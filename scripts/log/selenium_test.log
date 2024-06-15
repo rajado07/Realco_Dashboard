@@ -1,0 +1,206 @@
+INFO:root:Menjalankan Program Selenium Test
+WARNING:selenium.webdriver.common.selenium_manager:The version of chrome cannot be detected. Trying with latest driver version
+INFO:root:Terjadi kesalahan: Message: session not created: This version of ChromeDriver only supports Chrome version 114
+Current browser version is 126.0.6478.55 with binary path /snap/bin/chromium
+Stacktrace:
+#0 0x55efd37594e3 <unknown>
+#1 0x55efd3488c76 <unknown>
+#2 0x55efd34b604a <unknown>
+#3 0x55efd34b14a1 <unknown>
+#4 0x55efd34ae029 <unknown>
+#5 0x55efd34ecccc <unknown>
+#6 0x55efd34ec47f <unknown>
+#7 0x55efd34e3de3 <unknown>
+#8 0x55efd34b92dd <unknown>
+#9 0x55efd34ba34e <unknown>
+#10 0x55efd37193e4 <unknown>
+#11 0x55efd371d3d7 <unknown>
+#12 0x55efd3727b20 <unknown>
+#13 0x55efd371e023 <unknown>
+#14 0x55efd36ec1aa <unknown>
+#15 0x55efd37426b8 <unknown>
+#16 0x55efd3742847 <unknown>
+#17 0x55efd3752243 <unknown>
+#18 0x7f9e6355bac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/selenium_test.py", line 28, in <module>
+    driver = webdriver.Chrome(options=options)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/chrome/webdriver.py", line 49, in __init__
+    super().__init__(
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/chromium/webdriver.py", line 54, in __init__
+    super().__init__(
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 206, in __init__
+    self.start_session(capabilities)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 291, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 346, in execute
+    self.error_handler.check_response(response)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: This version of ChromeDriver only supports Chrome version 114
+Current browser version is 126.0.6478.55 with binary path /snap/bin/chromium
+Stacktrace:
+#0 0x55efd37594e3 <unknown>
+#1 0x55efd3488c76 <unknown>
+#2 0x55efd34b604a <unknown>
+#3 0x55efd34b14a1 <unknown>
+#4 0x55efd34ae029 <unknown>
+#5 0x55efd34ecccc <unknown>
+#6 0x55efd34ec47f <unknown>
+#7 0x55efd34e3de3 <unknown>
+#8 0x55efd34b92dd <unknown>
+#9 0x55efd34ba34e <unknown>
+#10 0x55efd37193e4 <unknown>
+#11 0x55efd371d3d7 <unknown>
+#12 0x55efd3727b20 <unknown>
+#13 0x55efd371e023 <unknown>
+#14 0x55efd36ec1aa <unknown>
+#15 0x55efd37426b8 <unknown>
+#16 0x55efd3742847 <unknown>
+#17 0x55efd3752243 <unknown>
+#18 0x7f9e6355bac3 <unknown>
+
+
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Terjadi kesalahan: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x55d552bbe6aa <unknown>
+#1 0x55d5528a10dc <unknown>
+#2 0x55d552898c70 <unknown>
+#3 0x55d552888772 <unknown>
+#4 0x55d552889df2 <unknown>
+#5 0x55d552888a2d <unknown>
+#6 0x55d552888143 <unknown>
+#7 0x55d552888035 <unknown>
+#8 0x55d552885f76 <unknown>
+#9 0x55d55288647a <unknown>
+#10 0x55d5528a3b27 <unknown>
+#11 0x55d5529301f5 <unknown>
+#12 0x55d552910872 <unknown>
+#13 0x55d55292f5c3 <unknown>
+#14 0x55d552910613 <unknown>
+#15 0x55d5528e04f7 <unknown>
+#16 0x55d5528e0e4e <unknown>
+#17 0x55d552b8487b <unknown>
+#18 0x55d552b88921 <unknown>
+#19 0x55d552b7036e <unknown>
+#20 0x55d552b89482 <unknown>
+#21 0x55d552b54ccf <unknown>
+#22 0x55d552bae0a8 <unknown>
+#23 0x55d552bae280 <unknown>
+#24 0x55d552bbd7dc <unknown>
+#25 0x7fd84fc99ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/selenium_test.py", line 29, in <module>
+    driver.get("https://www.google.com/")
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 355, in get
+    self.execute(Command.GET, {"url": url})
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 346, in execute
+    self.error_handler.check_response(response)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x55d552bbe6aa <unknown>
+#1 0x55d5528a10dc <unknown>
+#2 0x55d552898c70 <unknown>
+#3 0x55d552888772 <unknown>
+#4 0x55d552889df2 <unknown>
+#5 0x55d552888a2d <unknown>
+#6 0x55d552888143 <unknown>
+#7 0x55d552888035 <unknown>
+#8 0x55d552885f76 <unknown>
+#9 0x55d55288647a <unknown>
+#10 0x55d5528a3b27 <unknown>
+#11 0x55d5529301f5 <unknown>
+#12 0x55d552910872 <unknown>
+#13 0x55d55292f5c3 <unknown>
+#14 0x55d552910613 <unknown>
+#15 0x55d5528e04f7 <unknown>
+#16 0x55d5528e0e4e <unknown>
+#17 0x55d552b8487b <unknown>
+#18 0x55d552b88921 <unknown>
+#19 0x55d552b7036e <unknown>
+#20 0x55d552b89482 <unknown>
+#21 0x55d552b54ccf <unknown>
+#22 0x55d552bae0a8 <unknown>
+#23 0x55d552bae280 <unknown>
+#24 0x55d552bbd7dc <unknown>
+#25 0x7fd84fc99ac3 <unknown>
+
+
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
+INFO:root:Menjalankan Program Selenium Test
