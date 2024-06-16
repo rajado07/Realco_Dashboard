@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('generate:tasks')->everyMinute();
         // $schedule->command('update:task-status')->everyTenSeconds();
         // $schedule->command('run:tasks')->everyMinute();
-        $schedule->command('run:fastapi')->everyTenSeconds();
+        $schedule->command('run:fastapi')->everyMinute();
         
     }
 

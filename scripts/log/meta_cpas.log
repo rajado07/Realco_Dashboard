@@ -818,3 +818,231 @@ Stacktrace:
 #17 0x7f655f341ac3 <unknown>
 
 
+INFO:root:Terjadi kesalahan: 'schedule_to_run'
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 37, in <module>
+    schedule_to_run = task_data['schedule_to_run']
+KeyError: 'schedule_to_run'
+
+INFO:root:Terjadi kesalahan: unconverted data remains:  09:00:00
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 38, in <module>
+    schedule_date = datetime.strptime(schedule_to_run, '%Y-%m-%d')
+  File "/usr/lib/python3.10/_strptime.py", line 568, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+  File "/usr/lib/python3.10/_strptime.py", line 352, in _strptime
+    raise ValueError("unconverted data remains: %s" %
+ValueError: unconverted data remains:  09:00:00
+
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Task Berjalan On Time...
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x56136909d6aa <unknown>
+#1 0x561368d800dc <unknown>
+#2 0x561368dcc931 <unknown>
+#3 0x561368dcca21 <unknown>
+#4 0x561368e11234 <unknown>
+#5 0x561368def89d <unknown>
+#6 0x561368e0e5c3 <unknown>
+#7 0x561368def613 <unknown>
+#8 0x561368dbf4f7 <unknown>
+#9 0x561368dbfe4e <unknown>
+#10 0x56136906387b <unknown>
+#11 0x561369067921 <unknown>
+#12 0x56136904f36e <unknown>
+#13 0x561369068482 <unknown>
+#14 0x561369033ccf <unknown>
+#15 0x56136908d0a8 <unknown>
+#16 0x56136908d280 <unknown>
+#17 0x56136909c7dc <unknown>
+#18 0x7fb744f37ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 58, in <module>
+    click_select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x56136909d6aa <unknown>
+#1 0x561368d800dc <unknown>
+#2 0x561368dcc931 <unknown>
+#3 0x561368dcca21 <unknown>
+#4 0x561368e11234 <unknown>
+#5 0x561368def89d <unknown>
+#6 0x561368e0e5c3 <unknown>
+#7 0x561368def613 <unknown>
+#8 0x561368dbf4f7 <unknown>
+#9 0x561368dbfe4e <unknown>
+#10 0x56136906387b <unknown>
+#11 0x561369067921 <unknown>
+#12 0x56136904f36e <unknown>
+#13 0x561369068482 <unknown>
+#14 0x561369033ccf <unknown>
+#15 0x56136908d0a8 <unknown>
+#16 0x56136908d280 <unknown>
+#17 0x56136909c7dc <unknown>
+#18 0x7fb744f37ac3 <unknown>
+
+
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 14 hari terakhir
+INFO:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x56158635f6aa <unknown>
+#1 0x5615860420dc <unknown>
+#2 0x56158608e931 <unknown>
+#3 0x56158608ea21 <unknown>
+#4 0x5615860d3234 <unknown>
+#5 0x5615860b189d <unknown>
+#6 0x5615860d05c3 <unknown>
+#7 0x5615860b1613 <unknown>
+#8 0x5615860814f7 <unknown>
+#9 0x561586081e4e <unknown>
+#10 0x56158632587b <unknown>
+#11 0x561586329921 <unknown>
+#12 0x56158631136e <unknown>
+#13 0x56158632a482 <unknown>
+#14 0x5615862f5ccf <unknown>
+#15 0x56158634f0a8 <unknown>
+#16 0x56158634f280 <unknown>
+#17 0x56158635e7dc <unknown>
+#18 0x7fa434d69ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 45, in <module>
+    click_select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x56158635f6aa <unknown>
+#1 0x5615860420dc <unknown>
+#2 0x56158608e931 <unknown>
+#3 0x56158608ea21 <unknown>
+#4 0x5615860d3234 <unknown>
+#5 0x5615860b189d <unknown>
+#6 0x5615860d05c3 <unknown>
+#7 0x5615860b1613 <unknown>
+#8 0x5615860814f7 <unknown>
+#9 0x561586081e4e <unknown>
+#10 0x56158632587b <unknown>
+#11 0x561586329921 <unknown>
+#12 0x56158631136e <unknown>
+#13 0x56158632a482 <unknown>
+#14 0x5615862f5ccf <unknown>
+#15 0x56158634f0a8 <unknown>
+#16 0x56158634f280 <unknown>
+#17 0x56158635e7dc <unknown>
+#18 0x7fa434d69ac3 <unknown>
+
+
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 14 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Terjadi kesalahan: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 81, in <module>
+    raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
+FileNotFoundError: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+
+WARNING:urllib3.connectionpool:Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7ff19b619450>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/37bede9aee13636eca2251579620fb7e
+WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7ff19b618b50>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/37bede9aee13636eca2251579620fb7e
+WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7ff19b6194b0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/37bede9aee13636eca2251579620fb7e
+INFO:root:Terjadi kesalahan: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x561ac4b846aa <unknown>
+#1 0x561ac48670dc <unknown>
+#2 0x561ac485ec70 <unknown>
+#3 0x561ac484e772 <unknown>
+#4 0x561ac484fdf2 <unknown>
+#5 0x561ac484ea2d <unknown>
+#6 0x561ac484e143 <unknown>
+#7 0x561ac484e035 <unknown>
+#8 0x561ac484bf76 <unknown>
+#9 0x561ac484c47a <unknown>
+#10 0x561ac4869b27 <unknown>
+#11 0x561ac48f61f5 <unknown>
+#12 0x561ac48d6872 <unknown>
+#13 0x561ac48f55c3 <unknown>
+#14 0x561ac48d6613 <unknown>
+#15 0x561ac48a64f7 <unknown>
+#16 0x561ac48a6e4e <unknown>
+#17 0x561ac4b4a87b <unknown>
+#18 0x561ac4b4e921 <unknown>
+#19 0x561ac4b3636e <unknown>
+#20 0x561ac4b4f482 <unknown>
+#21 0x561ac4b1accf <unknown>
+#22 0x561ac4b740a8 <unknown>
+#23 0x561ac4b74280 <unknown>
+#24 0x561ac4b837dc <unknown>
+#25 0x7f20d25bdac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 34, in <module>
+    driver.get(url)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 355, in get
+    self.execute(Command.GET, {"url": url})
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 346, in execute
+    self.error_handler.check_response(response)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x561ac4b846aa <unknown>
+#1 0x561ac48670dc <unknown>
+#2 0x561ac485ec70 <unknown>
+#3 0x561ac484e772 <unknown>
+#4 0x561ac484fdf2 <unknown>
+#5 0x561ac484ea2d <unknown>
+#6 0x561ac484e143 <unknown>
+#7 0x561ac484e035 <unknown>
+#8 0x561ac484bf76 <unknown>
+#9 0x561ac484c47a <unknown>
+#10 0x561ac4869b27 <unknown>
+#11 0x561ac48f61f5 <unknown>
+#12 0x561ac48d6872 <unknown>
+#13 0x561ac48f55c3 <unknown>
+#14 0x561ac48d6613 <unknown>
+#15 0x561ac48a64f7 <unknown>
+#16 0x561ac48a6e4e <unknown>
+#17 0x561ac4b4a87b <unknown>
+#18 0x561ac4b4e921 <unknown>
+#19 0x561ac4b3636e <unknown>
+#20 0x561ac4b4f482 <unknown>
+#21 0x561ac4b1accf <unknown>
+#22 0x561ac4b740a8 <unknown>
+#23 0x561ac4b74280 <unknown>
+#24 0x561ac4b837dc <unknown>
+#25 0x7f20d25bdac3 <unknown>
+
+
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Terjadi kesalahan: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 81, in <module>
+    raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
+FileNotFoundError: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+
+WARNING:urllib3.connectionpool:Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe9dbad5450>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/036feec3a693b5197e89f93b14508fde
+WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe9dbad4b50>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/036feec3a693b5197e89f93b14508fde
+WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe9dbad54b0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/036feec3a693b5197e89f93b14508fde
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir

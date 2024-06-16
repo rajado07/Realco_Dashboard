@@ -5,21 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RawData extends Model
+class ShopeeBrandPortalShopData extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'type',
-        'data',
+        'product_name',
+        'product_id',
+        'gross_sales',
+        'gross_orders',
+        'gross_units_sold',
+        'product_views',
+        'product_visitors',
         'retrieved_at',
         'data_date',
         'file_name',
         'brand_id',
-        'market_place_id',
-        'task_id',
-        'status',
-        'message',
+        'raw_data_id',
     ];
 
 }

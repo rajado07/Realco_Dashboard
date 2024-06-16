@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ShopeeBrandPortalShop;
+use App\Models\ShopeeBrandPortalShopData;
 
-class ShopeeBrandPortalShopController extends Controller
+class ShopeeBrandPortalShopDataController extends Controller
 {
     public function index()
     {
         // Specify the columns you want to retrieve
-        $data = ShopeeBrandPortalShop::select([
+        $data = ShopeeBrandPortalShopData::select([
             'id',
             'product_name',
             'product_id',

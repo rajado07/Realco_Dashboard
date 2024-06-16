@@ -9,7 +9,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\RawDataController;
-use App\Http\Controllers\ShopeeBrandPortalShopController;
+use App\Http\Controllers\ShopeeBrandPortalShopDataController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/register', [RegisteredUserController::class, 'create'])
@@ -70,7 +70,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::post('/rawdata', [RawDataController::class, 'create']);
 
 //Shopee-BrandPortal-Shop
-Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopController::class, 'index'])
+Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])
     ->middleware('auth');
 
 

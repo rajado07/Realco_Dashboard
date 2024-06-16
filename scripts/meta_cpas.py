@@ -7,6 +7,7 @@ import sys
 import json
 import logging
 import traceback
+from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -32,6 +33,37 @@ try:
     url = task_data['link']  # Menggunakan link dari task data
     driver.get(url)
     wait = WebDriverWait(driver, 30)
+
+    schedule_to_run = task_data['scheduled_to_run']
+    schedule_date = datetime.strptime(schedule_to_run, '%Y-%m-%d %H:%M:%S')
+    current_date = datetime.now()
+
+    if current_date >= schedule_date + timedelta(days=1):
+        if current_date < schedule_date + timedelta(days=14):
+            logging.info("Tanggal sudah terlewat minimal satu hari, melakukan export data 14 hari terakhir")
+
+            click_select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+            time.sleep(7)
+            click_select_timeframe.click()
+            time.sleep(7)
+
+            select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 14 days')]")))
+            time.sleep(7)
+            select_timeframe.click()
+            time.sleep(7)
+
+        else:
+            logging.info("Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir")
+
+            click_select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+            time.sleep(7)
+            click_select_timeframe.click()
+            time.sleep(7)
+
+            select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 30 days')]")))
+            time.sleep(7)
+            select_timeframe.click()
+            time.sleep(7)
 
     first_export = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Export')]")))
     time.sleep(7)

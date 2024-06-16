@@ -15,6 +15,7 @@ class TaskGenerator extends Model
         'type',
         'link',
         'frequency',
-        'run_at'
+        'run_at',
+        'status',
     ];
 }

@@ -2,15 +2,17 @@
 
 namespace App\Observers;
 
+use App\Models\MetaCpasData;
 use App\Models\RawData;
-use App\Models\ShopeeBrandPortalShop;
 use Illuminate\Support\Facades\Log;
 
-class ShopeeBrandPortalShopObserver
+
+class MetaCpasDataObserver
 {
+
     public function created(RawData $rawData)
     {
-        if ($rawData->type === 'shopee_brand_portal_shop') {
+        if ($rawData->type === 'meta_cpas') {
             $jsonData = json_decode($rawData->data, true);
 
             $totalEntries = count($jsonData);
@@ -19,23 +21,23 @@ class ShopeeBrandPortalShopObserver
 
             foreach ($jsonData as $dataItem) {
                 try {
-                    ShopeeBrandPortalShop::create([
-                        'product_name' => $dataItem['Product Name'],
-                        'product_id' => $dataItem['Product ID'],
-                        'gross_sales' => $dataItem['Gross Sales(Rp)'],
-                        'gross_orders' => $dataItem['Gross Orders'],
-                        'gross_units_sold' => $dataItem['Gross Units Sold'],
-                        'product_views' => $dataItem['Product Views'],
-                        'product_visitors' => $dataItem['Product Visitors'],
+                    MetaCpasData::create([
+                        'data_date' => $dataItem['Day'],
+                        'ad_set_name' => $dataItem['Ad set name'],
+                        'amount_spent' => $dataItem['Amount spent (IDR)'],
+                        'content_views_with_shared_items' => $dataItem['Content views with shared items'],
+                        'adds_to_cart_with_shared_items' => $dataItem['Adds to cart with shared items'],
+                        'purchases_with_shared_items' => $dataItem['Purchases with shared items'],
+                        'purchases_conversion_value_for_shared_items_only' => $dataItem['Purchases conversion value for shared items only'],
                         'retrieved_at' => $rawData->retrieved_at,
-                        'data_date' => $rawData->data_date,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,
+                        'market_place_id' => $rawData->market_place_id,
                         'raw_data_id' => $rawData->id
                     ]);
                     $successCount++;
                 } catch (\Exception $e) {
-                    $errorDetails[] = 'Failed to insert data for product ID: ' . $dataItem['Product ID'] . ' with error: ' . $e->getMessage();
+                    $errorDetails[] = 'Failed to insert data for Ad Set Name: ' . $dataItem['Ad set name'] . ' with error: ' . $e->getMessage();
                 }
             }
 
@@ -68,4 +70,6 @@ class ShopeeBrandPortalShopObserver
             ]);
         }
     }
+
+    
 }

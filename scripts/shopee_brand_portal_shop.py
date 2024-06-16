@@ -1,4 +1,3 @@
-import undetected_chromedriver as uc
 import time
 import pandas as pd
 import os
@@ -8,6 +7,7 @@ import sys
 import json
 import logging
 import traceback
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -27,14 +27,16 @@ day = scheduled_to_run.day
 
 logging.info(f"ID : {task_data['id']} , Type : {task_data['type']} ,  Link : {task_data['link']} ,  Untuk Data Tanggal =  Year: {year}, Month: {month}, Day: {day}")
 
-options = uc.ChromeOptions()
-options.add_argument(f"--user-data-dir={config.user_data_dir}")
-options.add_argument(f"--profile-directory={config.profile_dir}")
-options.add_argument('--window-size=1920x1080')  
-options.add_argument('--disable-gpu')
-
 try:
-    driver = uc.Chrome(options=options)
+    options = webdriver.ChromeOptions()
+    options.add_argument(f"--user-data-dir={config.user_data_dir}")
+    options.add_argument(f"--profile-directory={config.profile_dir}")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--disable-infobars")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    
+    driver = webdriver.Chrome(options=options)
     url = task_data['link']
     driver.get(url)
     wait = WebDriverWait(driver, 30)
@@ -108,6 +110,8 @@ except Exception as e:
     error_message = f"Terjadi kesalahan: {e}\n{tb}"
     logging.error(error_message)
     sys.stderr.write(json.dumps({"status": "error", "message": error_message}))
-    if driver is not None: 
+    try:
         driver.quit()
+    except:
+        pass
     sys.exit(1)

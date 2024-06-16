@@ -108,6 +108,7 @@ class GenerateTasks extends Command
                 'link' => $generator->link,
                 'scheduled_to_run' => $scheduledToRun,
                 'status' => 1, // ready status
+                'task_generator_id' => $generator->id,
             ]);
 
             $this->info("Task generated for {$generator->type} scheduled to run at {$scheduledToRun}");

@@ -16,6 +16,7 @@ class Task extends Model
         'link',
         'scheduled_to_run',
         'status',
+        'task_generator_id',
         'message',
     ];
 

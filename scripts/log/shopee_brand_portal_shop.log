@@ -1164,3 +1164,502 @@ INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal
 INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 10
 INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 10
 INFO:undetected_chromedriver.patcher:patching driver executable /home/rajab/.local/share/undetected_chromedriver/undetected_chromedriver
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 15
+INFO:undetected_chromedriver.patcher:patching driver executable /home/rajab/.local/share/undetected_chromedriver/undetected_chromedriver
+ERROR:root:Terjadi kesalahan: Message: session not created: cannot connect to chrome at 127.0.0.1:60475
+from session not created: This version of ChromeDriver only supports Chrome version 126
+Current browser version is 108.0.5359.40
+Stacktrace:
+#0 0x55883a98d6aa <unknown>
+#1 0x55883a6700dc <unknown>
+#2 0x55883a6abb8b <unknown>
+#3 0x55883a6aad32 <unknown>
+#4 0x55883a6a0cbc <unknown>
+#5 0x55883a6ebef9 <unknown>
+#6 0x55883a6df613 <unknown>
+#7 0x55883a6af4f7 <unknown>
+#8 0x55883a6afe4e <unknown>
+#9 0x55883a95387b <unknown>
+#10 0x55883a957921 <unknown>
+#11 0x55883a93f36e <unknown>
+#12 0x55883a958482 <unknown>
+#13 0x55883a923ccf <unknown>
+#14 0x55883a97d0a8 <unknown>
+#15 0x55883a97d280 <unknown>
+#16 0x55883a98c7dc <unknown>
+#17 0x7fdef5d51ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 37, in <module>
+    driver = uc.Chrome(options=options)
+  File "/home/rajab/.local/lib/python3.10/site-packages/undetected_chromedriver/__init__.py", line 466, in __init__
+    super(Chrome, self).__init__(
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/chrome/webdriver.py", line 49, in __init__
+    super().__init__(
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/chromium/webdriver.py", line 54, in __init__
+    super().__init__(
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 206, in __init__
+    self.start_session(capabilities)
+  File "/home/rajab/.local/lib/python3.10/site-packages/undetected_chromedriver/__init__.py", line 724, in start_session
+    super(selenium.webdriver.chrome.webdriver.WebDriver, self).start_session(
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 291, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 346, in execute
+    self.error_handler.check_response(response)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: cannot connect to chrome at 127.0.0.1:60475
+from session not created: This version of ChromeDriver only supports Chrome version 126
+Current browser version is 108.0.5359.40
+Stacktrace:
+#0 0x55883a98d6aa <unknown>
+#1 0x55883a6700dc <unknown>
+#2 0x55883a6abb8b <unknown>
+#3 0x55883a6aad32 <unknown>
+#4 0x55883a6a0cbc <unknown>
+#5 0x55883a6ebef9 <unknown>
+#6 0x55883a6df613 <unknown>
+#7 0x55883a6af4f7 <unknown>
+#8 0x55883a6afe4e <unknown>
+#9 0x55883a95387b <unknown>
+#10 0x55883a957921 <unknown>
+#11 0x55883a93f36e <unknown>
+#12 0x55883a958482 <unknown>
+#13 0x55883a923ccf <unknown>
+#14 0x55883a97d0a8 <unknown>
+#15 0x55883a97d280 <unknown>
+#16 0x55883a98c7dc <unknown>
+#17 0x7fdef5d51ac3 <unknown>
+
+
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 15
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x55fc0d8f76aa <unknown>
+#1 0x55fc0d5da0dc <unknown>
+#2 0x55fc0d626931 <unknown>
+#3 0x55fc0d626a21 <unknown>
+#4 0x55fc0d66b234 <unknown>
+#5 0x55fc0d64989d <unknown>
+#6 0x55fc0d6685c3 <unknown>
+#7 0x55fc0d649613 <unknown>
+#8 0x55fc0d6194f7 <unknown>
+#9 0x55fc0d619e4e <unknown>
+#10 0x55fc0d8bd87b <unknown>
+#11 0x55fc0d8c1921 <unknown>
+#12 0x55fc0d8a936e <unknown>
+#13 0x55fc0d8c2482 <unknown>
+#14 0x55fc0d88dccf <unknown>
+#15 0x55fc0d8e70a8 <unknown>
+#16 0x55fc0d8e7280 <unknown>
+#17 0x55fc0d8f67dc <unknown>
+#18 0x7f453d625ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 45, in <module>
+    pilih_periode = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x55fc0d8f76aa <unknown>
+#1 0x55fc0d5da0dc <unknown>
+#2 0x55fc0d626931 <unknown>
+#3 0x55fc0d626a21 <unknown>
+#4 0x55fc0d66b234 <unknown>
+#5 0x55fc0d64989d <unknown>
+#6 0x55fc0d6685c3 <unknown>
+#7 0x55fc0d649613 <unknown>
+#8 0x55fc0d6194f7 <unknown>
+#9 0x55fc0d619e4e <unknown>
+#10 0x55fc0d8bd87b <unknown>
+#11 0x55fc0d8c1921 <unknown>
+#12 0x55fc0d8a936e <unknown>
+#13 0x55fc0d8c2482 <unknown>
+#14 0x55fc0d88dccf <unknown>
+#15 0x55fc0d8e70a8 <unknown>
+#16 0x55fc0d8e7280 <unknown>
+#17 0x55fc0d8f67dc <unknown>
+#18 0x7f453d625ac3 <unknown>
+
+
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 15
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 16
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x5628b7ba16aa <unknown>
+#1 0x5628b78840dc <unknown>
+#2 0x5628b78d0931 <unknown>
+#3 0x5628b78d0a21 <unknown>
+#4 0x5628b7915234 <unknown>
+#5 0x5628b78f389d <unknown>
+#6 0x5628b79125c3 <unknown>
+#7 0x5628b78f3613 <unknown>
+#8 0x5628b78c34f7 <unknown>
+#9 0x5628b78c3e4e <unknown>
+#10 0x5628b7b6787b <unknown>
+#11 0x5628b7b6b921 <unknown>
+#12 0x5628b7b5336e <unknown>
+#13 0x5628b7b6c482 <unknown>
+#14 0x5628b7b37ccf <unknown>
+#15 0x5628b7b910a8 <unknown>
+#16 0x5628b7b91280 <unknown>
+#17 0x5628b7ba07dc <unknown>
+#18 0x7f27eeaa2ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 48, in <module>
+    pilih_by_day = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'By Day')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x5628b7ba16aa <unknown>
+#1 0x5628b78840dc <unknown>
+#2 0x5628b78d0931 <unknown>
+#3 0x5628b78d0a21 <unknown>
+#4 0x5628b7915234 <unknown>
+#5 0x5628b78f389d <unknown>
+#6 0x5628b79125c3 <unknown>
+#7 0x5628b78f3613 <unknown>
+#8 0x5628b78c34f7 <unknown>
+#9 0x5628b78c3e4e <unknown>
+#10 0x5628b7b6787b <unknown>
+#11 0x5628b7b6b921 <unknown>
+#12 0x5628b7b5336e <unknown>
+#13 0x5628b7b6c482 <unknown>
+#14 0x5628b7b37ccf <unknown>
+#15 0x5628b7b910a8 <unknown>
+#16 0x5628b7b91280 <unknown>
+#17 0x5628b7ba07dc <unknown>
+#18 0x7f27eeaa2ac3 <unknown>
+
+
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 16
+INFO:root:ID : 2 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 17
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 16
+INFO:root:ID : 23 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 7
+INFO:root:ID : 24 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 8
+INFO:root:ID : 22 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 6
+INFO:root:ID : 21 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 5
+INFO:root:ID : 20 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 4
+INFO:root:ID : 19 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 3
+INFO:root:ID : 17 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 1
+INFO:root:ID : 16 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 31
+INFO:root:ID : 18 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 2
+INFO:root:ID : 15 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 30
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x558881c376aa <unknown>
+#1 0x55888191a0dc <unknown>
+#2 0x558881966931 <unknown>
+#3 0x558881966a21 <unknown>
+#4 0x5588819ab234 <unknown>
+#5 0x55888198989d <unknown>
+#6 0x5588819a85c3 <unknown>
+#7 0x558881989613 <unknown>
+#8 0x5588819594f7 <unknown>
+#9 0x558881959e4e <unknown>
+#10 0x558881bfd87b <unknown>
+#11 0x558881c01921 <unknown>
+#12 0x558881be936e <unknown>
+#13 0x558881c02482 <unknown>
+#14 0x558881bcdccf <unknown>
+#15 0x558881c270a8 <unknown>
+#16 0x558881c27280 <unknown>
+#17 0x558881c367dc <unknown>
+#18 0x7f1a0963aac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 44, in <module>
+    pilih_periode = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x558881c376aa <unknown>
+#1 0x55888191a0dc <unknown>
+#2 0x558881966931 <unknown>
+#3 0x558881966a21 <unknown>
+#4 0x5588819ab234 <unknown>
+#5 0x55888198989d <unknown>
+#6 0x5588819a85c3 <unknown>
+#7 0x558881989613 <unknown>
+#8 0x5588819594f7 <unknown>
+#9 0x558881959e4e <unknown>
+#10 0x558881bfd87b <unknown>
+#11 0x558881c01921 <unknown>
+#12 0x558881be936e <unknown>
+#13 0x558881c02482 <unknown>
+#14 0x558881bcdccf <unknown>
+#15 0x558881c270a8 <unknown>
+#16 0x558881c27280 <unknown>
+#17 0x558881c367dc <unknown>
+#18 0x7f1a0963aac3 <unknown>
+
+
+INFO:root:ID : 14 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 29
+INFO:root:ID : 13 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 28
+ERROR:root:Terjadi kesalahan: Message: element not interactable
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x55bb6117f6aa <unknown>
+#1 0x55bb60e61f21 <unknown>
+#2 0x55bb60eafabf <unknown>
+#3 0x55bb60ea340f <unknown>
+#4 0x55bb60ed1872 <unknown>
+#5 0x55bb60ea2d89 <unknown>
+#6 0x55bb60ed1a3e <unknown>
+#7 0x55bb60ef05c3 <unknown>
+#8 0x55bb60ed1613 <unknown>
+#9 0x55bb60ea14f7 <unknown>
+#10 0x55bb60ea1e4e <unknown>
+#11 0x55bb6114587b <unknown>
+#12 0x55bb61149921 <unknown>
+#13 0x55bb6113136e <unknown>
+#14 0x55bb6114a482 <unknown>
+#15 0x55bb61115ccf <unknown>
+#16 0x55bb6116f0a8 <unknown>
+#17 0x55bb6116f280 <unknown>
+#18 0x55bb6117e7dc <unknown>
+#19 0x7f88296a5ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 53, in <module>
+    select_year.click()
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webelement.py", line 94, in click
+    self._execute(Command.CLICK_ELEMENT)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webelement.py", line 395, in _execute
+    return self._parent.execute(command, params)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 346, in execute
+    self.error_handler.check_response(response)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.ElementNotInteractableException: Message: element not interactable
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x55bb6117f6aa <unknown>
+#1 0x55bb60e61f21 <unknown>
+#2 0x55bb60eafabf <unknown>
+#3 0x55bb60ea340f <unknown>
+#4 0x55bb60ed1872 <unknown>
+#5 0x55bb60ea2d89 <unknown>
+#6 0x55bb60ed1a3e <unknown>
+#7 0x55bb60ef05c3 <unknown>
+#8 0x55bb60ed1613 <unknown>
+#9 0x55bb60ea14f7 <unknown>
+#10 0x55bb60ea1e4e <unknown>
+#11 0x55bb6114587b <unknown>
+#12 0x55bb61149921 <unknown>
+#13 0x55bb6113136e <unknown>
+#14 0x55bb6114a482 <unknown>
+#15 0x55bb61115ccf <unknown>
+#16 0x55bb6116f0a8 <unknown>
+#17 0x55bb6116f280 <unknown>
+#18 0x55bb6117e7dc <unknown>
+#19 0x7f88296a5ac3 <unknown>
+
+
+INFO:root:ID : 25 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 9
+INFO:root:ID : 12 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 27
+INFO:root:ID : 26 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 10
+INFO:root:ID : 11 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 26
+ERROR:root:Terjadi kesalahan: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 93, in <module>
+    raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
+FileNotFoundError: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+
+WARNING:urllib3.connectionpool:Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f3669f99e40>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/a3f43834015ed477e106c1a14be1a0ac
+WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f3669f99e10>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/a3f43834015ed477e106c1a14be1a0ac
+WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f3669f9a020>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/a3f43834015ed477e106c1a14be1a0ac
+INFO:root:ID : 27 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 11
+INFO:root:ID : 10 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 25
+ERROR:root:Terjadi kesalahan: Message: element not interactable
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x55cab57c66aa <unknown>
+#1 0x55cab54a8f21 <unknown>
+#2 0x55cab54f6abf <unknown>
+#3 0x55cab54ea40f <unknown>
+#4 0x55cab5518872 <unknown>
+#5 0x55cab54e9d89 <unknown>
+#6 0x55cab5518a3e <unknown>
+#7 0x55cab55375c3 <unknown>
+#8 0x55cab5518613 <unknown>
+#9 0x55cab54e84f7 <unknown>
+#10 0x55cab54e8e4e <unknown>
+#11 0x55cab578c87b <unknown>
+#12 0x55cab5790921 <unknown>
+#13 0x55cab577836e <unknown>
+#14 0x55cab5791482 <unknown>
+#15 0x55cab575cccf <unknown>
+#16 0x55cab57b60a8 <unknown>
+#17 0x55cab57b6280 <unknown>
+#18 0x55cab57c57dc <unknown>
+#19 0x7f3cca507ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 53, in <module>
+    select_year.click()
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webelement.py", line 94, in click
+    self._execute(Command.CLICK_ELEMENT)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webelement.py", line 395, in _execute
+    return self._parent.execute(command, params)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 346, in execute
+    self.error_handler.check_response(response)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.ElementNotInteractableException: Message: element not interactable
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x55cab57c66aa <unknown>
+#1 0x55cab54a8f21 <unknown>
+#2 0x55cab54f6abf <unknown>
+#3 0x55cab54ea40f <unknown>
+#4 0x55cab5518872 <unknown>
+#5 0x55cab54e9d89 <unknown>
+#6 0x55cab5518a3e <unknown>
+#7 0x55cab55375c3 <unknown>
+#8 0x55cab5518613 <unknown>
+#9 0x55cab54e84f7 <unknown>
+#10 0x55cab54e8e4e <unknown>
+#11 0x55cab578c87b <unknown>
+#12 0x55cab5790921 <unknown>
+#13 0x55cab577836e <unknown>
+#14 0x55cab5791482 <unknown>
+#15 0x55cab575cccf <unknown>
+#16 0x55cab57b60a8 <unknown>
+#17 0x55cab57b6280 <unknown>
+#18 0x55cab57c57dc <unknown>
+#19 0x7f3cca507ac3 <unknown>
+
+
+INFO:root:ID : 29 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 13
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x5613666736aa <unknown>
+#1 0x5613663560dc <unknown>
+#2 0x5613663a2931 <unknown>
+#3 0x5613663a2a21 <unknown>
+#4 0x5613663e7234 <unknown>
+#5 0x5613663c589d <unknown>
+#6 0x5613663e45c3 <unknown>
+#7 0x5613663c5613 <unknown>
+#8 0x5613663954f7 <unknown>
+#9 0x561366395e4e <unknown>
+#10 0x56136663987b <unknown>
+#11 0x56136663d921 <unknown>
+#12 0x56136662536e <unknown>
+#13 0x56136663e482 <unknown>
+#14 0x561366609ccf <unknown>
+#15 0x5613666630a8 <unknown>
+#16 0x561366663280 <unknown>
+#17 0x5613666727dc <unknown>
+#18 0x7f371cf3aac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 44, in <module>
+    pilih_periode = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x5613666736aa <unknown>
+#1 0x5613663560dc <unknown>
+#2 0x5613663a2931 <unknown>
+#3 0x5613663a2a21 <unknown>
+#4 0x5613663e7234 <unknown>
+#5 0x5613663c589d <unknown>
+#6 0x5613663e45c3 <unknown>
+#7 0x5613663c5613 <unknown>
+#8 0x5613663954f7 <unknown>
+#9 0x561366395e4e <unknown>
+#10 0x56136663987b <unknown>
+#11 0x56136663d921 <unknown>
+#12 0x56136662536e <unknown>
+#13 0x56136663e482 <unknown>
+#14 0x561366609ccf <unknown>
+#15 0x5613666630a8 <unknown>
+#16 0x561366663280 <unknown>
+#17 0x5613666727dc <unknown>
+#18 0x7f371cf3aac3 <unknown>
+
+
+INFO:root:ID : 28 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 12
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x5633ac5af6aa <unknown>
+#1 0x5633ac2920dc <unknown>
+#2 0x5633ac2de931 <unknown>
+#3 0x5633ac2dea21 <unknown>
+#4 0x5633ac323234 <unknown>
+#5 0x5633ac30189d <unknown>
+#6 0x5633ac3205c3 <unknown>
+#7 0x5633ac301613 <unknown>
+#8 0x5633ac2d14f7 <unknown>
+#9 0x5633ac2d1e4e <unknown>
+#10 0x5633ac57587b <unknown>
+#11 0x5633ac579921 <unknown>
+#12 0x5633ac56136e <unknown>
+#13 0x5633ac57a482 <unknown>
+#14 0x5633ac545ccf <unknown>
+#15 0x5633ac59f0a8 <unknown>
+#16 0x5633ac59f280 <unknown>
+#17 0x5633ac5ae7dc <unknown>
+#18 0x7f4a86deeac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 44, in <module>
+    pilih_periode = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x5633ac5af6aa <unknown>
+#1 0x5633ac2920dc <unknown>
+#2 0x5633ac2de931 <unknown>
+#3 0x5633ac2dea21 <unknown>
+#4 0x5633ac323234 <unknown>
+#5 0x5633ac30189d <unknown>
+#6 0x5633ac3205c3 <unknown>
+#7 0x5633ac301613 <unknown>
+#8 0x5633ac2d14f7 <unknown>
+#9 0x5633ac2d1e4e <unknown>
+#10 0x5633ac57587b <unknown>
+#11 0x5633ac579921 <unknown>
+#12 0x5633ac56136e <unknown>
+#13 0x5633ac57a482 <unknown>
+#14 0x5633ac545ccf <unknown>
+#15 0x5633ac59f0a8 <unknown>
+#16 0x5633ac59f280 <unknown>
+#17 0x5633ac5ae7dc <unknown>
+#18 0x7f4a86deeac3 <unknown>
+
+
+INFO:root:ID : 30 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 14
+INFO:root:ID : 9 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 24
+INFO:root:ID : 8 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 23
+INFO:root:ID : 7 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 22
+INFO:root:ID : 5 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 20
+INFO:root:ID : 4 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 19
+INFO:root:ID : 6 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 21
+INFO:root:ID : 2 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 17
+INFO:root:ID : 3 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 18
+INFO:root:ID : 31 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 15
+INFO:root:ID : 15 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 30
+INFO:root:ID : 13 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 28
+INFO:root:ID : 11 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 26
+INFO:root:ID : 10 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 25
+ERROR:root:Terjadi kesalahan: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 93, in <module>
+    raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
+FileNotFoundError: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+
+WARNING:urllib3.connectionpool:Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8915085e40>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/4c42ae7c26ab2ba3440cf49de9113e53
+WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8915085e10>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/4c42ae7c26ab2ba3440cf49de9113e53
+WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8915086020>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/4c42ae7c26ab2ba3440cf49de9113e53
+INFO:root:ID : 29 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 13
+INFO:root:ID : 28 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 12
+INFO:root:ID : 10 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 25

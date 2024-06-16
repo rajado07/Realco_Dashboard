@@ -4,28 +4,23 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\RawData;
-use App\Observers\ShopeeBrandPortalShopObserver;
+use App\Observers\ShopeeBrandPortalShopDataObserver;
+use App\Observers\ShopeeBrandPortalAdsDataObserver;
+use App\Observers\MetaCpasDataObserver;
 
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
+
     public function register()
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot()
     {
-        RawData::observe(ShopeeBrandPortalShopObserver::class);
+        RawData::observe(ShopeeBrandPortalShopDataObserver::class);
+        RawData::observe(ShopeeBrandPortalAdsDataObserver::class);
+        RawData::observe(MetaCpasDataObserver::class);
     }
 }

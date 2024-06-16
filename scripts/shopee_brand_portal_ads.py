@@ -1,4 +1,3 @@
-import undetected_chromedriver as uc
 import time
 import pandas as pd
 import os
@@ -8,10 +7,11 @@ import sys
 import json
 import logging
 import traceback
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from datetime import datetime
+from datetime import datetime, timedelta
 
 task_data = json.loads(sys.argv[1])
 
@@ -27,59 +27,45 @@ day = scheduled_to_run.day
 
 logging.info(f"ID : {task_data['id']} , Type : {task_data['type']} , Link : {task_data['link']} , Untuk Data Tanggal =  Year: {year}, Month: {month}, Day: {day}")
 
-options = uc.ChromeOptions()
-options.add_argument(f"--user-data-dir={config.user_data_dir}")
-options.add_argument(f"--profile-directory={config.profile_dir}")
-options.add_argument('--window-size=1920x1080')  
-options.add_argument('--disable-gpu')
-
 try:
-    driver = uc.Chrome(options=options)
+    options = webdriver.ChromeOptions()
+    options.add_argument(f"--user-data-dir={config.user_data_dir}")
+    options.add_argument(f"--profile-directory={config.profile_dir}")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--disable-infobars")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+
+    driver = webdriver.Chrome(options=options)
     url = task_data['link']
     driver.get(url)
     wait = WebDriverWait(driver, 30)
 
-    pilih_periode = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
-    driver.execute_script("arguments[0].click();", pilih_periode)
-    time.sleep(3)
+    schedule_to_run = task_data['scheduled_to_run']
+    schedule_date = datetime.strptime(schedule_to_run, '%Y-%m-%d %H:%M:%S')
+    current_date = datetime.now()
 
-    pilih_by_day = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'By Day')]")))
-    pilih_by_day.click()
-    time.sleep(3)
+    if current_date >= schedule_date + timedelta(days=1):
+    
+        logging.info("Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir")
 
-    select_year = wait.until(EC.presence_of_element_located((By.XPATH, "//span[@class='date-default-style year']")))
-    select_year.click()
-    time.sleep(3)
+        pilih_periode = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 7 days')]")))
+        driver.execute_script("arguments[0].click();", pilih_periode)
+        time.sleep(7)
 
-    pick_year = wait.until(EC.presence_of_element_located((By.XPATH, f"//div[contains(@class, 'shopee-react-date-picker__table-cell') and text()='{year}']")))
-    pick_year.click()
-    time.sleep(3)
+        pilih_periode_30_days = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 30 days')]")))
+        driver.execute_script("arguments[0].click();", pilih_periode_30_days)
+        time.sleep(7)
 
-    select_month = wait.until(EC.presence_of_element_located((By.XPATH, "//span[@class='date-default-style month']")))
-    select_month.click()
-    time.sleep(3)
+        refresh = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Refresh')]")))
+        driver.execute_script("arguments[0].click();", refresh)
+        time.sleep(3) 
 
-    pick_month = wait.until(EC.presence_of_element_located((By.XPATH, f"//div[contains(@class, 'shopee-react-date-picker__table-cell') and text()='{month}']")))
-    pick_month.click()
-    time.sleep(3)
+        apply = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Apply')]")))
+        driver.execute_script("arguments[0].click();", apply)
+        time.sleep(3)
 
-    pick_day = wait.until(EC.presence_of_element_located((By.XPATH, f"//div[contains(@class, 'shopee-react-date-picker__table-cell') and not(contains(@class, 'out-of-range')) and text()='{day}']")))
-    pick_day.click()
-    time.sleep(3)
-
-    # confirm_button = wait.until(EC.presence_of_element_located((By.XPATH, "//button[.//span[text()='Confirm']]")))
-    # confirm_button.click()
-    # time.sleep(3)
-
-    refresh = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Refresh')]")))
-    driver.execute_script("arguments[0].click();", refresh)
-    time.sleep(3) 
-
-    apply = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Apply')]")))
-    driver.execute_script("arguments[0].click();", apply)
-    time.sleep(3)
-
-    button = wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(@data-track-info, '\"targetType\":\"export\"')]")))
+    button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@data-track-info, '\"targetType\":\"export\"')]")))
     download_timestamp = time.time()
     driver.execute_script("arguments[0].click();", button)
 
@@ -101,15 +87,15 @@ try:
         "data": cleaned_data_json,
         "file_name": os.path.basename(downloaded_file)
     }
-    print(json.dumps(output))
-
-    
+    print(json.dumps(output))    
 
 except Exception as e:
     tb = traceback.format_exc()
     error_message = f"Terjadi kesalahan: {e}\n{tb}"
     logging.error(error_message)
     sys.stderr.write(json.dumps({"status": "error", "message": error_message}))
-    if driver is not None: 
+    try:
         driver.quit()
+    except:
+        pass
     sys.exit(1)

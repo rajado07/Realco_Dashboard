@@ -9,15 +9,15 @@ return new class extends Migration
  
     public function up(): void
     {
-        Schema::create('shopee_brand_portal_shops', function (Blueprint $table) {
+        Schema::create('shopee_brand_portal_shop_data', function (Blueprint $table) {
             $table->id();
             $table->string('product_name');
             $table->string('product_id');
-            $table->decimal('gross_sales', 10, 2);
-            $table->integer('gross_orders');
-            $table->integer('gross_units_sold');
-            $table->integer('product_views');
-            $table->integer('product_visitors');
+            $table->decimal('gross_sales', 10, 2)->nullable();
+            $table->integer('gross_orders')->nullable();
+            $table->integer('gross_units_sold')->nullable();
+            $table->integer('product_views')->nullable();
+            $table->integer('product_visitors')->nullable();
             $table->timestamp('retrieved_at'); 
             $table->date('data_date'); 
             $table->string('file_name');
@@ -27,9 +27,9 @@ return new class extends Migration
         });
     }
 
-
     public function down(): void
     {
-        Schema::dropIfExists('shopee_brand_portal_shops');
+        Schema::dropIfExists('shopee_brand_portal_shop_data');
     }
+    
 };

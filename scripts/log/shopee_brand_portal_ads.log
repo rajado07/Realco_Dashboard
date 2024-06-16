@@ -198,3 +198,77 @@ Stacktrace:
 
 INFO:root:ID : 13 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 1
 INFO:undetected_chromedriver.patcher:patching driver executable /home/rajab/.local/share/undetected_chromedriver/undetected_chromedriver
+INFO:root:ID : 324 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 16
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+ERROR:root:Terjadi kesalahan: Message: element not interactable: element has zero size
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x5649a4b6f6aa <unknown>
+#1 0x5649a48520dc <unknown>
+#2 0x5649a489fcc3 <unknown>
+#3 0x5649a489340f <unknown>
+#4 0x5649a48c1872 <unknown>
+#5 0x5649a4892d89 <unknown>
+#6 0x5649a48c1a3e <unknown>
+#7 0x5649a48e05c3 <unknown>
+#8 0x5649a48c1613 <unknown>
+#9 0x5649a48914f7 <unknown>
+#10 0x5649a4891e4e <unknown>
+#11 0x5649a4b3587b <unknown>
+#12 0x5649a4b39921 <unknown>
+#13 0x5649a4b2136e <unknown>
+#14 0x5649a4b3a482 <unknown>
+#15 0x5649a4b05ccf <unknown>
+#16 0x5649a4b5f0a8 <unknown>
+#17 0x5649a4b5f280 <unknown>
+#18 0x5649a4b6e7dc <unknown>
+#19 0x7ff8a4d51ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_ads.py", line 54, in <module>
+    click_select_timeframe.click()
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webelement.py", line 94, in click
+    self._execute(Command.CLICK_ELEMENT)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webelement.py", line 395, in _execute
+    return self._parent.execute(command, params)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 346, in execute
+    self.error_handler.check_response(response)
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.ElementNotInteractableException: Message: element not interactable: element has zero size
+  (Session info: chrome=126.0.6478.55)
+Stacktrace:
+#0 0x5649a4b6f6aa <unknown>
+#1 0x5649a48520dc <unknown>
+#2 0x5649a489fcc3 <unknown>
+#3 0x5649a489340f <unknown>
+#4 0x5649a48c1872 <unknown>
+#5 0x5649a4892d89 <unknown>
+#6 0x5649a48c1a3e <unknown>
+#7 0x5649a48e05c3 <unknown>
+#8 0x5649a48c1613 <unknown>
+#9 0x5649a48914f7 <unknown>
+#10 0x5649a4891e4e <unknown>
+#11 0x5649a4b3587b <unknown>
+#12 0x5649a4b39921 <unknown>
+#13 0x5649a4b2136e <unknown>
+#14 0x5649a4b3a482 <unknown>
+#15 0x5649a4b05ccf <unknown>
+#16 0x5649a4b5f0a8 <unknown>
+#17 0x5649a4b5f280 <unknown>
+#18 0x5649a4b6e7dc <unknown>
+#19 0x7ff8a4d51ac3 <unknown>
+
+
+INFO:root:ID : 324 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 16
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+INFO:root:ID : 325 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 23
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+INFO:root:ID : 325 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 23
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+INFO:root:ID : 325 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 23
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+INFO:root:ID : 326 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 30
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+INFO:root:ID : 326 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 30
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir

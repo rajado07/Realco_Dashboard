@@ -52,6 +52,7 @@ class RunTasksFastApi extends Command
                         $rawData->file_name = $responseData['file_name'];
                         $rawData->brand_id = $task->brand_id;
                         $rawData->market_place_id = $task->market_place_id;
+                        $rawData->task_id = $task->id;
                         $rawData->save();
 
                         $task->status = 5;
