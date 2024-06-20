@@ -7,6 +7,10 @@ use App\Models\RawData;
 use App\Observers\ShopeeBrandPortalShopDataObserver;
 use App\Observers\ShopeeBrandPortalAdsDataObserver;
 use App\Observers\MetaCpasDataObserver;
+use App\Observers\TiktokPsaDataObserver;
+use App\Observers\TiktokLsaDataObserver;
+use App\Observers\TiktokVsaDataObserver;
+
 
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
         RawData::observe(ShopeeBrandPortalShopDataObserver::class);
         RawData::observe(ShopeeBrandPortalAdsDataObserver::class);
         RawData::observe(MetaCpasDataObserver::class);
+        RawData::observe(TiktokPsaDataObserver::class);
+        RawData::observe(TiktokLsaDataObserver::class);
+        RawData::observe(TiktokVsaDataObserver::class);
     }
 }

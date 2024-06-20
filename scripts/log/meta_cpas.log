@@ -1046,3 +1046,33 @@ WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None,
 INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
 INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
 INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 14 hari terakhir
+INFO:root:Terjadi kesalahan: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 81, in <module>
+    raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
+FileNotFoundError: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+
+WARNING:urllib3.connectionpool:Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fbe1b4cd2d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f7fde5e1cd4e30a83c90585bca85ae4d
+WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fbe1b4ccf40>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f7fde5e1cd4e30a83c90585bca85ae4d
+WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fbe1b4cd4e0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f7fde5e1cd4e30a83c90585bca85ae4d
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 14 hari terakhir
+INFO:root:Terjadi kesalahan: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/meta_cpas.py", line 81, in <module>
+    raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
+FileNotFoundError: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+
+WARNING:urllib3.connectionpool:Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f75e8475450>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/35547635bdbe0a9cd332a7d182d1608a
+WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f75e8474c10>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/35547635bdbe0a9cd332a7d182d1608a
+WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f75e84754b0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/35547635bdbe0a9cd332a7d182d1608a
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir

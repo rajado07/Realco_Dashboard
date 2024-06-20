@@ -15,7 +15,9 @@ class ShopeeBrandPortalShopDataObserver
 
             $totalEntries = count($jsonData);
             $successCount = 0;
+            $skipCount = 0; // Initialize skipped count if needed
             $errorDetails = [];
+            $failedDetails = [];
 
             foreach ($jsonData as $dataItem) {
                 try {
@@ -35,36 +37,42 @@ class ShopeeBrandPortalShopDataObserver
                     ]);
                     $successCount++;
                 } catch (\Exception $e) {
-                    $errorDetails[] = 'Failed to insert data for product ID: ' . $dataItem['Product ID'] . ' with error: ' . $e->getMessage();
+                    $failedDetails[] = $dataItem;
+                    $errorDetails[] = [
+                        'product_id' => $dataItem['Product ID'],
+                        'error' => $e->getMessage(),
+                    ];
                 }
             }
 
             $status = 2; // Assume success by default
-            $message = "All entries processed successfully. Processed $totalEntries entries: $successCount successful, " . ($totalEntries - $successCount) . " failed.";
+            $messageDetails = [
+                'total_entries' => $totalEntries,
+                'successful' => $successCount,
+                'skipped' => $skipCount,
+                'failed' => $totalEntries - $successCount - $skipCount,
+                'failed_details' => $failedDetails,
+                'errors' => $errorDetails,
+            ];
 
+            
             if ($successCount === 0) {
-                $status = 4; // All failed
-                $message = "All entries failed to process. Processed $totalEntries entries: $successCount successful, " . ($totalEntries - $successCount) . " failed.";
-            } elseif ($successCount < $totalEntries) {
+                $status = 5; // All failed
+            } elseif ($successCount === $totalEntries) {
+                $status = 2; // All successful
+            } elseif ($successCount > 0 && count($failedDetails) > 0) {
+                $status = 4; // Partial error
+            } elseif ($successCount > 0 && $skipCount > 0) {
                 $status = 3; // Partial success
-                $message = "Partial success in processing entries. Processed $totalEntries entries: $successCount successful, " . ($totalEntries - $successCount) . " failed.";
             }
 
             // Log summary of the process
-            Log::info("RawData ID $rawData->id, $message");
-
-            // Append error details to the message and log each error
-            if (!empty($errorDetails)) {
-                foreach ($errorDetails as $error) {
-                    Log::error($error);
-                }
-                $message .= ' Errors: ' . implode('; ', $errorDetails);
-            }
+            Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Skipped: $skipCount, Failed: " . ($totalEntries - $successCount - $skipCount));
 
             // Update the status and message in RawData
             $rawData->update([
                 'status' => $status,
-                'message' => $message,
+                'message' => json_encode($messageDetails),
             ]);
         }
     }

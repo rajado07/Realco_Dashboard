@@ -2,15 +2,15 @@
 
 namespace App\Observers;
 
-use App\Models\MetaCpasData;
+use App\Models\TiktokVsaData;
 use App\Models\RawData;
 use Illuminate\Support\Facades\Log;
 
-class MetaCpasDataObserver
+class TiktokVsaDataObserver
 {
     public function created(RawData $rawData)
     {
-        if ($rawData->type === 'meta_cpas') {
+        if ($rawData->type === 'tiktok_vsa') {
             $jsonData = json_decode($rawData->data, true);
 
             $totalEntries = count($jsonData);
@@ -23,10 +23,9 @@ class MetaCpasDataObserver
             foreach ($jsonData as $dataItem) {
                 try {
                     // Check for existing data
-                    $existingData = MetaCpasData::where('data_date', $dataItem['Day'])
-                        ->where('ad_set_id', $dataItem['Ad set ID'])
+                    $existingData = TiktokVsaData::where('data_date', $dataItem['Date'])
+                        ->where('ad_group_id', $dataItem['Ad group ID'])
                         ->where('brand_id', $rawData->brand_id)
-                        ->where('market_place_id', $rawData->market_place_id)
                         ->exists();
 
                     if ($existingData) {
@@ -35,26 +34,27 @@ class MetaCpasDataObserver
                         continue;
                     }
 
-                    MetaCpasData::create([
-                        'data_date' => $dataItem['Day'],
-                        'ad_set_name' => $dataItem['Ad set name'],
-                        'ad_set_id' => $dataItem['Ad set ID'],
-                        'amount_spent' => $dataItem['Amount spent (IDR)'],
-                        'content_views_with_shared_items' => $dataItem['Content views with shared items'],
-                        'adds_to_cart_with_shared_items' => $dataItem['Adds to cart with shared items'],
-                        'purchases_with_shared_items' => $dataItem['Purchases with shared items'],
-                        'purchases_conversion_value_for_shared_items_only' => $dataItem['Purchases conversion value for shared items only'],
+                    TiktokVsaData::create([
+                        'data_date' => $dataItem['Date'],
+                        'ad_group_name' => $dataItem['Ad Group Name'],
+                        'ad_group_id' => $dataItem['Ad group ID'],
+                        'cost' => $dataItem['Cost'],
+                        'average_watch_time_per_video_view' => $dataItem['Average Watch Time per Video View'],
+                        'adds_to_cart' => $dataItem['Adds to cart (Shop)'],
+                        'purchases' => $dataItem['Purchases (Shop)'],
+                        'gross_revenue' => $dataItem['Gross revenue (Shop)'],
+                        'checkouts_initiated' => $dataItem['Checkouts initiated (Shop)'],
+                        'product_page_views' => $dataItem['Product page views (Shop)'],
                         'retrieved_at' => $rawData->retrieved_at,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,
-                        'market_place_id' => $rawData->market_place_id,
-                        'raw_data_id' => $rawData->id
+                        'raw_data_id' => $rawData->id,
                     ]);
                     $successCount++;
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
-                        'ad_set_name' => $dataItem['Ad set name'],
+                        'ad_group_name' => $dataItem['Ad Group Name'],
                         'error' => $e->getMessage(),
                     ];
                 }
@@ -71,6 +71,7 @@ class MetaCpasDataObserver
                 'errors' => $errorDetails,
             ];
 
+            
             if ($successCount === 0) {
                 $status = 5; // All failed
             } elseif ($successCount === $totalEntries) {

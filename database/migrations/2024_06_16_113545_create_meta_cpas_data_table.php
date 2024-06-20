@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id();
             $table->date('data_date'); // Day
             $table->string('ad_set_name');
+            $table->unsignedBigInteger('ad_set_id');
             $table->integer('amount_spent')->nullable();
             $table->integer('content_views_with_shared_items')->nullable();
             $table->integer('adds_to_cart_with_shared_items')->nullable();

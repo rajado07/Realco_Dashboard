@@ -18,6 +18,7 @@ yarn-error.log
 /.idea
 /.vscode
 
+scripts/__pycache__
 scripts/downloaded_excell
 scripts/log
-scripts/config.py
+

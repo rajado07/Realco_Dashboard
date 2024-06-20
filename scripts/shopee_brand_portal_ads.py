@@ -79,7 +79,9 @@ try:
     worksheet_name = "By Day"
     df = pd.read_excel(downloaded_file, sheet_name=worksheet_name, header=0, skiprows=[1])
 
-    data_json = df.to_dict(orient='records')
+    filtered_df = df[~df['Shop Name'].str.contains('All', na=False)]
+
+    data_json = filtered_df.to_dict(orient='records')
     cleaned_data_json = helper.clean_data(data_json)
 
     output = {

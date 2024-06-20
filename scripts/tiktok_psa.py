@@ -7,11 +7,11 @@ import sys
 import json
 import logging
 import traceback
+from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 
 task_data = json.loads(sys.argv[1])
 
@@ -33,6 +33,24 @@ try:
     driver.get(url)
     wait = WebDriverWait(driver, 30)
 
+    schedule_to_run = task_data['scheduled_to_run']
+    schedule_date = datetime.strptime(schedule_to_run, '%Y-%m-%d %H:%M:%S')
+    current_date = datetime.now()
+
+    if current_date >= schedule_date + timedelta(days=1):
+
+        logging.info("Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir")
+
+        click_select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "(//span[contains(.,'Last 7 days')])[2]")))
+        time.sleep(7)
+        click_select_timeframe.click()
+        time.sleep(7)
+
+        select_timeframe = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Last 30 days')]")))
+        time.sleep(7)
+        select_timeframe.click()
+        time.sleep(7)
+
     first_export = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Export')]")))
     time.sleep(7)
     first_export.click()
@@ -41,7 +59,6 @@ try:
     second_export = wait.until(EC.element_to_be_clickable((By.XPATH, "(//span[contains(.,'Export')])[5]")))
     download_timestamp = time.time()
     second_export.click()
-    # driver.execute_script("arguments[0].click();", second_export)
 
     downloaded_file = helper.check_file_downloaded(config.download_directory, download_timestamp)
     driver.quit()
@@ -52,7 +69,10 @@ try:
     worksheet_name = "Sheet1"
     df = pd.read_excel(downloaded_file, sheet_name=worksheet_name, header=0)
 
-    data_json = df.to_dict(orient='records')
+    # Memfilter data untuk menghilangkan baris yang kolom Date mengandung kata "Total"
+    filtered_df = df[~df['Date'].str.contains('Total', na=False)]
+
+    data_json = filtered_df.to_dict(orient='records')
     cleaned_data_json = helper.clean_data(data_json)
 
     output = {

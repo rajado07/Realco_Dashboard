@@ -67,7 +67,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 
 // rawData
-Route::post('/rawdata', [RawDataController::class, 'create']);
+Route::get('/rawdata', [RawDataController::class, 'index']);
 
 //Shopee-BrandPortal-Shop
 Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])

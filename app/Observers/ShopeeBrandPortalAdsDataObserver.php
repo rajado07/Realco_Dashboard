@@ -18,18 +18,18 @@ class ShopeeBrandPortalAdsDataObserver
             $skippedAllCount = 0;
             $skippedExistingCount = 0;
             $errorDetails = [];
+            $skippedDetails = [];
+            $failedDetails = [];
 
             foreach ($jsonData as $dataItem) {
-                // Skip data where Shop Name is "All"
-                if ($dataItem['Shop Name'] === 'All') {
-                    $skippedAllCount++;
-                    continue;
-                }
-
                 // Convert the date format from dd/MM/yyyy to yyyy-MM-dd
                 $dataDate = \DateTime::createFromFormat('d/m/Y', $dataItem['Date']);
                 if (!$dataDate) {
-                    $errorDetails[] = 'Invalid date format for Date: ' . $dataItem['Date'];
+                    $errorDetails[] = [
+                        'data_item' => $dataItem,
+                        'error' => 'Invalid date format for Date: ' . $dataItem['Date'],
+                    ];
+                    $failedDetails[] = $dataItem;
                     continue;
                 }
                 $formattedDate = $dataDate->format('Y-m-d');
@@ -37,9 +37,10 @@ class ShopeeBrandPortalAdsDataObserver
                 // Skip data if shop_id and data_date already exist
                 $existingData = ShopeeBrandPortalAdsData::where('shop_id', $dataItem['Shop ID'])
                     ->where('data_date', $formattedDate)
-                    ->first();
+                    ->exists();
                 if ($existingData) {
                     $skippedExistingCount++;
+                    $skippedDetails[] = $dataItem;
                     continue;
                 }
 
@@ -60,36 +61,43 @@ class ShopeeBrandPortalAdsDataObserver
                     ]);
                     $successCount++;
                 } catch (\Exception $e) {
-                    $errorDetails[] = 'Failed to insert data for shop ID: ' . $dataItem['Shop ID'] . ' on date: ' . $dataItem['Date'] . ' with error: ' . $e->getMessage();
+                    $failedDetails[] = $dataItem;
+                    $errorDetails[] = [
+                        'data_item' => $dataItem,
+                        'error' => 'Failed to insert data for shop ID: ' . $dataItem['Shop ID'] . ' on date: ' . $dataItem['Date'] . ' with error: ' . $e->getMessage(),
+                    ];
                 }
             }
 
             $status = 2; // Assume success by default
-            $message = "Processed $totalEntries entries: $successCount successful, $skippedAllCount skipped (Shop Name 'All'), $skippedExistingCount skipped (Existing data), " . ($totalEntries - $successCount - $skippedAllCount - $skippedExistingCount) . " failed.";
+            $messageDetails = [
+                'total_entries' => $totalEntries,
+                'successful' => $successCount,
+                'skipped_all' => $skippedAllCount,
+                'skipped_existing' => $skippedExistingCount,
+                'failed' => $totalEntries - $successCount - $skippedAllCount - $skippedExistingCount,
+                'skipped_details' => $skippedDetails,
+                'failed_details' => $failedDetails,
+                'errors' => $errorDetails,
+            ];
 
             if ($successCount === 0) {
-                $status = 4; // All failed
-                $message = "All entries failed to process. Processed $totalEntries entries: $successCount successful, $skippedAllCount skipped (Shop Name 'All'), $skippedExistingCount skipped (Existing data), " . ($totalEntries - $successCount - $skippedAllCount - $skippedExistingCount) . " failed.";
-            } elseif ($successCount < $totalEntries - $skippedAllCount - $skippedExistingCount) {
+                $status = 5; // All failed
+            } elseif ($successCount === $totalEntries) {
+                $status = 2; // All successful
+            } elseif ($successCount > 0 && count($failedDetails) > 0) {
+                $status = 4; // Partial error
+            } elseif ($successCount > 0 && $skippedExistingCount > 0) {
                 $status = 3; // Partial success
-                $message = "Partial success in processing entries. Processed $totalEntries entries: $successCount successful, $skippedAllCount skipped (Shop Name 'All'), $skippedExistingCount skipped (Existing data), " . ($totalEntries - $successCount - $skippedAllCount - $skippedExistingCount) . " failed.";
             }
 
             // Log summary of the process
-            Log::info("RawData ID $rawData->id, $message");
-
-            // Append error details to the message and log each error
-            if (!empty($errorDetails)) {
-                foreach ($errorDetails as $error) {
-                    Log::error($error);
-                }
-                $message .= ' Errors: ' . implode('; ', $errorDetails);
-            }
+            Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Skipped (Existing data): $skippedExistingCount, Failed: " . ($totalEntries - $successCount - $skippedAllCount - $skippedExistingCount));
 
             // Update the status and message in RawData
             $rawData->update([
                 'status' => $status,
-                'message' => $message,
+                'message' => json_encode($messageDetails),
             ]);
         }
     }

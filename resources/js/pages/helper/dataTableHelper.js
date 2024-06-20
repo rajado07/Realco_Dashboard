@@ -21,6 +21,18 @@ function translateStatus(status) {
     return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
 }
 
+function translateStatusRawData(status) {
+  const statusMap = {
+    1: '<span class="badge bg-secondary text-light rounded-pill">Ready</span>',
+    2: '<span class="badge bg-success rounded-pill">Data Moved</span>',
+    3: '<span class="badge bg-success rounded-pill">Partial Moved</span>',
+    4: '<span class="badge bg-warning rounded-pill">Partial Failed</span>',
+    5: '<span class="badge bg-danger rounded-pill">Failed</span>',
+  };
+  return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+}
+
+
 function translateStatusLog(status) {
   const statusMap = {
       INFO: '<span class="badge bg-info rounded-pill">INFO</span>',
@@ -107,6 +119,7 @@ function toggleSettings() {
 export default {
     translateStatus,
     translateStatusLog,
+    translateStatusRawData,
     shortenText,
     formatSchedule,
     checkAll,

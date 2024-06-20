@@ -12,6 +12,7 @@ class MetaCpasData extends Model
     protected $fillable = [
         'data_date',
         'ad_set_name',
+        'ad_set_id',
         'amount_spent',
         'content_views_with_shared_items',
         'adds_to_cart_with_shared_items',
