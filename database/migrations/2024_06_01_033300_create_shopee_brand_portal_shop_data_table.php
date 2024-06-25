@@ -22,7 +22,8 @@ return new class extends Migration
             $table->date('data_date'); 
             $table->string('file_name');
             $table->unsignedBigInteger('brand_id');
-            $table->unsignedBigInteger('raw_data_id');  
+            $table->unsignedBigInteger('raw_data_id');
+            $table->unsignedBigInteger('data_group_id')->nullable();  
             $table->timestamps();
         });
     }

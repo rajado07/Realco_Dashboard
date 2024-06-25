@@ -32,13 +32,21 @@ function translateStatusRawData(status) {
   return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
 }
 
-
 function translateStatusLog(status) {
   const statusMap = {
       INFO: '<span class="badge bg-info rounded-pill">INFO</span>',
       DANGER: '<span class="badge bg-danger rounded-pill">DANGER</span>',
   };
   return statusMap[status] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+}
+
+function translateBrand(brand) {
+  const brandMap = {
+    1: '<span class="badge bg-info text-light rounded-pill">Realfood</span>',
+    2: '<span class="badge bg-warning rounded-pill">Elora</span>',
+    3: '<span class="badge bg-success rounded-pill">Partial Moved</span>',
+  };
+  return brandMap[parseInt(brand, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
 }
 
 
@@ -120,6 +128,7 @@ export default {
     translateStatus,
     translateStatusLog,
     translateStatusRawData,
+    translateBrand,
     shortenText,
     formatSchedule,
     checkAll,

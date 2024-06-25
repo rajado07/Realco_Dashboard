@@ -8,7 +8,10 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\DataGroupController;
 use App\Http\Controllers\RawDataController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskGeneratorController;
 use App\Http\Controllers\ShopeeBrandPortalShopDataController;
 use Illuminate\Support\Facades\Route;
 
@@ -67,10 +70,27 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 
 // rawData
-Route::get('/rawdata', [RawDataController::class, 'index']);
+Route::get('/raw-data/read', [RawDataController::class, 'index']);
+
+// Group
+Route::get('/group/read', [DataGroupController::class, 'index']);
+
+// Task
+Route::get('/task/read', [TaskController::class, 'index']);
+
+// TaskGenerator
+Route::get('/task-generator/read', [TaskGeneratorController::class, 'index']);
+
+
+
+
 
 //Shopee-BrandPortal-Shop
 Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])
     ->middleware('auth');
+
+Route::get('/shopee/brand-portal-shop/aggregate', [ShopeeBrandPortalShopDataController::class, 'aggregatedData'])
+    ->middleware('auth');
+
 
 

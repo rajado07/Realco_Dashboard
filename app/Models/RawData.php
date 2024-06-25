@@ -9,17 +9,19 @@ class RawData extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'type',
-        'data',
-        'retrieved_at',
-        'data_date',
-        'file_name',
-        'brand_id',
-        'market_place_id',
-        'task_id',
-        'status',
-        'message',
-    ];
+    // protected $fillable = [
+    //     'type',
+    //     'data',
+    //     'retrieved_at',
+    //     'data_date',
+    //     'file_name',
+    //     'brand_id',
+    //     'market_place_id',
+    //     'task_id',
+    //     'status',
+    //     'message',
+    // ];
+
+    protected $guarded = ['id'];
 
 }

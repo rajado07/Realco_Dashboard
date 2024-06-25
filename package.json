@@ -28,6 +28,7 @@
         "bootstrap-timepicker": "^0.5.2",
         "bootstrap-touchspin": "^4.7.3",
         "chart.js": "^3.7.1",
+        "crypto-js": "^4.2.0",
         "datatables.net": "^1.11.4",
         "datatables.net-bs5": "^1.11.4",
         "datatables.net-buttons": "^2.2.2",

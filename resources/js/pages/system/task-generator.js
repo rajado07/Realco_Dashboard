@@ -2,7 +2,6 @@ import "datatables.net-bs5";
 import DataTable from "datatables.net";
 import initialize from "../helper/initialize";
 import dataTableHelper from "../helper/dataTableHelper";
-import 'bootstrap/js/dist/collapse';  // Pastikan bootstrap collapse plugin diimport
 
 $.fn.dataTable = DataTable;
 
@@ -15,7 +14,7 @@ $(document).ready(() => {
         if (!dataTableInstance) {
             dataTableInstance = $('#basic-datatable').DataTable({
                 ajax: {
-                    url: '/rawdata',
+                    url: '/task-generator/read',
                     type: 'GET',
                     dataSrc: '',
                 },
@@ -26,13 +25,13 @@ $(document).ready(() => {
                 columns: [
                     { title: '<input type="checkbox" id="checkAll"/>', defaultContent: '<input type="checkbox" class="rowCheckbox"/>' },
                     { title: "ID", data: "id" },
-                    { title: "Type", data: "type" },
-                    { title: "Retrieved At", data: "retrieved_at" },
-                    { title: "Data Date", data: "data_date" },
-                    { title: "File Name", data: "file_name" },
-                    { title: "Market Place", data: "market_place_id" },
                     { title: "Brand", data: "brand_id" },
-                    { title: "status", data: "status" },
+                    { title: "Makrket Place", data: "market_place_id" },
+                    { title: "Type", data: "type" },
+                    { title: "Link", data: "link" },
+                    { title: "Frequency", data: "frequency" },
+                    { title: "Run At", data: "run_at" },
+                    { title: "Status", data: "status" },
                     { title: "Action", defaultContent: '' }
                 ],
                 columnDefs: [
@@ -50,12 +49,6 @@ $(document).ready(() => {
                         targets: 5,
                         render: function (data, type, row) {
                             return type === 'display' ? dataTableHelper.shortenText(data) : data;
-                        }
-                    },
-                    {
-                        targets: 8,
-                        render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateStatusRawData(data) : data;
                         }
                     },
                     {
@@ -94,131 +87,9 @@ $(document).ready(() => {
         }
     }
 
-    // Function to format the child row
-    function format(d) {
-        let dataTable = `
-        <div class="accordion accordion-flush" id="accordion-${d.id}">
-    `;
-
-        // Section for Data
-        if (d.data) {
-            let jsonData = JSON.parse(d.data);
-            dataTable += `
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading-data-${d.id}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-section-${d.id}" aria-expanded="false" aria-controls="data-section-${d.id}">
-                        Data
-                    </button>
-                </h2>
-                <div id="data-section-${d.id}" class="accordion-collapse collapse" aria-labelledby="heading-data-${d.id}">
-                    <div class="accordion-body">
-                        ${createTable(jsonData)}
-                    </div>
-                </div>
-            </div>
-        `;
-        }
-
-        // Section for Message
-        if (d.message) {
-            let messageData = JSON.parse(d.message);
-            dataTable += `
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading-message-${d.id}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#message-section-${d.id}" aria-expanded="false" aria-controls="message-section-${d.id}">
-                        Message
-                    </button>
-                </h2>
-                <div id="message-section-${d.id}" class="accordion-collapse collapse" aria-labelledby="heading-message-${d.id}">
-                    <div class="accordion-body">
-                        <p>Total Entries: ${messageData.total_entries}</p>
-                        <p>Successful: ${messageData.successful}</p>
-                        <p>Skipped: ${messageData.skipped}</p>
-                        <p>Failed: ${messageData.failed}</p>
-                        ${messageData.skipped_details && messageData.skipped_details.length > 0 ? `
-                            <div class="accordion accordion-flush" id="accordion-skipped-${d.id}">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading-skipped-${d.id}">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#skipped-details-section-${d.id}" aria-expanded="false" aria-controls="skipped-details-section-${d.id}">
-                                            Skipped Details
-                                        </button>
-                                    </h2>
-                                    <div id="skipped-details-section-${d.id}" class="accordion-collapse collapse" aria-labelledby="heading-skipped-${d.id}">
-                                        <div class="accordion-body">
-                                            ${createTable(messageData.skipped_details)}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ` : ''}
-                        ${messageData.failed_details && messageData.failed_details.length > 0 ? `
-                            <div class="accordion accordion-flush" id="accordion-error-${d.id}">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading-error-${d.id}">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#failed-details-section-${d.id}" aria-expanded="false" aria-controls="error-details-section-${d.id}">
-                                            Failed Details
-                                        </button>
-                                    </h2>
-                                    <div id="failed-details-section-${d.id}" class="accordion-collapse collapse" aria-labelledby="heading-error-${d.id}">
-                                        <div class="accordion-body">
-                                            ${createTable(messageData.failed_details)}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ` : ''}
-                        ${messageData.errors && messageData.errors.length > 0 ? `
-                            <div class="accordion accordion-flush" id="accordion-error-${d.id}">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading-error-${d.id}">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#error-details-section-${d.id}" aria-expanded="false" aria-controls="error-details-section-${d.id}">
-                                            Error Reason
-                                        </button>
-                                    </h2>
-                                    <div id="error-details-section-${d.id}" class="accordion-collapse collapse" aria-labelledby="heading-error-${d.id}">
-                                        <div class="accordion-body">
-                                            ${createTable(messageData.errors)}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-        }
-
-        dataTable += `</div>`;
-        return dataTable;
-    }
-    
-    function createTable(data) {
-        let table = '<table class="table table-striped table-sm"><thead><tr>';
-
-        // Add table headers based on the keys of the first object
-        Object.keys(data[0]).forEach(function (key) {
-            table += '<th>' + key + '</th>';
-        });
-
-        table += '</tr></thead><tbody>';
-
-        // Add table rows based on the values of each object
-        data.forEach(function (item) {
-            table += '<tr>';
-            Object.values(item).forEach(function (value) {
-                table += '<td>' + value + '</td>';
-            });
-            table += '</tr>';
-        });
-
-        table += '</tbody></table>';
-        return table;
-    }
-
     function periodicallyUpdateAllDataTable() {
         setInterval(() => {
-            fetch('/rawdata')
+            fetch('/task-generator/read')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

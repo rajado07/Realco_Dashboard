@@ -23,11 +23,12 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Upload</a></li>
-                            <li class="breadcrumb-item active">Task</a></li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Shopee</a></li>
+                            <li class="breadcrumb-item">Brand Portal</a></li>
+                            <li class="breadcrumb-item active">Shop</a></li>
                         </ol>
                     </div>
-                    <h4 class="page-title">Upload Task</h4>
+                    <h4 class="page-title">Shopee Portal Shop</h4>
                 </div>
             </div>
         </div>
@@ -60,7 +61,7 @@
                         </div>                        
                     </div>
                     <div class="card-body">
-                        <table id="basic-datatable" class="table table-hover table-responsive-sm nowrap w-100">
+                        <table id="basic-datatable" class="table table-responsive-sm nowrap w-100">
                             <thead>
                             </thead>
                             <tbody>

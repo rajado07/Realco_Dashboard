@@ -13,7 +13,7 @@ def check_file_downloaded(directory, download_timestamp):
     elapsed_time = 0
     sleep_interval = 1  # interval to check for new files
     while elapsed_time < timeout:
-        current_files = glob.glob(os.path.join(directory, '*.xlsx'))
+        current_files = glob.glob(os.path.join(directory, '*.xlsx')) + glob.glob(os.path.join(directory, '*.csv'))
         for file_path in current_files:
             if os.path.getmtime(file_path) > download_timestamp:
                 return file_path

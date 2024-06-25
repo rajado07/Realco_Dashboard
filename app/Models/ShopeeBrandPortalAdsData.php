@@ -9,18 +9,20 @@ class ShopeeBrandPortalAdsData extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'data_date',
-        'shop_name',
-        'shop_id',
-        'impressions',
-        'orders',
-        'gross_sales',
-        'ads_spend',
-        'units_sold',
-        'retrieved_at',
-        'file_name',
-        'brand_id',
-        'raw_data_id',
-    ];
+    // protected $fillable = [
+    //     'data_date',
+    //     'shop_name',
+    //     'shop_id',
+    //     'impressions',
+    //     'orders',
+    //     'gross_sales',
+    //     'ads_spend',
+    //     'units_sold',
+    //     'retrieved_at',
+    //     'file_name',
+    //     'brand_id',
+    //     'raw_data_id',
+    // ];
+
+    protected $guarded = ['id'];
 }

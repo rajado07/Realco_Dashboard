@@ -23,8 +23,8 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Raw Data</a></li>
-                            <li class="breadcrumb-item active">Data</a></li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">System</a></li>
+                            <li class="breadcrumb-item active"> Raw Data</a></li>
                         </ol>
                     </div>
                     <h4 class="page-title">Raw Data</h4>
@@ -76,5 +76,5 @@
 @endsection
 
 @section('script')
-    @vite(['resources/js/pages/raw-data/index.js'])
+    @vite(['resources/js/pages/system/raw-data.js'])
 @endsection

@@ -200,34 +200,39 @@
             <li class="side-nav-title">System</li>
 
             <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarRawData" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">
+                <a href="{{ route('second', ['system', 'raw-data']) }}" class="side-nav-link">
                     <i class="ri-database-2-line"></i>
                     <span> Raw Data </span>
                 </a>
-                <div class="collapse" id="sidebarRawData">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            <a href="{{ route('second', ['raw-data', 'index']) }}">Data</a>
-                        </li>
-                    </ul>
-                </div>
             </li>
 
             <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarLog" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">
+                <a href="{{ route('second', ['system', 'group']) }}" class="side-nav-link">
+                    <i class="ri-stack-line"></i>
+                    <span> Group </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('second', ['system', 'task']) }}" class="side-nav-link">
+                    <i class="ri-task-line"></i>
+                    <span> Task List </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('second', ['system', 'task-generator']) }}" class="side-nav-link">
+                    <i class="ri-alarm-line"></i>
+                    <span> Task Generator </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('second', ['system', 'test']) }}" class="side-nav-link">
                     <i class="ri-bill-line"></i>
                     <span> Log </span>
                 </a>
-                <div class="collapse" id="sidebarLog">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            <a href="{{ route('second', ['raw-data', 'test']) }}">Monitoring</a>
-                        </li>
-                    </ul>
-                </div>
             </li>
-
-            
 
         </ul>
         <!--- End Sidemenu -->

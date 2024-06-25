@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\RawData;
 use App\Models\ShopeeBrandPortalShopData;
+use App\Models\DataGroup;
 use Illuminate\Support\Facades\Log;
 
 class ShopeeBrandPortalShopDataObserver
@@ -21,6 +22,18 @@ class ShopeeBrandPortalShopDataObserver
 
             foreach ($jsonData as $dataItem) {
                 try {
+                    // Tentukan group_id berdasarkan product_id
+                    $groupId = null;
+                    $dataGroups = DataGroup::all();
+
+                    foreach ($dataGroups as $dataGroup) {
+                        $idMapping = json_decode($dataGroup->id_mapping, true);
+                        if (in_array($dataItem['Product ID'], $idMapping)) {
+                            $groupId = $dataGroup->id;
+                            break;
+                        }
+                    }
+
                     ShopeeBrandPortalShopData::create([
                         'product_name' => $dataItem['Product Name'],
                         'product_id' => $dataItem['Product ID'],
@@ -33,7 +46,8 @@ class ShopeeBrandPortalShopDataObserver
                         'data_date' => $rawData->data_date,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,
-                        'raw_data_id' => $rawData->id
+                        'raw_data_id' => $rawData->id,
+                        'data_group_id' => $groupId, // Menetapkan group_id jika ada, jika tidak null
                     ]);
                     $successCount++;
                 } catch (\Exception $e) {
@@ -55,7 +69,6 @@ class ShopeeBrandPortalShopDataObserver
                 'errors' => $errorDetails,
             ];
 
-            
             if ($successCount === 0) {
                 $status = 5; // All failed
             } elseif ($successCount === $totalEntries) {

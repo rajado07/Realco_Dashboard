@@ -1782,3 +1782,204 @@ INFO:root:ID : 3 , Type : shopee_brand_portal_shop ,  Link : https://brandportal
 INFO:root:ID : 2 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 19
 INFO:root:ID : 31 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 17
 INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 19
+INFO:root:ID : 2 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 20
+INFO:root:ID : 3 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 21
+INFO:root:ID : 4 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 22
+INFO:root:ID : 5 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 23
+INFO:root:ID : 9 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 27
+INFO:root:ID : 8 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 26
+INFO:root:ID : 10 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 28
+INFO:root:ID : 6 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 24
+INFO:root:ID : 7 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 25
+INFO:root:ID : 11 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 29
+INFO:root:ID : 14 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 1
+INFO:root:ID : 15 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 2
+INFO:root:ID : 12 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 30
+INFO:root:ID : 13 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 31
+INFO:root:ID : 16 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 3
+INFO:root:ID : 17 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 4
+INFO:root:ID : 18 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 5
+INFO:root:ID : 19 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 6
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 22
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x55b3e7fe86aa <unknown>
+#1 0x55b3e7ccb0dc <unknown>
+#2 0x55b3e7d17931 <unknown>
+#3 0x55b3e7d17a21 <unknown>
+#4 0x55b3e7d5c234 <unknown>
+#5 0x55b3e7d3a89d <unknown>
+#6 0x55b3e7d595c3 <unknown>
+#7 0x55b3e7d3a613 <unknown>
+#8 0x55b3e7d0a4f7 <unknown>
+#9 0x55b3e7d0ae4e <unknown>
+#10 0x55b3e7fae87b <unknown>
+#11 0x55b3e7fb2921 <unknown>
+#12 0x55b3e7f9a36e <unknown>
+#13 0x55b3e7fb3482 <unknown>
+#14 0x55b3e7f7eccf <unknown>
+#15 0x55b3e7fd80a8 <unknown>
+#16 0x55b3e7fd8280 <unknown>
+#17 0x55b3e7fe77dc <unknown>
+#18 0x7fa7dd24aac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 48, in <module>
+    pilih_by_day = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'By Day')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x55b3e7fe86aa <unknown>
+#1 0x55b3e7ccb0dc <unknown>
+#2 0x55b3e7d17931 <unknown>
+#3 0x55b3e7d17a21 <unknown>
+#4 0x55b3e7d5c234 <unknown>
+#5 0x55b3e7d3a89d <unknown>
+#6 0x55b3e7d595c3 <unknown>
+#7 0x55b3e7d3a613 <unknown>
+#8 0x55b3e7d0a4f7 <unknown>
+#9 0x55b3e7d0ae4e <unknown>
+#10 0x55b3e7fae87b <unknown>
+#11 0x55b3e7fb2921 <unknown>
+#12 0x55b3e7f9a36e <unknown>
+#13 0x55b3e7fb3482 <unknown>
+#14 0x55b3e7f7eccf <unknown>
+#15 0x55b3e7fd80a8 <unknown>
+#16 0x55b3e7fd8280 <unknown>
+#17 0x55b3e7fe77dc <unknown>
+#18 0x7fa7dd24aac3 <unknown>
+
+
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 22
+INFO:root:ID : 2 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 23
+INFO:root:ID : 3 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 24
+INFO:root:ID : 5 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 26
+INFO:root:ID : 4 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 25
+INFO:root:ID : 1 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 22
+INFO:root:ID : 2 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 23
+INFO:root:ID : 3 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 24
+INFO:root:ID : 6 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 27
+INFO:root:ID : 7 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 28
+INFO:root:ID : 8 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 29
+INFO:root:ID : 9 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 30
+INFO:root:ID : 10 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: May, Day: 31
+INFO:root:ID : 11 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 1
+INFO:root:ID : 12 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 2
+INFO:root:ID : 13 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 3
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x555abad296aa <unknown>
+#1 0x555abaa0c0dc <unknown>
+#2 0x555abaa58931 <unknown>
+#3 0x555abaa58a21 <unknown>
+#4 0x555abaa9d234 <unknown>
+#5 0x555abaa7b89d <unknown>
+#6 0x555abaa9a5c3 <unknown>
+#7 0x555abaa7b613 <unknown>
+#8 0x555abaa4b4f7 <unknown>
+#9 0x555abaa4be4e <unknown>
+#10 0x555abacef87b <unknown>
+#11 0x555abacf3921 <unknown>
+#12 0x555abacdb36e <unknown>
+#13 0x555abacf4482 <unknown>
+#14 0x555abacbfccf <unknown>
+#15 0x555abad190a8 <unknown>
+#16 0x555abad19280 <unknown>
+#17 0x555abad287dc <unknown>
+#18 0x7f690249dac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 48, in <module>
+    pilih_by_day = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'By Day')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x555abad296aa <unknown>
+#1 0x555abaa0c0dc <unknown>
+#2 0x555abaa58931 <unknown>
+#3 0x555abaa58a21 <unknown>
+#4 0x555abaa9d234 <unknown>
+#5 0x555abaa7b89d <unknown>
+#6 0x555abaa9a5c3 <unknown>
+#7 0x555abaa7b613 <unknown>
+#8 0x555abaa4b4f7 <unknown>
+#9 0x555abaa4be4e <unknown>
+#10 0x555abacef87b <unknown>
+#11 0x555abacf3921 <unknown>
+#12 0x555abacdb36e <unknown>
+#13 0x555abacf4482 <unknown>
+#14 0x555abacbfccf <unknown>
+#15 0x555abad190a8 <unknown>
+#16 0x555abad19280 <unknown>
+#17 0x555abad287dc <unknown>
+#18 0x7f690249dac3 <unknown>
+
+
+INFO:root:ID : 13 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 3
+INFO:root:ID : 14 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 4
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x558a76fb06aa <unknown>
+#1 0x558a76c930dc <unknown>
+#2 0x558a76cdf931 <unknown>
+#3 0x558a76cdfa21 <unknown>
+#4 0x558a76d24234 <unknown>
+#5 0x558a76d0289d <unknown>
+#6 0x558a76d215c3 <unknown>
+#7 0x558a76d02613 <unknown>
+#8 0x558a76cd24f7 <unknown>
+#9 0x558a76cd2e4e <unknown>
+#10 0x558a76f7687b <unknown>
+#11 0x558a76f7a921 <unknown>
+#12 0x558a76f6236e <unknown>
+#13 0x558a76f7b482 <unknown>
+#14 0x558a76f46ccf <unknown>
+#15 0x558a76fa00a8 <unknown>
+#16 0x558a76fa0280 <unknown>
+#17 0x558a76faf7dc <unknown>
+#18 0x7fb68bacdac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 48, in <module>
+    pilih_by_day = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'By Day')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x558a76fb06aa <unknown>
+#1 0x558a76c930dc <unknown>
+#2 0x558a76cdf931 <unknown>
+#3 0x558a76cdfa21 <unknown>
+#4 0x558a76d24234 <unknown>
+#5 0x558a76d0289d <unknown>
+#6 0x558a76d215c3 <unknown>
+#7 0x558a76d02613 <unknown>
+#8 0x558a76cd24f7 <unknown>
+#9 0x558a76cd2e4e <unknown>
+#10 0x558a76f7687b <unknown>
+#11 0x558a76f7a921 <unknown>
+#12 0x558a76f6236e <unknown>
+#13 0x558a76f7b482 <unknown>
+#14 0x558a76f46ccf <unknown>
+#15 0x558a76fa00a8 <unknown>
+#16 0x558a76fa0280 <unknown>
+#17 0x558a76faf7dc <unknown>
+#18 0x7fb68bacdac3 <unknown>
+
+
+INFO:root:ID : 14 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 4
+ERROR:root:Terjadi kesalahan: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_shop.py", line 93, in <module>
+    raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
+FileNotFoundError: File tidak berhasil diunduh dalam batas waktu yang ditentukan.
+
+WARNING:urllib3.connectionpool:Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f878fcfde40>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/ba4ed4e1cb7582dcf8eda746187bf1cc
+WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f878fcfde10>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/ba4ed4e1cb7582dcf8eda746187bf1cc
+WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f878fcfe020>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/ba4ed4e1cb7582dcf8eda746187bf1cc
+INFO:root:ID : 14 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 4
+INFO:root:ID : 15 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 5
+INFO:root:ID : 16 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 6
+INFO:root:ID : 17 , Type : shopee_brand_portal_shop ,  Link : https://brandportal.shopee.com/seller/insights/sales/shop ,  Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 7
