@@ -28,8 +28,8 @@ $(document).ready(() => {
                     { title: "name", data: "name" },
                     { title: "type", data: "type" },
                     { title: "id_mapping", data: "id_mapping" },
-                    { title: "brand_id", data: "brand_id" },
                     { title: "Market Place", data: "market_place_id" },
+                    { title: "Brand", data: "brand_id" },
                     { title: "Action", defaultContent: '' }
                 ],
                 columnDefs: [
@@ -41,6 +41,24 @@ $(document).ready(() => {
                         className: 'dt-body-center',
                         render: function (data, type, row) {
                             return '<input name="checklist[]" type="checkbox" class="rowCheckbox" value="' + row.id + '"/>';
+                        }
+                    },
+                    {
+                        targets: 4,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.shortenText(data) : data;
+                        }
+                    },
+                    {
+                        targets: 5,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                        }
+                    },
+                    {
+                        targets: 6,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
                         }
                     },
                     {
@@ -151,24 +169,128 @@ $(document).ready(() => {
         });
     }
 
-    // Add event listener for opening and closing details on row click
-    $('#basic-datatable tbody').on('click', 'tr', function () {
-        let row = dataTableInstance.row(this);
+    window.getBrands = function(modalId) {
+        fetch('/brand/read')
+        .then(response => response.json())
+        .then(data => {
+            const $modal = $(`#${modalId} .modal-body`);
+            const $select = $modal.find('#selectBrand');
+            $select.empty(); 
+  
+            const defaultOption = new Option('Select Brand', '', true, true);
+            defaultOption.disabled = true;
+            $select.append(defaultOption);
+  
+            data.forEach(brand => {
+                const option = new Option(brand.name, brand.id);
+                $select.append(option); 
+            });
+            $select.select2({
+                dropdownParent: $modal,
+            }).trigger('change');
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
-        if (row.child.isShown()) {
-            row.child.hide();
-            $(this).removeClass('shown');
-        } else {
-            row.child(format(row.data())).show();
-            $(this).addClass('shown');
+    window.getMarketPlaces = function(modalId) {
+        fetch('/market-place/read')
+        .then(response => response.json())
+        .then(data => {
+            const $modal = $(`#${modalId} .modal-body`);
+            const $select = $modal.find('#selectMarketPlace');
+            $select.empty(); 
+  
+            const defaultOption = new Option('Select Market Place', '', true, true);
+            defaultOption.disabled = true;
+            $select.append(defaultOption);
+  
+            data.forEach(marketPlace => {
+                const option = new Option(marketPlace.name, marketPlace.id);
+                $select.append(option); 
+            });
+            $select.select2({
+                dropdownParent: $modal,
+            }).trigger('change');
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    window.getType = function(modalId) {
+        fetch('/group/type')
+        .then(response => response.json())
+        .then(data => {
+            const $modal = $(`#${modalId} .modal-body`);
+            const $select = $modal.find('#selectType');
+            $select.empty(); 
+    
+            // Create a default option and disable it
+            const defaultOption = new Option('Select Type', '', true, true);
+            defaultOption.disabled = true;
+            $select.append(defaultOption);
+    
+            // Iterate over the data array and append each type as an option
+            data.forEach(type => {
+                const option = new Option(type, type); // Here we assume each type is a string
+                $select.append(option); 
+            });
+    
+            // Initialize select2 for the dropdown and trigger change event
+            $select.select2({
+                dropdownParent: $modal,
+            }).trigger('change');
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    window.getGroupByType = function(modalId, type = null) {
+        let url = '/group/bytype';
+        if (type) {
+            url += '/' + type;
         }
-    });
+    
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const $modal = $(`#${modalId} .modal-body`);
+            const $select = $modal.find('#selectIdMapping');
+            $select.empty(); 
+    
+            if (data.error) {
+                // Display the error message
+                const errorOption = new Option(data.error, '', true, true);
+                errorOption.disabled = true;
+                $select.append(errorOption);
+            } else {
+                // Create a default option and disable it
+                const defaultOption = new Option('Select Type', '');
+                defaultOption.disabled = true;
+                $select.append(defaultOption);
+    
+                // Filter and append options where data_group_id is null
+                data.filter(item => item.data_group_id === null).forEach(item => {
+                    const option = new Option(`${item.name} (${item.id_mapping})`, item.id_mapping);
+                    $select.append(option); 
+                });
+            }
+    
+            // Initialize select2 for the dropdown with multi-select enabled and trigger change event
+            $select.select2({
+                multiple: true,
+                // closeOnSelect: false,
+                dropdownParent: $modal,
+            }).trigger('change');
+        })
+        .catch(error => console.error('Error:', error));
+    }    
 
-    // Add event listener for arrow icon toggle
-    $(document).on('click', '.toggle-section', function () {
-        let icon = $(this).find('.arrow-icon');
-        icon.toggleClass('bi-chevron-right bi-chevron-down');
-    });
+    function handleSelectTypeChange() {
+        $(document).on('change', '#selectType', function() {
+            const selectedType = $(this).val();
+            const modalId = $(this).closest('.modal').attr('id'); // Assuming the select is inside a modal
+            getGroupByType(modalId, selectedType);
+        });
+    }
+
 
     function init() {
         // Initialise External Helper
@@ -182,6 +304,9 @@ $(document).ready(() => {
         initializeOrUpdateDataTable();
         periodicallyUpdateAllDataTable();
         getSelectedData();
+
+         // Initialize event listener for 'selectType' dropdown change
+        handleSelectTypeChange();
 
     }
     init();

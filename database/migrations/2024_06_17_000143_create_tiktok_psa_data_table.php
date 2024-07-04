@@ -17,14 +17,17 @@ return new class extends Migration
 
             $table->string('ad_group_name');
             $table->unsignedBigInteger('ad_group_id');
+            $table->string('ad_name')->nullable();
             $table->integer('cost')->nullable();
             $table->integer('purchases')->nullable();
             $table->integer('gross_revenue')->nullable();
+            $table->integer('impressions')->nullable();
 
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');
             $table->unsignedBigInteger('brand_id');
-            $table->unsignedBigInteger('raw_data_id');  
+            $table->unsignedBigInteger('raw_data_id'); 
+            $table->unsignedBigInteger('data_group_id')->nullable(); 
             $table->timestamps();
         });
     }

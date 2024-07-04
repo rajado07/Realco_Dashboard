@@ -345,3 +345,5 @@ Stacktrace:
 
 INFO:root:ID : 33 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: May, Day: 22
 INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+INFO:root:ID : 32 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 2
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir

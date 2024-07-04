@@ -1,24 +1,20 @@
-function translateStatus(status) {
+function translateStatusTask(status) {
     const statusMap = {
         1: '<span class="badge bg-secondary text-light rounded-pill">Ready</span>',
         2: '<span class="badge bg-info rounded-pill">Wait For Running</span>',
-        3: '<span class="badge bg-success rounded-pill">Running</span>',
+        3: '<span class="badge bg-info rounded-pill">Running</span>',
         4: '<span class="badge bg-warning rounded-pill">Exeption</span>',
-        5: '<span class="badge bg-info rounded-pill">Wait For Stopped</span>',
-        6: '<span class="badge bg-danger rounded-pill">Stopped</span>',
-        7: '<span class="badge bg-info rounded-pill">Wait For Reboot</span>',
-        8: '<span class="badge bg-info rounded-pill">Rebooting</span>',
-
-        93: '<span class="badge bg-danger rounded-pill">Offline</span>',
-        94: '<span class="badge bg-success rounded-pill">Online</span>',
-        95: '<span class="badge bg-warning rounded-pill">Appium</span>',
-        96: '<span class="badge bg-warning rounded-pill">Script</span>',
-        97: '<span class="badge bg-warning text-dark rounded-pill">Maintenance</span>',
-        98: '<span class="badge bg-dark rounded-pill">Not Found</span>',
-        99: '<span class="badge bg-light text-dark rounded-pill">Completed</span>',
-        100: '<span class="badge bg-dark rounded-pill">Archived</span>',
+        5: '<span class="badge bg-success rounded-pill">Completed</span>',
     };
     return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+}
+
+function translateStatusTaskGenerator(status) {
+  const statusMap = {
+        1: '<span class="badge bg-success text-light rounded-pill">Active</span>',
+        2: '<span class="badge bg-secondary text-light rounded-pill">Deactive</span>',
+  };
+  return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
 }
 
 function translateStatusRawData(status) {
@@ -42,9 +38,19 @@ function translateStatusLog(status) {
 
 function translateBrand(brand) {
   const brandMap = {
-    1: '<span class="badge bg-info text-light rounded-pill">Realfood</span>',
-    2: '<span class="badge bg-warning rounded-pill">Elora</span>',
-    3: '<span class="badge bg-success rounded-pill">Partial Moved</span>',
+    1: '<span class="badge rounded-pill text-light" style="background-color: #20a3a9;">Realfood</span>',
+    2: '<span class="badge rounded-pill text-dark" style="background-color: #f1e5b3;">Skindoze</span>',
+    3: '<span class="badge rounded-pill text-light" style="background-color: #9e8ad6;">Elora</span>',
+  };
+  return brandMap[parseInt(brand, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+}
+
+function translateMarketPlace(brand) {
+  const brandMap = {
+    1: '<i class="bi bi-stripe"></i><span> Shopee</span>',
+    2: '<i class="ri-tiktok-line"></i><span> Tiktok</span>',
+    3: '<i class="ri-shopping-cart-line"></i><span> Tokopedia</span>',
+    4: '<i class="ri-shopping-bag-3-line"></i><span> Lazada</span>',
   };
   return brandMap[parseInt(brand, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
 }
@@ -125,10 +131,12 @@ function toggleSettings() {
 }
 
 export default {
-    translateStatus,
+    translateStatusTask,
+    translateStatusTaskGenerator,
     translateStatusLog,
     translateStatusRawData,
     translateBrand,
+    translateMarketPlace,
     shortenText,
     formatSchedule,
     checkAll,

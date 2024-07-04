@@ -25,13 +25,12 @@ $(document).ready(() => {
                 columns: [
                     { title: '<input type="checkbox" id="checkAll"/>', defaultContent: '<input type="checkbox" class="rowCheckbox"/>' },
                     { title: "ID", data: "id" },
-                    { title: "Brand", data: "brand_id" },
-                    { title: "Market Place", data: "market_place_id" },
                     { title: "Type", data: "type" },
                     { title: "Link", data: "link" },
                     { title: "Scheduled To Run", data: "scheduled_to_run" },
+                    { title: "Market Place", data: "market_place_id" },
+                    { title: "Brand", data: "brand_id" },
                     { title: "Status", data: "status" },
-                    { title: "Task Generator ID", data: "task_generator_id" },
                     { title: "Action", defaultContent: '' }
                 ],
                 columnDefs: [
@@ -46,13 +45,31 @@ $(document).ready(() => {
                         }
                     },
                     {
-                        targets: 5,
+                        targets: 3,
                         render: function (data, type, row) {
                             return type === 'display' ? dataTableHelper.shortenText(data) : data;
                         }
                     },
                     {
-                        targets: 9, // Updated target index for actions
+                        targets: 5,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                        }
+                    },
+                    {
+                        targets: 6,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
+                        }
+                    },
+                    {
+                        targets: 7,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateStatusTask(data) : data;
+                        }
+                    },
+                    {
+                        targets: 8, // Updated target index for actions
                         orderable: false,
                         searchable: false,
                         render: function (data, type, row) {

@@ -11,6 +11,8 @@ return new class extends Migration
     {
         Schema::create('shopee_brand_portal_shop_data', function (Blueprint $table) {
             $table->id();
+            $table->date('data_date'); 
+
             $table->string('product_name');
             $table->string('product_id');
             $table->decimal('gross_sales', 10, 2)->nullable();
@@ -18,8 +20,8 @@ return new class extends Migration
             $table->integer('gross_units_sold')->nullable();
             $table->integer('product_views')->nullable();
             $table->integer('product_visitors')->nullable();
+            
             $table->timestamp('retrieved_at'); 
-            $table->date('data_date'); 
             $table->string('file_name');
             $table->unsignedBigInteger('brand_id');
             $table->unsignedBigInteger('raw_data_id');

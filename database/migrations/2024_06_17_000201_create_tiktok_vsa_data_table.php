@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('tiktok_vsa_data', function (Blueprint $table) {
             $table->id();
             $table->date('data_date'); // Date
+
             $table->string('ad_group_name');
             $table->unsignedBigInteger('ad_group_id');
+            $table->string('ad_name')->nullable();
             $table->integer('cost')->nullable();
             $table->float('average_watch_time_per_video_view')->nullable();
             $table->integer('adds_to_cart')->nullable();
@@ -23,10 +25,13 @@ return new class extends Migration
             $table->integer('gross_revenue')->nullable();
             $table->integer('checkouts_initiated')->nullable();
             $table->integer('product_page_views')->nullable();
+            $table->integer('impressions')->nullable();
+            
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');
             $table->unsignedBigInteger('brand_id');
-            $table->unsignedBigInteger('raw_data_id');  
+            $table->unsignedBigInteger('raw_data_id'); 
+            $table->unsignedBigInteger('data_group_id')->nullable(); 
             $table->timestamps();
         });
     }

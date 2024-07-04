@@ -12,18 +12,23 @@ return new class extends Migration
         Schema::create('meta_cpas_data', function (Blueprint $table) {
             $table->id();
             $table->date('data_date'); // Day
+
             $table->string('ad_set_name');
             $table->unsignedBigInteger('ad_set_id');
+            $table->string('ad_name')->nullable();
             $table->integer('amount_spent')->nullable();
             $table->integer('content_views_with_shared_items')->nullable();
             $table->integer('adds_to_cart_with_shared_items')->nullable();
             $table->integer('purchases_with_shared_items')->nullable();
             $table->integer('purchases_conversion_value_for_shared_items_only')->nullable();
+            $table->integer('impressions')->nullable();
+            
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');
             $table->unsignedBigInteger('brand_id');
             $table->unsignedBigInteger('market_place_id'); 
-            $table->unsignedBigInteger('raw_data_id');  
+            $table->unsignedBigInteger('raw_data_id'); 
+            $table->unsignedBigInteger('data_group_id')->nullable();   
             $table->timestamps();
         });
     }

@@ -190,7 +190,7 @@
                 <div class="collapse" id="sidebarMeta">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('second', ['raw-data', 'test']) }}">CPAS</a>
+                            <a href="{{ route('second', ['meta', 'cpas']) }}">CPAS</a>
                         </li>
                     </ul>
                 </div>

@@ -25,12 +25,12 @@ $(document).ready(() => {
                 columns: [
                     { title: '<input type="checkbox" id="checkAll"/>', defaultContent: '<input type="checkbox" class="rowCheckbox"/>' },
                     { title: "ID", data: "id" },
-                    { title: "Brand", data: "brand_id" },
-                    { title: "Makrket Place", data: "market_place_id" },
                     { title: "Type", data: "type" },
                     { title: "Link", data: "link" },
                     { title: "Frequency", data: "frequency" },
                     { title: "Run At", data: "run_at" },
+                    { title: "Market Place", data: "market_place_id" },
+                    { title: "Brand", data: "brand_id" },
                     { title: "Status", data: "status" },
                     { title: "Action", defaultContent: '' }
                 ],
@@ -46,9 +46,27 @@ $(document).ready(() => {
                         }
                     },
                     {
-                        targets: 5,
+                        targets: 3,
                         render: function (data, type, row) {
                             return type === 'display' ? dataTableHelper.shortenText(data) : data;
+                        }
+                    },
+                    {
+                        targets: 6,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                        }
+                    },
+                    {
+                        targets: 7,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
+                        }
+                    },
+                    {
+                        targets: 8,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateStatusTaskGenerator(data) : data;
                         }
                     },
                     {

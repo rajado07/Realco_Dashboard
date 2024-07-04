@@ -1077,3 +1077,9 @@ WARNING:urllib3.connectionpool:Retrying (Retry(total=1, connect=None, read=None,
 WARNING:urllib3.connectionpool:Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f75e84754b0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/35547635bdbe0a9cd332a7d182d1608a
 INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
 INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir
+INFO:root:Tanggal sudah terlewat lebih dari 14 hari, melakukan export data 30 hari terakhir

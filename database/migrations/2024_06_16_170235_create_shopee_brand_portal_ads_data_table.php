@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create('shopee_brand_portal_ads_data', function (Blueprint $table) {
             $table->id();
             $table->date('data_date'); // Date
+
             $table->string('shop_name');
             $table->integer('shop_id');
             $table->integer('impressions')->nullable();
@@ -19,10 +20,12 @@ return new class extends Migration
             $table->integer('gross_sales')->nullable();
             $table->integer('ads_spend')->nullable();
             $table->integer('units_sold')->nullable();
+            
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');
             $table->unsignedBigInteger('brand_id');
-            $table->unsignedBigInteger('raw_data_id');  
+            $table->unsignedBigInteger('raw_data_id');
+            $table->unsignedBigInteger('data_group_id')->nullable();  
             $table->timestamps();
         });
     }

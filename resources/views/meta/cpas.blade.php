@@ -26,10 +26,10 @@
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Shopee</a></li>
                             <li class="breadcrumb-item">Brand Portal</a></li>
-                            <li class="breadcrumb-item active">Ads</a></li>
+                            <li class="breadcrumb-item active">Shop</a></li>
                         </ol>
                     </div>
-                    <h4 class="page-title">Shopee Portal Ads</h4>
+                    <h4 class="page-title">Shopee Portal Shop</h4>
                 </div>
             </div>
         </div>
@@ -73,54 +73,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Impressions">Impressions</h5>
-                                <h3 class="mb-1" id="impressions">0</h3>
+                                <h5 class="text-muted fw-normal mb-2" title="Amount Spent">Amount Spent</h5>
+                                <h3 class="mb-1" id="amount-spent">0</h3>
                                 <div>
-                                    <span id="impressions-change-percentage" class="badge bg-success me-1">
-                                        <i class="ri-arrow-up-line"></i> 1 %
-                                    </span>
-                                </div>
-                            </div>
-                            <div>
-                                <!-- Optional icon or image can be placed here if needed -->
-                                <i class="ri-bar-chart-2-line text-light" style="font-size: 3rem;"></i>
-                            </div>
-                        </div>
-                    </div> 
-                </div> 
-            </div>
-
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Orders">Orders</h5>
-                                <h3 class="mb-1" id="orders">0</h3>
-                                <div>
-                                    <span id="orders-change-percentage" class="badge bg-success me-1">
-                                        <i class="ri-arrow-up-line"></i> 1 %
-                                    </span>
-                                </div>
-                            </div>
-                            <div>
-                                <!-- Optional icon or image can be placed here if needed -->
-                                <i class="ri-shopping-basket-line text-light" style="font-size: 3rem;"></i>
-                            </div>
-                        </div>
-                    </div> 
-                </div> 
-            </div>
-
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Gross Sales">Gross Sales</h5>
-                                <h3 class="mb-1" id="gross-sales">0</h3>
-                                <div>
-                                    <span id="gross-sales-change-percentage" class="badge bg-success me-1">
+                                    <span id="amount-spent-change-percentage" class="badge bg-success me-1">
                                         <i class="ri-arrow-up-line"></i> 1 %
                                     </span>
                                 </div>
@@ -132,6 +88,72 @@
                         </div>
                     </div> 
                 </div> 
+            </div>
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="text-muted fw-normal mb-2" title="Content Views">Content Views</h5>
+                                <h3 class="mb-1" id="content-views">0</h3>
+                                <div>
+                                    <span id="content-views-change-percentage" class="badge bg-success me-1">
+                                        <i class="ri-arrow-up-line"></i> 1 %
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <!-- Optional icon or image can be placed here if needed -->
+                                <i class="ri-eye-line text-light" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="text-muted fw-normal mb-2" title="Impressions">Impressions</h5>
+                                <h3 class="mb-1" id="impressions">0</h3>
+                                <div>
+                                    <span id="impressions-change-percentage" class="badge bg-success me-1">
+                                        <i class="ri-arrow-up-line"></i> 1 %
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <!-- Optional icon or image can be placed here if needed -->
+                                <i class=" ri-picture-in-picture-line text-light" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="text-muted fw-normal mb-2" title="Adds To Cart">Adds To Cart</h5>
+                                <h3 class="mb-1" id="adds-to-cart">0</h3>
+                                <div>
+                                    <span id="adds-to-cart-change-percentage" class="badge bg-success me-1">
+                                        <i class="ri-arrow-up-line"></i> 1 %
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <!-- Optional icon or image can be placed here if needed -->
+                                <i class="ri-shopping-basket-line text-light" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
             </div> 
 
             <div class="col">
@@ -139,17 +161,17 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Ads Spends">Ads Spends</h5>
-                                <h3 class="mb-1" id="ads-spends">0</h3>
+                                <h5 class="text-muted fw-normal mb-2" title="Purchases">Purchases</h5>
+                                <h3 class="mb-1" id="purchases">0</h3>
                                 <div>
-                                    <span id="ads-spends-change-percentage" class="badge bg-success me-1">
+                                    <span id="purchases-change-percentage" class="badge bg-success me-1">
                                         <i class="ri-arrow-up-line"></i> 1 %
                                     </span>
                                 </div>
                             </div>
                             <div>
                                 <!-- Optional icon or image can be placed here if needed -->
-                                <i class="ri-wallet-line text-light" style="font-size: 3rem;"></i>
+                                <i class="ri-shopping-bag-line text-light" style="font-size: 3rem;"></i>
                             </div>
                         </div>
                     </div> 
@@ -161,39 +183,17 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Gross Sales">Units Sold</h5>
-                                <h3 class="mb-1" id="units-sold">0</h3>
+                                <h5 class="text-muted fw-normal mb-2" title="Purchases Conversion Value">Purchases Conversion Value</h5>
+                                <h3 class="mb-1" id="purchases-conversion-value">0</h3>
                                 <div>
-                                    <span id="units-sold-change-percentage" class="badge bg-success me-1">
+                                    <span id="purchases-conversion-value-change-percentage" class="badge bg-success me-1">
                                         <i class="ri-arrow-up-line"></i> 1 %
                                     </span>
                                 </div>
                             </div>
                             <div>
                                 <!-- Optional icon or image can be placed here if needed -->
-                                <i class="ri-shopping-cart-2-line text-light" style="font-size: 3rem;"></i>
-                            </div>
-                        </div>
-                    </div> 
-                </div> 
-            </div> 
-
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Gross Sales">Average Return On Ads Spend</h5>
-                                <h3 class="mb-1" id="return-on-ads-spend">0</h3>
-                                <div>
-                                    <span id="return-on-ads-spend-change-percentage" class="badge bg-success me-1">
-                                        <i class="ri-arrow-up-line"></i> 1 %
-                                    </span>
-                                </div>
-                            </div>
-                            <div>
-                                <!-- Optional icon or image can be placed here if needed -->
-                                <i class="ri-exchange-funds-line text-light" style="font-size: 3rem;"></i>
+                                <i class="ri-swap-box-line text-light" style="font-size: 3rem;"></i>
                             </div>
                         </div>
                     </div> 
@@ -224,5 +224,5 @@
 @endsection
 
 @section('script')
-    @vite(['resources/js/pages/shopee/brand-portal-ads.js'])
+    @vite(['resources/js/pages/meta/cpas.js'])
 @endsection

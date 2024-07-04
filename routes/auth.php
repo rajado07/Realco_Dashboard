@@ -8,11 +8,15 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DataGroupController;
+use App\Http\Controllers\MarketPlaceController;
 use App\Http\Controllers\RawDataController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGeneratorController;
 use App\Http\Controllers\ShopeeBrandPortalShopDataController;
+use App\Http\Controllers\ShopeeBrandPortalAdsDataController;
+use App\Http\Controllers\MetaCpasDataController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/register', [RegisteredUserController::class, 'create'])
@@ -72,8 +76,16 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 // rawData
 Route::get('/raw-data/read', [RawDataController::class, 'index']);
 
+// Brand
+Route::get('/brand/read', [BrandController::class, 'index']);
+
+// Market Place
+Route::get('/market-place/read', [MarketPlaceController::class, 'index']);
+
 // Group
 Route::get('/group/read', [DataGroupController::class, 'index']);
+Route::get('/group/type', [DataGroupController::class, 'getDataGroupType']);
+Route::get('/group/bytype/{type?}', [DataGroupController::class, 'getDataGroupByType']);
 
 // Task
 Route::get('/task/read', [TaskController::class, 'index']);
@@ -81,15 +93,39 @@ Route::get('/task/read', [TaskController::class, 'index']);
 // TaskGenerator
 Route::get('/task-generator/read', [TaskGeneratorController::class, 'index']);
 
-
-
-
-
 //Shopee-BrandPortal-Shop
 Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])
     ->middleware('auth');
 
 Route::get('/shopee/brand-portal-shop/aggregate', [ShopeeBrandPortalShopDataController::class, 'aggregatedData'])
+    ->middleware('auth');
+
+Route::get('/shopee/brand-portal-shop/summary', [ShopeeBrandPortalShopDataController::class, 'getSummary'])
+    ->middleware('auth');
+
+Route::get('/shopee/brand-portal-shop/latest-data', [ShopeeBrandPortalShopDataController::class, 'latestRetrievedAt'])
+    ->middleware('auth');
+
+
+//Shopee-BrandPortal-Ads
+Route::get('/shopee/brand-portal-ads/read', [ShopeeBrandPortalAdsDataController::class, 'index'])
+    ->middleware('auth');
+
+Route::get('/shopee/brand-portal-ads/summary', [ShopeeBrandPortalAdsDataController::class, 'getSummary'])
+    ->middleware('auth');
+
+Route::get('/shopee/brand-portal-ads/latest-data', [ShopeeBrandPortalAdsDataController::class, 'latestRetrievedAt'])
+    ->middleware('auth');
+
+
+//Meta-CPAS
+Route::get('/meta/cpas/read', [MetaCpasDataController::class, 'index'])
+    ->middleware('auth');
+
+Route::get('/meta/cpas/summary', [MetaCpasDataController::class, 'getSummary'])
+    ->middleware('auth');
+
+Route::get('/meta/cpas/latest-data', [MetaCpasDataController::class, 'latestRetrievedAt'])
     ->middleware('auth');
 
 

@@ -31,7 +31,7 @@ $(document).ready(() => {
                     { title: "File Name", data: "file_name" },
                     { title: "Market Place", data: "market_place_id" },
                     { title: "Brand", data: "brand_id" },
-                    { title: "status", data: "status" },
+                    { title: "Status", data: "status" },
                     { title: "Action", defaultContent: '' }
                 ],
                 columnDefs: [
@@ -49,6 +49,18 @@ $(document).ready(() => {
                         targets: 5,
                         render: function (data, type, row) {
                             return type === 'display' ? dataTableHelper.shortenText(data) : data;
+                        }
+                    },
+                    {
+                        targets: 6,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                        }
+                    },
+                    {
+                        targets: 7,
+                        render: function (data, type, row) {
+                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
                         }
                     },
                     {

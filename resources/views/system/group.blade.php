@@ -33,6 +33,42 @@
         </div>
         <!-- end page title -->
 
+         <!-- Start Form Modal Add -->
+        <div id="addModal" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content modal-lg">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="standard-modalLabel">Add New</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add">
+                            <div class="mb-3">
+                                <input  class="form-control"  name="name"  placeholder="Group Name" required>
+                            </div>
+                            <div class="mb-3">
+                                <select id="selectType" name="type" class="form-control select2" data-toggle="select2" required></select>
+                            </div>
+                            <div class="mb-3">
+                                <select id="selectMarketPlace" name="marketPlace" class="form-control select2" data-toggle="select2" required></select>
+                            </div>
+                            <div class="mb-3">
+                                <select id="selectBrand" name="brand" class="form-control select2" data-toggle="select2" required></select>
+                            </div>
+                            <div class="mb-3">
+                                <select id="selectIdMapping" name="idMapping" class="form-control select2" data-toggle="select2" required></select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitAddForm()" id="addNewFormSubmit">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>                
+        <!-- End Form Modal Add -->
+
         <!-- Start Data Table-->
         <div class="row">
             <div class="col">
@@ -55,7 +91,7 @@
                                     {{-- <a class="dropdown-item" href="#" id="editSelected">Edit Selected Task</a> --}}
                                 </div>
                                 <button type="button" id="import" class="btn btn-outline-seconday" data-bs-toggle="modal" data-bs-target="#importModal"><i class="bi bi-upload"></i> Import</button>
-                                <button type="button" id="addNew" onclick="getAccounts('addModal');" class="btn btn-outline-scondary" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-play-list-add-line me-1"></i> Add New</button>
+                                <button type="button" id="addNew" onclick="getBrands('addModal');getMarketPlaces('addModal');getType('addModal');getGroupByType('addModal');" class="btn btn-outline-scondary" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-play-list-add-line me-1"></i> Add New</button>
                             </div>
                         </div>                        
                     </div>
