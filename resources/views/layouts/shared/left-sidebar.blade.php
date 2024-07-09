@@ -97,13 +97,13 @@
                             <div class="collapse" id="sidebarSellerCenter">
                                 <ul class="side-nav-third-level">
                                     <li>
-                                        <a href="{{ route('second', ['shopee', 'brand-portal-shop']) }}">Live Streaming</a>
+                                        <a href="{{ route('second', ['shopee', 'seller-center-live-streaming']) }}">Live Streaming</a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('second', ['shopee', 'brand-portal-ads']) }}">Voucher</a>
+                                        <a href="{{ route('second', ['shopee', 'seller-center-voucher']) }}">Voucher</a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('second', ['shopee', 'brand-portal-ads']) }}">Coin</a>
+                                        <a href="{{ route('second', ['shopee', 'seller-center-coin']) }}">Coin</a>
                                     </li>
                                 </ul>
                             </div>

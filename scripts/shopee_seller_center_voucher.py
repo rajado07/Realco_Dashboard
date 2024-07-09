@@ -41,13 +41,40 @@ try:
     driver.get(url)
     wait = WebDriverWait(driver, 30)
 
+    current_month = datetime.now().strftime('%B')
+    current_year = datetime.now().strftime('%Y')
+
     pilih_periode = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Periode Data')]")))
     driver.execute_script("arguments[0].click();", pilih_periode)
     time.sleep(7)
 
-    pilih_periode_30_days = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '30 hari sebelumnya')]")))
-    driver.execute_script("arguments[0].click();", pilih_periode_30_days)
-    time.sleep(7)
+    #--TEST--
+
+    pilih_periode_per_hari = wait.until(EC.presence_of_element_located((By.XPATH, "//span[@class='eds-date-shortcut-item__text' and contains(text(), 'Per Hari')]")))
+    pilih_periode_per_hari.click()
+    time.sleep(3)
+
+    select_year = wait.until(EC.presence_of_element_located((By.XPATH, f"//span[@class='eds-picker-header__label clickable'][contains(.,'{current_year}')]")))
+    select_year.click()
+    time.sleep(3)
+
+    pick_year = wait.until(EC.element_to_be_clickable((By.XPATH, f"//div[@class='eds-year-table__row']//div[contains(text(), '{year}')]")))
+    pick_year.click()
+    time.sleep(3)
+
+    select_month = wait.until(EC.presence_of_element_located((By.XPATH, f"//span[@class='eds-picker-header__label clickable'][contains(.,'{current_month}')]")))
+    select_month.click()
+    time.sleep(3)
+
+    pick_month = wait.until(EC.element_to_be_clickable((By.XPATH, f"//div[@class='eds-month-table__row']//div[contains(text(), '{month}')]")))
+    pick_month.click()
+    time.sleep(3)
+
+    pick_day = wait.until(EC.presence_of_element_located((By.XPATH, f"//span[contains(@class, 'eds-date-table__cell-inner') and contains(@class, 'normal') and not(contains(@class, 'disabled')) and contains(text(), '{day}')]")))
+    pick_day.click()
+    time.sleep(3)
+
+    #--TEST--
 
     button = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Download Data')]")))
     download_timestamp = time.time()
@@ -61,7 +88,7 @@ try:
         raise FileNotFoundError("File tidak berhasil diunduh dalam batas waktu yang ditentukan.")
     
     worksheet_name = "Rincian Performa"
-    df = pd.read_excel(downloaded_file, sheet_name=worksheet_name, header=0)
+    df = pd.read_excel(downloaded_file, sheet_name=worksheet_name, header=0 , dtype={'Total Biaya (Pesanan Siap Dikirim) (IDR)': str})
 
     data_json = df.to_dict(orient='records')
     cleaned_data_json = helper.clean_data(data_json)

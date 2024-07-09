@@ -16,6 +16,9 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGeneratorController;
 use App\Http\Controllers\ShopeeBrandPortalShopDataController;
 use App\Http\Controllers\ShopeeBrandPortalAdsDataController;
+use App\Http\Controllers\ShopeeSellerCenterLiveStreamingDataController;
+use App\Http\Controllers\ShopeeSellerCenterCoinDataController;
+use App\Http\Controllers\ShopeeSellerCenterVoucherDataController;
 use App\Http\Controllers\MetaCpasDataController;
 use Illuminate\Support\Facades\Route;
 
@@ -117,6 +120,17 @@ Route::get('/shopee/brand-portal-ads/summary', [ShopeeBrandPortalAdsDataControll
 Route::get('/shopee/brand-portal-ads/latest-data', [ShopeeBrandPortalAdsDataController::class, 'latestRetrievedAt'])
     ->middleware('auth');
 
+//Shopee-SellerCenter-LiveStreaming
+Route::get('/shopee/seller-center-live-streaming/read', [ShopeeSellerCenterLiveStreamingDataController::class, 'index'])
+    ->middleware('auth');
+
+//Shopee-SellerCenter-Voucher
+Route::get('/shopee/seller-center-voucher/read', [ShopeeSellerCenterVoucherDataController::class, 'index'])
+    ->middleware('auth');
+
+//Shopee-SellerCenter-Coin
+Route::get('/shopee/seller-center-coin/read', [ShopeeSellerCenterCoinDataController::class, 'index'])
+    ->middleware('auth');
 
 //Meta-CPAS
 Route::get('/meta/cpas/read', [MetaCpasDataController::class, 'index'])

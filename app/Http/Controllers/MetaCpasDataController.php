@@ -28,7 +28,8 @@ class MetaCpasDataController extends Controller
             'impressions',
             'brand_id',
             'market_place_id',
-        ])
+        ])  
+            ->selectRaw('IF(amount_spent > 0, purchases_conversion_value_for_shared_items_only / amount_spent, 0) as return_on_ad_spend')
             ->whereBetween('data_date', [$startDate, $endDate]);
 
         if (!is_null($brandId) && $brandId != 0) {

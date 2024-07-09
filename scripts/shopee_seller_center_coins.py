@@ -49,6 +49,14 @@ try:
     driver.execute_script("arguments[0].click();", pilih_periode_30_days)
     time.sleep(7)
 
+    pilih_transaksi = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Semua Transaksi')]")))
+    driver.execute_script("arguments[0].click();", pilih_transaksi)
+    time.sleep(7)
+
+    pilih_transaksi_koin_terpakai = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Koin Terpakai')]")))
+    driver.execute_script("arguments[0].click();", pilih_transaksi_koin_terpakai)
+    time.sleep(7)
+
     button = wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Download Data')]")))
     download_timestamp = time.time()
     driver.execute_script("arguments[0].click();", button)
@@ -62,7 +70,10 @@ try:
     
     df = pd.read_csv(downloaded_file, header=2)
 
-    data_json = df.to_dict(orient='records')
+    # Menggabungkan data berdasarkan kolom yang sama dan menjumlahkan kolom 'Jumlah Koin Penjual'
+    grouped_df = df.groupby(list(df.columns.difference(['Jumlah Koin Penjual']))).agg({'Jumlah Koin Penjual': 'sum'}).reset_index()
+
+    data_json = grouped_df.to_dict(orient='records')
     cleaned_data_json = helper.clean_data(data_json)
 
     output = {
