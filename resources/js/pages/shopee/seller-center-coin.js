@@ -34,7 +34,11 @@ $(document).ready(() => {
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             columns: [
                 { title: "Date", data: "data_date" },
-                { title: "Total Coins Amount", data: "total_coins_amount" },
+                { title: "Coins Used", data: "total_coins_amount", render: data => {
+                    return new Intl.NumberFormat().format(data);
+                }},
+                { title: "Sales", data: "total_sales" , render: data => dataTableHelper.currency(data) },
+                { title: "Return On Investment", data: "roi" },
                 { title: "Brand", data: "brand_id", render: data => dataTableHelper.translateBrand(data) },
                 {
                     title: "Details",
@@ -120,23 +124,17 @@ $(document).ready(() => {
         if (brandId) data.brand_id = brandId;
 
         $.ajax({
-            url: '/shopee/brand-portal-ads/summary',
+            url: '/shopee/seller-center-coin/summary',
             type: 'GET',
             data: data,
             success: function (response) {
-                initialize.animateCounter($('#impressions'), response.current.total_impressions);
-                initialize.animateCounter($('#orders'), response.current.total_orders);
-                initialize.animateCounter($('#gross-sales'), response.current.total_gross_sales, true);
-                initialize.animateCounter($('#ads-spends'), response.current.total_ads_spend, true);
-                initialize.animateCounter($('#units-sold'), response.current.total_units_sold);
-                initialize.animateCounter($('#return-on-ads-spend'), response.current.average_roas, false, 1000, 2);
+                initialize.animateCounter($('#coins'), response.current.total_coins_amount);
+                initialize.animateCounter($('#sales'), response.current.total_sales,true);
+                initialize.animateCounter($('#roi'), response.current.average_roi);
 
-                initialize.updatePercentageChange($('#impressions-change-percentage'), response.changes.total_impressions_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#orders-change-percentage'), response.changes.total_orders_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#gross-sales-change-percentage'), response.changes.total_gross_sales_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#ads-spends-change-percentage'), response.changes.total_ads_spend_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#units-sold-change-percentage'), response.changes.total_units_sold_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#return-on-ads-spend-change-percentage'), response.changes.average_roas_change, startDate, endDate);
+                initialize.updatePercentageChange($('#coins-change-percentage'), response.changes.total_coins_amount_change_percentage, startDate, endDate);
+                initialize.updatePercentageChange($('#sales-change-percentage'), response.changes.total_sales_change_percentage, startDate, endDate);
+                initialize.updatePercentageChange($('#roi-change-percentage'), response.changes.average_roi_change_percentage, startDate, endDate);
             },
             error: function (error) {
                 console.error('Error fetching summary data:', error);

@@ -16,4 +16,9 @@ class ShopeeBrandPortalShopData extends Model
         return $this->belongsTo(DataGroup::class, 'data_group_id');
     }
 
+    public function dataGroup()
+    {
+        return $this->belongsTo(DataGroup::class, 'data_group_id');
+    }
+
 }

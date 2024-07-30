@@ -47,12 +47,17 @@ class ShopeeSellerCenterLiveStreamingDataObserver
                     // Convert necessary fields
                     $durationParts = explode(':', $duration);
                     $durationInSeconds = $durationParts[0] * 3600 + $durationParts[1] * 60 + $durationParts[2];
+                    $durationInMinutes = $durationInSeconds / 60;
+
 
                     $averageWatchDurationParts = explode(':', $dataItem['Rata-rata Durasi Menonton']);
                     $averageWatchDurationInSeconds = $averageWatchDurationParts[0] * 3600 + $averageWatchDurationParts[1] * 60 + $averageWatchDurationParts[2];
 
                     $salesAmount = str_replace(['Rp', '.', 'K'], '', $dataItem['Penjualan']);
                     $salesAmount = str_replace(',', '.', $salesAmount) * 1000;
+
+                    // Calculate sales_per_hour
+                    $salesPerHour = $salesAmount / $durationInMinutes;
 
                     ShopeeSellerCenterLiveStreamingData::create([
                         'duration' => $durationInSeconds,
@@ -64,6 +69,7 @@ class ShopeeSellerCenterLiveStreamingDataObserver
                         'avg_watch_time' => $averageWatchDurationInSeconds,
                         'orders' => $dataItem['Pesanan'],
                         'sales' => $salesAmount,
+                        'sales_per_hour' => $salesPerHour,
                         'raw_data_id' => $rawData->id,
                         'brand_id' => $rawData->brand_id,
                         'retrieved_at' => $rawData->retrieved_at,

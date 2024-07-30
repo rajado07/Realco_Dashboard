@@ -17,9 +17,11 @@ return new class extends Migration
             $table->integer('shop_id');
             $table->integer('impressions')->nullable();
             $table->integer('orders')->nullable();
-            $table->integer('gross_sales')->nullable();
+            $table->bigInteger('gross_sales')->nullable();
             $table->integer('ads_spend')->nullable();
             $table->integer('units_sold')->nullable();
+
+            $table->double('return_on_ads_spend')->nullable();
             
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');

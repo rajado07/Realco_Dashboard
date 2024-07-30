@@ -19,6 +19,7 @@ use App\Http\Controllers\ShopeeBrandPortalAdsDataController;
 use App\Http\Controllers\ShopeeSellerCenterLiveStreamingDataController;
 use App\Http\Controllers\ShopeeSellerCenterCoinDataController;
 use App\Http\Controllers\ShopeeSellerCenterVoucherDataController;
+use App\Http\Controllers\ShopeeSummaryDataController;
 use App\Http\Controllers\MetaCpasDataController;
 use Illuminate\Support\Facades\Route;
 
@@ -100,9 +101,6 @@ Route::get('/task-generator/read', [TaskGeneratorController::class, 'index']);
 Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])
     ->middleware('auth');
 
-Route::get('/shopee/brand-portal-shop/aggregate', [ShopeeBrandPortalShopDataController::class, 'aggregatedData'])
-    ->middleware('auth');
-
 Route::get('/shopee/brand-portal-shop/summary', [ShopeeBrandPortalShopDataController::class, 'getSummary'])
     ->middleware('auth');
 
@@ -128,8 +126,23 @@ Route::get('/shopee/seller-center-live-streaming/read', [ShopeeSellerCenterLiveS
 Route::get('/shopee/seller-center-voucher/read', [ShopeeSellerCenterVoucherDataController::class, 'index'])
     ->middleware('auth');
 
+Route::get('/shopee/seller-center-voucher/summary', [ShopeeSellerCenterVoucherDataController::class, 'summary'])
+    ->middleware('auth');
+
 //Shopee-SellerCenter-Coin
 Route::get('/shopee/seller-center-coin/read', [ShopeeSellerCenterCoinDataController::class, 'index'])
+    ->middleware('auth');
+Route::get('/shopee/seller-center-coin/summary', [ShopeeSellerCenterCoinDataController::class, 'summary'])
+    ->middleware('auth');
+
+//Shopee-Summary
+Route::get('/shopee/summary/brand-performance/read', [ShopeeSummaryDataController::class, 'shopeeBrand'])
+    ->middleware('auth');
+Route::get('/shopee/summary/cpas/read', [ShopeeSummaryDataController::class, 'metaCpas'])
+    ->middleware('auth');
+Route::get('/shopee/summary/ads/read', [ShopeeSummaryDataController::class, 'shopeeAds'])
+    ->middleware('auth');
+Route::get('/shopee/summary/live-stream/read', [ShopeeSummaryDataController::class, 'shopeeLiveStream'])
     ->middleware('auth');
 
 //Meta-CPAS

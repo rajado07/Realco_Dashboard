@@ -24,12 +24,11 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Shopee</a></li>
-                            <li class="breadcrumb-item">Brand Portal</a></li>
-                            <li class="breadcrumb-item active">Shop</a></li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Meta</a></li>
+                            <li class="breadcrumb-item active">CPAS</a></li>
                         </ol>
                     </div>
-                    <h4 class="page-title">Shopee Portal Shop</h4>
+                    <h4 class="page-title">Meta CPAS</h4>
                 </div>
             </div>
         </div>
@@ -55,6 +54,14 @@
                 <!-- Select Brand -->
                 <div class="form-group">
                     <select id="selectedBrand" name="brand" class="form-control select2" data-toggle="select2" required>
+                        <!-- Options will be dynamically populated here -->
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <!-- Select Market Place -->
+                <div class="form-group">
+                    <select id="selectedMarketPlace" name="brand" class="form-control select2" data-toggle="select2" required>
                         <!-- Options will be dynamically populated here -->
                     </select>
                 </div>

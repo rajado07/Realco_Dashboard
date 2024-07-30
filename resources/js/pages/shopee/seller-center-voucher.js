@@ -34,14 +34,19 @@ $(document).ready(() => {
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             columns: [
                 { title: "Voucher Name", data: "voucher_name" },
-                { title: "Total Claims", data: "total_claims" },
-                { title: "Total Orders", data: "total_orders" },
-                { title: "Total Sales", data: "total_sales" },
-                { title: "Total Costs", data: "total_costs" },
-                { title: "Total Units Sold", data: "total_units_sold" },
-                { title: "Total Buyers", data: "total_buyers" },
-                { title: "Avg. Sales per Buyer", data: "average_sales_per_buyer" },
-                { title: "Avg. ROI", data: "average_roi" },
+                { title: "Claims", data: "total_claims" },
+                { title: "Orders", data: "total_orders" },
+                { title: "Sales", data: "total_sales" },
+                { title: "Costs", data: "total_costs" },
+                { title: "Units Sold", data: "total_units_sold" },
+                { title: "Buyers", data: "total_buyers" },
+                { title: "Sales per Buyer", data: "average_sales_per_buyer" },
+                { title: "ROI", data: "average_roi", render: function(data) {
+                    return parseFloat(data).toFixed(2); // This will format the number to two decimal places
+                }},
+                { title: "Usage Rate", data: "average_usage_rate", render: function(data) {
+                    return parseFloat(data).toFixed(2); // This will format the number to two decimal places
+                }},
                 { title: "Brand", data: "brand_id", render: data => dataTableHelper.translateBrand(data) },
                 {
                     title: "Details",
@@ -54,7 +59,14 @@ $(document).ready(() => {
                 targets: -1, // Details column
                 searchable: false,
                 orderable: false
-            }],
+            },
+            {
+                targets: [3, 4,7],
+                render: function (data, type, row) {
+                    return dataTableHelper.currency(data);
+                }
+            },
+        ],
             drawCallback: function () {
                 $('#basic-datatable_paginate').addClass('pagination-rounded');
                 initialize.toolTip();
@@ -140,23 +152,21 @@ $(document).ready(() => {
         if (brandId) data.brand_id = brandId;
 
         $.ajax({
-            url: '/shopee/brand-portal-ads/summary',
+            url: '/shopee/seller-center-voucher/summary',
             type: 'GET',
             data: data,
             success: function (response) {
-                initialize.animateCounter($('#impressions'), response.current.total_impressions);
-                initialize.animateCounter($('#orders'), response.current.total_orders);
-                initialize.animateCounter($('#gross-sales'), response.current.total_gross_sales, true);
-                initialize.animateCounter($('#ads-spends'), response.current.total_ads_spend, true);
-                initialize.animateCounter($('#units-sold'), response.current.total_units_sold);
-                initialize.animateCounter($('#return-on-ads-spend'), response.current.average_roas, false, 1000, 2);
+                initialize.animateCounter($('#claim'), response.current.total_claims);
+                initialize.animateCounter($('#sales'), response.current.total_sales, true);
+                initialize.animateCounter($('#cost'), response.current.total_costs, true);
+                initialize.animateCounter($('#usage-rate'), response.current.average_usage_rate);
+                initialize.animateCounter($('#return-on-investment'), response.current.average_roi);
 
-                initialize.updatePercentageChange($('#impressions-change-percentage'), response.changes.total_impressions_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#orders-change-percentage'), response.changes.total_orders_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#gross-sales-change-percentage'), response.changes.total_gross_sales_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#ads-spends-change-percentage'), response.changes.total_ads_spend_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#units-sold-change-percentage'), response.changes.total_units_sold_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#return-on-ads-spend-change-percentage'), response.changes.average_roas_change, startDate, endDate);
+                initialize.updatePercentageChange($('#claim-change-percentage'), response.changes.total_claims_change_percentage, startDate, endDate);
+                initialize.updatePercentageChange($('#sales-change-percentage'), response.changes.total_sales_change_percentage, startDate, endDate);
+                initialize.updatePercentageChange($('#cost-change-percentage'), response.changes.total_costs_change_percentage, startDate, endDate);
+                initialize.updatePercentageChange($('#usage-rate-change-percentage'), response.changes.average_usage_rate_change_percentage, startDate, endDate);
+                initialize.updatePercentageChange($('#return-on-investment-change-percentage'), response.changes.average_roi_change_percentage, startDate, endDate);
             },
             error: function (error) {
                 console.error('Error fetching summary data:', error);

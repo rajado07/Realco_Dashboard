@@ -12,7 +12,7 @@ $(document).ready(() => {
     let dataTableInstance;
 
     function initializeOrUpdateDataTable(startDate = null, endDate = null, brandId = null) {
-        const ajaxUrl = '/shopee/brand-portal-shop/aggregate';
+        const ajaxUrl = '/shopee/brand-portal-shop/read';
         const ajaxData = {};
 
         if (startDate && endDate) {
@@ -34,19 +34,7 @@ $(document).ready(() => {
                 type: 'GET',
                 data: ajaxData,
                 dataSrc: function (json) {
-                    return json.map(group => ({
-                        group_id: group.group_id,
-                        group_name: group.group_name,
-                        total_gross_sales: group.total_gross_sales,
-                        total_gross_orders: group.total_gross_order,
-                        total_gross_units_sold: group.total_gross_units_sold,
-                        total_product_views: group.total_product_views,
-                        total_product_visitors: group.total_product_visitors,
-                        brand_id: group.brand_id,
-                        average_basket_size: group.average_basket_size,
-                        average_selling_price: group.average_selling_price,
-                        details: group.details,
-                    }));
+                    return json; // No re-mapping needed
                 }
             },
             stateSave: true,
@@ -54,28 +42,34 @@ $(document).ready(() => {
             deferLoading: true,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             columns: [
-                { title: "Group Name", data: "group_name" },
-                { title: "Gross Sales", data: "total_gross_sales" },
-                { title: "Gross Orders", data: "total_gross_orders" },
-                { title: "Gross Units Sold", data: "total_gross_units_sold" },
-                { title: "Product Views", data: "total_product_views" },
-                { title: "Product Visitors", data: "total_product_visitors" },
+                { title: "Brand", data: "group_name" },
+                { title: "Gross Sales", data: "gross_sales" },
+                { title: "Gross Orders", data: "gross_orders" },
+                { title: "Gross Units Sold", data: "gross_units_sold" },
+                { title: "Product Views", data: "product_views" },
+                { title: "Product Visitors", data: "product_visitors" },
                 { title: "Average Basket Size", data: "average_basket_size" },
                 { title: "Average Selling Price", data: "average_selling_price" },
-                { title: "Brand", data: "brand_id" },
+                { title: "Conversion", data: "conversion" },
                 { title: "Action", defaultContent: '' }
             ],
             columnDefs: [
                 {
+                    targets: [2, 3, 4, 5],
+                    render: function (data, type, row) {
+                        return dataTableHelper.columnWitheNowPreviousChange(data,false);
+                    }
+                },
+                {
                     targets: [1, 6, 7],
                     render: function (data, type, row) {
-                        return type === 'display' ? dataTableHelper.currency(data) : data;
+                        return dataTableHelper.columnWitheNowPreviousChange(data,true);
                     }
                 },
                 {
                     targets: 8,
                     render: function (data, type, row) {
-                        return type === 'display' ? dataTableHelper.translateBrand(data) : data;
+                        return dataTableHelper.columnWitheNowPreviousChange(data,false,false);
                     }
                 },
                 {
@@ -208,7 +202,7 @@ $(document).ready(() => {
         const data = {};
         if (startDate) data.start_date = startDate;
         if (endDate) data.end_date = endDate;
-        if (brandId) data.brand_id = brandId;  // Memasukkan brandId ke dalam data yang dikirim
+        if (brandId) data.brand_id = brandId;
 
         $.ajax({
             url: '/shopee/brand-portal-shop/summary',
@@ -237,7 +231,7 @@ $(document).ready(() => {
             var selectedDate = $('#selectedDate').text();
             var selectedBrand = $('#selectedBrand').val();
 
-            // Mengecek apakah ada tanggal yang dipilih
+            // Check if dates are selected
             const dates = selectedDate.split(' - ');
             let startDate, endDate;
 
@@ -248,14 +242,14 @@ $(document).ready(() => {
                 console.log(`End Date: ${endDate}`);
             }
 
-            console.log(`Nilai input berubah menjadi: ${selectedDate}`);
+            console.log(`Input value changed to: ${selectedDate}`);
             console.log(`Selected Brand: ${selectedBrand}`);
 
             fetchSummaryData(startDate, endDate, selectedBrand);
             initializeOrUpdateDataTable(startDate, endDate, selectedBrand);
 
             if (!startDate || !endDate) {
-                console.log('Tanggal tidak tersedia, menggunakan hanya brand untuk filter.');
+                console.log('No dates available, using only brand filter.');
             }
         });
     }
@@ -280,7 +274,7 @@ $(document).ready(() => {
 
         fetchBrands();
         fetchSummaryData();
-        fetchLatestRetrievedData()
+        fetchLatestRetrievedData();
 
         initializeOrUpdateDataTable();
         initializeRefreshButton();

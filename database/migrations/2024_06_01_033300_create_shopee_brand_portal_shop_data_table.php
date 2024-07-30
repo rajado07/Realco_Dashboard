@@ -15,11 +15,14 @@ return new class extends Migration
 
             $table->string('product_name');
             $table->string('product_id');
-            $table->decimal('gross_sales', 10, 2)->nullable();
+            $table->decimal('gross_sales', 15, 2)->nullable();
             $table->integer('gross_orders')->nullable();
             $table->integer('gross_units_sold')->nullable();
             $table->integer('product_views')->nullable();
             $table->integer('product_visitors')->nullable();
+
+            $table->double('avg_basket_size')->nullable();
+            $table->double('avg_selling_price')->nullable();
             
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');

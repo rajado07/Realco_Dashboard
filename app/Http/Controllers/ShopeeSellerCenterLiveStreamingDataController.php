@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 class ShopeeSellerCenterLiveStreamingDataController extends Controller
 {
 
+    private function formatDuration($seconds)
+    {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        return sprintf("%dH %dM", $hours, $minutes);
+    }
+
     public function index(Request $request)
     {
         $startDate = $request->input('startDate', Carbon::now()->subMonth()->toDateString());
@@ -24,6 +31,7 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
             'avg_watch_time',
             'orders',
             'sales',
+            'sales_per_hour',
             'brand_id',
         ])
             ->whereBetween('data_date', [$startDate, $endDate]);
@@ -44,6 +52,7 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
                 'avg_watch_time',
                 'orders',
                 'sales',
+                'sales_per_hour',
             ])
                 ->where('data_date', $previousDate);
 
@@ -56,10 +65,11 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
             return [
                 'duration' => $previousDayItems->sum('duration'),
                 'unique_viewers' => $previousDayItems->sum('unique_viewers'),
-                'peak_viewers' => $previousDayItems->avg('peak_viewers'),
+                'peak_viewers' => $previousDayItems->max('peak_viewers'),
                 'avg_watch_time' => $previousDayItems->avg('avg_watch_time'),
                 'orders' => $previousDayItems->sum('orders'),
                 'sales' => $previousDayItems->sum('sales'),
+                'sales_per_hour' => $previousDayItems->sum('sales_per_hour'),
             ];
         });
 
@@ -68,10 +78,11 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
             $currentTotals = [
                 'duration' => $items->sum('duration'),
                 'unique_viewers' => $items->sum('unique_viewers'),
-                'peak_viewers' => $items->avg('peak_viewers'),
+                'peak_viewers' => $items->max('peak_viewers'),
                 'avg_watch_time' => $items->avg('avg_watch_time'),
                 'orders' => $items->sum('orders'),
                 'sales' => $items->sum('sales'),
+                'sales_per_hour' => $items->sum('sales_per_hour'),
             ];
 
             // Get the previous day's totals
@@ -82,6 +93,7 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
                 'avg_watch_time' => 0,
                 'orders' => 0,
                 'sales' => 0,
+                'sales_per_hour' => 0,
             ]);
 
             $changes = [];
@@ -93,8 +105,8 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
             return [
                 'data_date' => $date,
                 'duration' => [
-                    'now' => $currentTotals['duration'],
-                    'previous' => $previousTotals['duration'],
+                    'now' => $this->formatDuration($currentTotals['duration']),
+                    'previous' => $this->formatDuration($previousTotals['duration']),
                     'change' => $changes['duration'],
                 ],
                 'unique_viewers' => [
@@ -122,16 +134,22 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
                     'previous' => $previousTotals['sales'],
                     'change' => $changes['sales'],
                 ],
+                'sales_per_hour' => [
+                    'now' => $currentTotals['sales_per_hour'],
+                    'previous' => $previousTotals['sales_per_hour'],
+                    'change' => $changes['sales_per_hour'],
+                ],
                 'brand_id' => $items->first()->brand_id, // Assuming all items in a group have the same brand_id
                 'details' => $items->map(function ($item) {
                     return [
                         'name' => $item->name,
-                        'duration' => $item->duration,
+                        'duration' => $this->formatDuration($item->duration),
                         'unique_viewers' => $item->unique_viewers,
                         'peak_viewers' => $item->peak_viewers,
                         'avg_watch_time' => $item->avg_watch_time,
                         'orders' => $item->orders,
                         'sales' => $item->sales,
+                        'sales_per_hour' => $item->sales_per_hour,
                     ];
                 })
             ];
@@ -139,4 +157,6 @@ class ShopeeSellerCenterLiveStreamingDataController extends Controller
 
         return response()->json($groupedResults);
     }
+
+    
 }

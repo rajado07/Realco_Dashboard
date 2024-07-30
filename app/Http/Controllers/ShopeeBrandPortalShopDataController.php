@@ -9,82 +9,147 @@ use App\Models\DataGroup;
 
 class ShopeeBrandPortalShopDataController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Specify the columns you want to retrieve
-        $data = ShopeeBrandPortalShopData::select([
-            'id',
-            'product_name',
-            'product_id',
-            'gross_sales',
-            'gross_orders',
-            'gross_units_sold',
-            'product_views',
-            'product_visitors',
-            'data_date'
-        ])->get();
+        $startDate = $request->input('startDate', Carbon::now()->subMonth()->toDateString());
+        $endDate = $request->input('endDate', Carbon::now()->toDateString());
+        $brandId = $request->input('brand_id', null);
 
-        return response()->json($data);
-    }
-
-    public function aggregatedData(Request $request)
-    {
-        // Get the start and end dates from the request, default to the last month
-        $startDate = $request->input('start_date', now()->subMonth()->toDateString());
-        $endDate = $request->input('end_date', now()->toDateString());
-        $brandId = $request->input('brand_id');
-
-        // Base query for groups
-        $groupQuery = DataGroup::with(['products' => function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('data_date', [$startDate, $endDate]);
-        }])->where('type', 'shopee_brand_portal_shop');
-
-        // Apply brandId filter if present and not zero
-        if ($brandId && $brandId != 0) {
-            $groupQuery->where('brand_id', $brandId);
-        }
-
-        $groups = $groupQuery->get();
-
-        // Base query for ungrouped products
-        $ungroupedProductsQuery = ShopeeBrandPortalShopData::whereNull('data_group_id')
+        // Retrieve the data for the current period
+        $query = ShopeeBrandPortalShopData::with('dataGroup')
+            ->select([
+                'id',
+                'product_name',
+                'product_id',
+                'gross_sales',
+                'gross_orders',
+                'gross_units_sold',
+                'product_views',
+                'product_visitors',
+                'data_date',
+                'data_group_id',
+                'brand_id'
+            ])
             ->whereBetween('data_date', [$startDate, $endDate]);
 
-        // Apply brandId filter if present and not zero
-        if ($brandId && $brandId != 0) {
-            $ungroupedProductsQuery->where('brand_id', $brandId);
+        if (!is_null($brandId) && $brandId != 0) {
+            $query->where('brand_id', $brandId);
         }
 
-        $ungroupedProducts = $ungroupedProductsQuery->get();
+        $results = $query->get();
 
-        $result = [];
+        // Retrieve the data for the previous period
+        $previousStartDate = Carbon::parse($startDate)->subMonth()->toDateString();
+        $previousEndDate = Carbon::parse($endDate)->subMonth()->toDateString();
 
-        // Process groups with products
-        foreach ($groups as $group) {
-            $totalGrossSales = $group->products->sum('gross_sales');
-            $totalGrossOrders = $group->products->sum('gross_orders');
-            $totalGrossUnitsSold = $group->products->sum('gross_units_sold');
+        $previousQuery = ShopeeBrandPortalShopData::with('dataGroup')
+            ->select([
+                'data_group_id',
+                'gross_sales',
+                'gross_orders',
+                'gross_units_sold',
+                'product_views',
+                'product_visitors',
+            ])
+            ->whereBetween('data_date', [$previousStartDate, $previousEndDate]);
 
+        if (!is_null($brandId) && $brandId != 0) {
+            $previousQuery->where('brand_id', $brandId);
+        }
+
+        $previousResults = $previousQuery->get();
+
+        // Group by 'data_group_id' and prepare the nested structure
+        $groupedResults = $results->groupBy('data_group_id')->map(function ($items, $groupId) use ($previousResults, $startDate, $endDate) {
+            // Aggregate data for the current period
+            $currentTotals = [
+                'gross_sales' => $items->sum('gross_sales'),
+                'gross_orders' => $items->sum('gross_orders'),
+                'gross_units_sold' => $items->sum('gross_units_sold'),
+                'product_views' => $items->sum('product_views'),
+                'product_visitors' => $items->sum('product_visitors'),
+                'average_basket_size' => $items->sum('gross_orders') ? $items->sum('gross_sales') / $items->sum('gross_orders') : 0,
+                'average_selling_price' => $items->sum('gross_units_sold') ? $items->sum('gross_sales') / $items->sum('gross_units_sold') : 0,
+                'conversion' => $items->sum('product_views') ? ($items->sum('gross_units_sold') / $items->sum('product_views')) * 100 : 0,
+            ];
+
+            // Retrieve previous totals for the same group
+            $previousItems = $previousResults->where('data_group_id', $groupId);
+            $previousTotals = [
+                'gross_sales' => $previousItems->sum('gross_sales'),
+                'gross_orders' => $previousItems->sum('gross_orders'),
+                'gross_units_sold' => $previousItems->sum('gross_units_sold'),
+                'product_views' => $previousItems->sum('product_views'),
+                'product_visitors' => $previousItems->sum('product_visitors'),
+                'average_basket_size' => $previousItems->sum('gross_orders') ? $previousItems->sum('gross_sales') / $previousItems->sum('gross_orders') : 0,
+                'average_selling_price' => $previousItems->sum('gross_units_sold') ? $previousItems->sum('gross_sales') / $previousItems->sum('gross_units_sold') : 0,
+                'conversion' => $previousItems->sum('product_views') ? ($previousItems->sum('gross_units_sold') / $previousItems->sum('product_views')) * 100 : 0,
+            ];
+
+            $changes = [];
+            foreach ($currentTotals as $key => $currentValue) {
+                $previousValue = $previousTotals[$key];
+                $changes[$key] = $previousValue > 0 ? (($currentValue - $previousValue) / $previousValue) * 100 : 0;
+            }
+
+            // Format conversion and changes as percentages
+            $currentTotals['conversion'] = number_format($currentTotals['conversion'], 2) . '%';
+            $previousTotals['conversion'] = number_format($previousTotals['conversion'], 2) . '%';
+            $changes['conversion'] = number_format($changes['conversion'], 2) . '%';
+
+            // Prepare group data with totals and changes
             $groupData = [
-                'group_id' => $group->id,
-                'group_name' => $group->name,
-                'total_gross_sales' => $totalGrossSales,
-                'total_gross_order' => $totalGrossOrders,
-                'total_gross_units_sold' => $totalGrossUnitsSold,
-                'total_product_views' => $group->products->sum('product_views'),
-                'total_product_visitors' => $group->products->sum('product_visitors'),
-                'brand_id' => $group->brand_id,
-                'average_basket_size' => $totalGrossOrders ? $totalGrossSales / $totalGrossOrders : 0,
-                'average_selling_price' => $totalGrossUnitsSold ? $totalGrossSales / $totalGrossUnitsSold : 0,
+                'group_id' => $groupId,
+                'group_name' => $items->first()->dataGroup->name ?? 'Unknown Group',
+                'gross_sales' => [
+                    'now' => $currentTotals['gross_sales'],
+                    'previous' => $previousTotals['gross_sales'],
+                    'change' => $changes['gross_sales'],
+                ],
+                'gross_orders' => [
+                    'now' => $currentTotals['gross_orders'],
+                    'previous' => $previousTotals['gross_orders'],
+                    'change' => $changes['gross_orders'],
+                ],
+                'gross_units_sold' => [
+                    'now' => $currentTotals['gross_units_sold'],
+                    'previous' => $previousTotals['gross_units_sold'],
+                    'change' => $changes['gross_units_sold'],
+                ],
+                'product_views' => [
+                    'now' => $currentTotals['product_views'],
+                    'previous' => $previousTotals['product_views'],
+                    'change' => $changes['product_views'],
+                ],
+                'product_visitors' => [
+                    'now' => $currentTotals['product_visitors'],
+                    'previous' => $previousTotals['product_visitors'],
+                    'change' => $changes['product_visitors'],
+                ],
+                'average_basket_size' => [
+                    'now' => $currentTotals['average_basket_size'],
+                    'previous' => $previousTotals['average_basket_size'],
+                    'change' => $changes['average_basket_size'],
+                ],
+                'average_selling_price' => [
+                    'now' => $currentTotals['average_selling_price'],
+                    'previous' => $previousTotals['average_selling_price'],
+                    'change' => $changes['average_selling_price'],
+                ],
+                'conversion' => [
+                    'now' => $currentTotals['conversion'],
+                    'previous' => $previousTotals['conversion'],
+                    'change' => $changes['conversion'],
+                ],
                 'details' => []
             ];
 
-            // Store processed products to avoid duplication
+            // Collect products in the group
             $processedProducts = [];
-
-            foreach ($group->products as $product) {
-                if (!in_array($product->product_id, $processedProducts)) {
-                    $historicalData = ShopeeBrandPortalShopData::where('product_id', $product->product_id)
+            foreach ($items->groupBy('product_id') as $productId => $productItems) {
+                if (!in_array($productId, $processedProducts)) {
+                    // Retrieve historical data for each product
+                    $historicalData = ShopeeBrandPortalShopData::where('product_id', $productId)
                         ->whereBetween('data_date', [$startDate, $endDate])
                         ->orderBy('data_date')
                         ->get(['data_date', 'gross_sales', 'gross_orders', 'gross_units_sold', 'product_views', 'product_visitors'])
@@ -98,81 +163,28 @@ class ShopeeBrandPortalShopDataController extends Controller
                                 'product_visitors' => $data->product_visitors,
                                 'average_basket_size' => $data->gross_orders ? $data->gross_sales / $data->gross_orders : 0,
                                 'average_selling_price' => $data->gross_units_sold ? $data->gross_sales / $data->gross_units_sold : 0,
+                                'conversion' => $data->product_views ? number_format(($data->gross_units_sold / $data->product_views) * 100, 2) . '%' : '0%',
                             ];
                         });
 
+                    // Prepare product details with historical data
                     $productDetails = [
-                        'product_id' => $product->product_id,
-                        'product_name' => $product->product_name,
+                        'product_id' => $productId,
+                        'product_name' => $productItems->first()->product_name,
                         'historical_data' => $historicalData,
                     ];
 
                     $groupData['details'][] = $productDetails;
-                    $processedProducts[] = $product->product_id;
+                    $processedProducts[] = $productId;
                 }
             }
 
-            $result[] = $groupData;
-        }
+            return $groupData;
+        })->values(); // Use values() to reset the keys
 
-        // Process ungrouped products
-        if ($ungroupedProducts->isNotEmpty()) {
-            $totalGrossSales = $ungroupedProducts->sum('gross_sales');
-            $totalGrossOrders = $ungroupedProducts->sum('gross_orders');
-            $totalGrossUnitsSold = $ungroupedProducts->sum('gross_units_sold');
-
-            $unknownGroup = [
-                'group_id' => null,
-                'group_name' => 'Unknown Group',
-                'total_gross_sales' => $totalGrossSales,
-                'total_gross_order' => $totalGrossOrders,
-                'total_gross_units_sold' => $totalGrossUnitsSold,
-                'total_product_views' => $ungroupedProducts->sum('product_views'),
-                'total_product_visitors' => $ungroupedProducts->sum('product_visitors'),
-                'brand_id' => null,
-                'average_basket_size' => $totalGrossOrders ? $totalGrossSales / $totalGrossOrders : 0,
-                'average_selling_price' => $totalGrossUnitsSold ? $totalGrossSales / $totalGrossUnitsSold : 0,
-                'details' => []
-            ];
-
-            $processedProducts = [];
-
-            foreach ($ungroupedProducts as $product) {
-                if (!in_array($product->product_id, $processedProducts)) {
-                    $historicalData = ShopeeBrandPortalShopData::where('product_id', $product->product_id)
-                        ->whereBetween('data_date', [$startDate, $endDate])
-                        ->orderBy('data_date')
-                        ->get(['data_date', 'gross_sales', 'gross_orders', 'gross_units_sold', 'product_views', 'product_visitors'])
-                        ->map(function ($data) {
-                            return [
-                                'data_date' => $data->data_date,
-                                'gross_sales' => $data->gross_sales,
-                                'gross_orders' => $data->gross_orders,
-                                'gross_units_sold' => $data->gross_units_sold,
-                                'product_views' => $data->product_views,
-                                'product_visitors' => $data->product_visitors,
-                                'average_basket_size' => $data->gross_orders ? $data->gross_sales / $data->gross_orders : 0,
-                                'average_selling_price' => $data->gross_units_sold ? $data->gross_sales / $data->gross_units_sold : 0,
-                            ];
-                        });
-
-                    $productDetails = [
-                        'product_id' => $product->product_id,
-                        'product_name' => $product->product_name,
-                        'historical_data' => $historicalData,
-                    ];
-
-                    $unknownGroup['details'][] = $productDetails;
-                    $processedProducts[] = $product->product_id;
-                }
-            }
-
-            $result[] = $unknownGroup;
-        }
-
-        return response()->json($result);
+        return response()->json($groupedResults);
     }
-
+    
     public function getSummary(Request $request)
     {
         // Get the start and end dates from the request, default to the last month

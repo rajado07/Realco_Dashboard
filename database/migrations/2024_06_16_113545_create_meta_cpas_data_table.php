@@ -22,6 +22,8 @@ return new class extends Migration
             $table->integer('purchases_with_shared_items')->nullable();
             $table->integer('purchases_conversion_value_for_shared_items_only')->nullable();
             $table->integer('impressions')->nullable();
+
+            $table->double('return_on_ads_spend')->nullable();
             
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');

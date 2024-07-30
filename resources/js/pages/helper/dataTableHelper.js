@@ -75,6 +75,35 @@ function formatSchedule(schedule, locale = 'en-US') {
   }
 }
 
+
+function formatCurrencyWithUnits(value) {
+  let unit = '';
+  if (value >= 1e12) {
+    value = (value / 1e12).toFixed(2);
+    unit = 'T';
+  } else if (value >= 1e9) {
+    value = (value / 1e9).toFixed(2);
+    unit = 'B';
+  } else if (value >= 1e6) {
+    value = (value / 1e6).toFixed(2);
+    unit = 'M';
+  } else if (value >= 1e3) {
+    value = (value / 1e3).toFixed(2);
+    unit = 'K';
+  }
+  return { value, unit };
+}
+
+function formatNumber(value) {
+  // Memformat angka dengan pemisah ribuan dan dua digit desimal jika ada nilai desimal
+  const options = value % 1 !== 0 ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : {};
+  return new Intl.NumberFormat('en-US', options).format(value);
+}
+
+function formatFloat(number) {
+  return number.toFixed(2);
+}
+
 function currency(data) {
   const formattedCurrency = new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -82,34 +111,31 @@ function currency(data) {
     minimumFractionDigits: 0 // Sesuaikan desimal sesuai kebutuhan
   }).format(data);
 
-  return `<span class="badge bg-success rounded-pill">${formattedCurrency}</span>`;
+  // Gunakan format mata uang IDR dengan K, M, B, T
+  const { value, unit } = formatCurrencyWithUnits(data);
+
+  return `<span class="badge bg-success rounded-pill">${formattedCurrency} ${unit}</span>`;
 }
 
-function columnWithChangePercentage(data, isCurrency = false) {
+function columnWitheNowPreviousChange(data, isCurrency = false, showChange = true) {
   const now = data.now;
   const change = data.change;
-  const badgeColor = change >= 0 ? 'bg-success' : 'bg-danger';
-  const changeSymbol = change >= 0 ? '+' : '';
+  let badgeColor = 'bg-secondary'; // Default color for no change
+  let changeSymbol = '';
 
-  // Fungsi untuk format mata uang IDR dengan K, M, B, T
-  function formatCurrency(value) {
-    if (value >= 1e12) return (value / 1e12).toFixed(2) + 'T';
-    if (value >= 1e9) return (value / 1e9).toFixed(2) + 'B';
-    if (value >= 1e6) return (value / 1e6).toFixed(2) + 'M';
-    if (value >= 1e3) return (value / 1e3).toFixed(2) + 'K';
-    return value.toFixed(2);
-  }
-
-  // Fungsi untuk memastikan angka memiliki dua digit di belakang koma
-  function formatNumber(value) {
-    return parseFloat(value).toFixed(2);
+  if (change > 0) {
+    badgeColor = 'bg-success';
+    changeSymbol = '+';
+  } else if (change < 0) {
+    badgeColor = 'bg-danger';
   }
 
   // Memformat nilai sekarang berdasarkan apakah ini mata uang atau tidak
   let formattedNow = '';
   if (typeof now === 'number') {
     if (isCurrency) {
-      formattedNow = formatCurrency(now);
+      const { value, unit } = formatCurrencyWithUnits(now);
+      formattedNow = `${value} ${unit}`;
     } else {
       formattedNow = formatNumber(now);
     }
@@ -117,11 +143,49 @@ function columnWithChangePercentage(data, isCurrency = false) {
     formattedNow = now;
   }
 
+  // Jika tidak ingin menampilkan perubahan persentase, kembalikan hanya nilai sekarang
+  if (!showChange) {
+    return `<span>${formattedNow}</span>`;
+  }
+
   return `
-      <span class="badge ${badgeColor}">${formattedNow}</span>
-      <span>${changeSymbol}${change.toFixed(2)}%</span>
+      <span>${formattedNow}</span>
+      <span class="badge ${badgeColor}">${changeSymbol}${change.toFixed(2)}%</span>
   `;
 }
+
+function columnSummary(data, type) {
+  let formattedNow = '';
+  let badgeColor = 'bg-secondary'; // Default color for no change
+  
+  switch (type) {
+    case 'percentage':
+      // Memastikan data adalah string dengan simbol '%'
+      const percentageValue = parseFloat(data);
+      formattedNow = data;
+      if (percentageValue > 0) {
+        badgeColor = 'bg-success';
+      } else if (percentageValue < 0) {
+        badgeColor = 'bg-danger';
+      }
+      return `<span class="badge ${badgeColor}">${formattedNow}</span>`;
+    case 'integer':
+      formattedNow = formatNumber(data);
+      break;
+    case 'float':
+      formattedNow = formatFloat(data);
+      break;
+    case 'currency':
+      const { value, unit } = formatCurrencyWithUnits(data);
+      formattedNow = `${value} ${unit}`;
+      break;
+    default:
+      formattedNow = data; // Default behavior jika tipe tidak dikenali
+  }
+
+  return `<span>${formattedNow}</span>`;
+}
+
 
 function checkAll() {
   $(document).on('change', '#checkAll', function () {
@@ -173,7 +237,8 @@ export default {
   translateStatusRawData,
   translateBrand,
   translateMarketPlace,
-  columnWithChangePercentage,
+  columnWitheNowPreviousChange,
+  columnSummary,
   shortenText,
   formatSchedule,
   checkAll,

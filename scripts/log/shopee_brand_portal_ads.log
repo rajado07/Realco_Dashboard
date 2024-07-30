@@ -347,3 +347,57 @@ INFO:root:ID : 33 , Type : shopee_brand_portal_ads , Link : https://brandportal.
 INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
 INFO:root:ID : 32 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 2
 INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+INFO:root:ID : 33 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 9
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir
+ERROR:root:Terjadi kesalahan: Message: 
+Stacktrace:
+#0 0x55d915db36aa <unknown>
+#1 0x55d915a960dc <unknown>
+#2 0x55d915ae2931 <unknown>
+#3 0x55d915ae2a21 <unknown>
+#4 0x55d915b27234 <unknown>
+#5 0x55d915b0589d <unknown>
+#6 0x55d915b245c3 <unknown>
+#7 0x55d915b05613 <unknown>
+#8 0x55d915ad54f7 <unknown>
+#9 0x55d915ad5e4e <unknown>
+#10 0x55d915d7987b <unknown>
+#11 0x55d915d7d921 <unknown>
+#12 0x55d915d6536e <unknown>
+#13 0x55d915d7e482 <unknown>
+#14 0x55d915d49ccf <unknown>
+#15 0x55d915da30a8 <unknown>
+#16 0x55d915da3280 <unknown>
+#17 0x55d915db27dc <unknown>
+#18 0x7f5661bf7ac3 <unknown>
+
+Traceback (most recent call last):
+  File "/home/rajab/laravel/myproject/realco_dashboard/scripts/shopee_brand_portal_ads.py", line 60, in <module>
+    refresh = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Refresh')]")))
+  File "/home/rajab/.local/lib/python3.10/site-packages/selenium/webdriver/support/wait.py", line 95, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+#0 0x55d915db36aa <unknown>
+#1 0x55d915a960dc <unknown>
+#2 0x55d915ae2931 <unknown>
+#3 0x55d915ae2a21 <unknown>
+#4 0x55d915b27234 <unknown>
+#5 0x55d915b0589d <unknown>
+#6 0x55d915b245c3 <unknown>
+#7 0x55d915b05613 <unknown>
+#8 0x55d915ad54f7 <unknown>
+#9 0x55d915ad5e4e <unknown>
+#10 0x55d915d7987b <unknown>
+#11 0x55d915d7d921 <unknown>
+#12 0x55d915d6536e <unknown>
+#13 0x55d915d7e482 <unknown>
+#14 0x55d915d49ccf <unknown>
+#15 0x55d915da30a8 <unknown>
+#16 0x55d915da3280 <unknown>
+#17 0x55d915db27dc <unknown>
+#18 0x7f5661bf7ac3 <unknown>
+
+
+INFO:root:ID : 33 , Type : shopee_brand_portal_ads , Link : https://brandportal.shopee.com/seller/mkt/my-ads-report/overall , Untuk Data Tanggal =  Year: 2024, Month: Jun, Day: 9
+INFO:root:Tanggal sudah terlewat minimal satu hari, melakukan export data 30 hari terakhir

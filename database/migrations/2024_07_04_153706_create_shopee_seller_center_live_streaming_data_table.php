@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('avg_watch_time')->nullable();
             $table->integer('orders')->nullable();
             $table->bigInteger('sales')->nullable();
+
+            $table->double('sales_per_hour')->nullable();
             
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');

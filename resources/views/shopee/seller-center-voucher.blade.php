@@ -25,11 +25,11 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Shopee</a></li>
-                            <li class="breadcrumb-item">Brand Portal</a></li>
-                            <li class="breadcrumb-item active">Shop</a></li>
+                            <li class="breadcrumb-item">Seller Center</a></li>
+                            <li class="breadcrumb-item active">Voucher</a></li>
                         </ol>
                     </div>
-                    <h4 class="page-title">Shopee Portal Shop</h4>
+                    <h4 class="page-title">Shopee Seller Center Voucher</h4>
                 </div>
             </div>
         </div>
@@ -67,16 +67,16 @@
         
 
          <!-- start dashboar card -->
-        <div class="row row-cols-1 row-cols-xxl-5 row-cols-lg-3 row-cols-md-2">
+        <div class="row">
             <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Gross Sales">Gross Sales</h5>
-                                <h3 class="mb-1" id="gross-sales">0</h3>
+                                <h5 class="text-muted fw-normal mb-2" title="Claim">Claim</h5>
+                                <h3 class="mb-1" id="claim">0</h3>
                                 <div>
-                                    <span id="gross-sales-change-percentage" class="badge bg-success me-1">
+                                    <span id="claim-change-percentage" class="badge bg-success me-1">
                                         <i class="ri-arrow-up-line"></i> 1 %
                                     </span>
                                 </div>
@@ -95,10 +95,32 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Gross Order">Gross Order</h5>
-                                <h3 class="mb-1" id="gross-order">0</h3>
+                                <h5 class="text-muted fw-normal mb-2" title="Sales">Sales</h5>
+                                <h3 class="mb-1" id="sales">0</h3>
                                 <div>
-                                    <span id="gross-order-change-percentage" class="badge bg-success me-1">
+                                    <span id="sales-change-percentage" class="badge bg-success me-1">
+                                        <i class="ri-arrow-up-line"></i> 1 %
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <!-- Optional icon or image can be placed here if needed -->
+                                <i class="ri-money-dollar-circle-line text-light" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="text-muted fw-normal mb-2" title="Cost">Cost</h5>
+                                <h3 class="mb-1" id="cost">0</h3>
+                                <div>
+                                    <span id="cost-change-percentage" class="badge bg-success me-1">
                                         <i class="ri-arrow-up-line"></i> 1 %
                                     </span>
                                 </div>
@@ -117,10 +139,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Gross Unit Sold">Gross Unit Sold</h5>
-                                <h3 class="mb-1" id="gross-unit-sold">0</h3>
+                                <h5 class="text-muted fw-normal mb-2" title="Usage Rate">Usage Rate</h5>
+                                <h3 class="mb-1" id="usage-rate">0</h3>
                                 <div>
-                                    <span id="gross-units-sold-change-percentage" class="badge bg-success me-1">
+                                    <span id="usage-rate-change-percentage" class="badge bg-success me-1">
                                         <i class="ri-arrow-up-line"></i> 1 %
                                     </span>
                                 </div>
@@ -139,10 +161,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Average Basket Size">Average Basket Size</h5>
-                                <h3 class="mb-1" id="average-basket-size">0</h3>
+                                <h5 class="text-muted fw-normal mb-2" title="Return On Investment">Return On Investment</h5>
+                                <h3 class="mb-1" id="return-on-investment">0</h3>
                                 <div>
-                                    <span id="average-basket-size-change-percentage" class="badge bg-success me-1">
+                                    <span id="return-on-investment-change-percentage" class="badge bg-success me-1">
                                         <i class="ri-arrow-up-line"></i> 1 %
                                     </span>
                                 </div>
@@ -155,28 +177,6 @@
                     </div> 
                 </div> 
             </div>
-            
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="text-muted fw-normal mb-2" title="Average Selling Price">Average Selling Price</h5>
-                                <h3 class="mb-1" id="average-selling-price">0</h3>
-                                <div>
-                                    <span id="average-selling-price-change-percentage" class="badge bg-success me-1">
-                                        <i class="ri-arrow-up-line"></i> 1 %
-                                    </span>
-                                </div>
-                            </div>
-                            <div>
-                                <!-- Optional icon or image can be placed here if needed -->
-                                <i class="ri-coupon-line text-light" style="font-size: 3rem;"></i>
-                            </div>
-                        </div>
-                    </div> 
-                </div> 
-            </div> 
 
         </div> <!-- end row -->
          <!-- End dashboar card -->

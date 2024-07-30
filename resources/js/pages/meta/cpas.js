@@ -11,7 +11,7 @@ const csrfToken = $('meta[name="csrf-token"]').attr('content');
 $(document).ready(() => {
     let dataTableInstance;
 
-    function initializeOrUpdateDataTable(startDate, endDate, brandId) {
+    function initializeOrUpdateDataTable(startDate, endDate, brandId, marketPlaceId) {
         if (dataTableInstance) {
             dataTableInstance.destroy();
             $('#basic-datatable').empty();
@@ -25,9 +25,14 @@ $(document).ready(() => {
                     if (startDate) d.startDate = startDate;
                     if (endDate) d.endDate = endDate;
                     if (brandId) d.brand_id = brandId;
+                    if (marketPlaceId) d.market_place_id = marketPlaceId;
                 },
                 dataSrc: function (json) {
-                    return groupDataByAdSetId(json);
+                    console.log("Received data:", json); // Log received data for debugging
+                    return json; // Data is already grouped and formatted from the backend
+                },
+                error: function (xhr, error, code) {
+                    console.error("AJAX error:", error); // Log AJAX errors
                 }
             },
             stateSave: true,
@@ -35,53 +40,26 @@ $(document).ready(() => {
             deferLoading: true,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             columns: [
-                { title: "ID", data: "ad_set_id" },
-                { title: "Ad Set Name", data: "ad_set_name" },
-                { title: "Amount Spent", data: "total_amount_spent" },
-                { title: "Content Views", data: "total_content_views" },
-                { title: "Adds to Cart", data: "total_adds_to_cart" },
-                { title: "Purchases", data: "total_purchases" },
-                { title: "Purchase Value Conversion", data: "total_purchase_value" },
-                { title: "Total Impressions", data: "total_impressions" }, // New column for Total Impressions
-                { title: "Brand", data: "brand_id" },
-                { title: "Marketplace", data: "market_place_id" },
-                { title: "Action", defaultContent: '' }
+                { title: "Brand", data: "data_group_name" },
+                { title: "Amount Spent", data: "amount_spent" },
+                { title: "Content Views", data: "content_views_with_shared_items" },
+                { title: "Adds to Cart", data: "adds_to_cart_with_shared_items" },
+                { title: "Purchases", data: "purchases_with_shared_items" },
+                { title: "Purchase Value Conversion", data: "purchases_conversion_value_for_shared_items_only" },
+                { title: "Total Impressions", data: "impressions" },
+                { title: "Return on Ad Spend", data: "return_on_ad_spend" }
             ],
             columnDefs: [
                 {
-                    targets: [2, 6],
+                    targets: [2, 3, 4,6, 7],
                     render: function (data, type, row) {
-                        return type === 'display' ? dataTableHelper.currency(data) : data;
+                        return dataTableHelper.columnWitheNowPreviousChange(data,);
                     }
                 },
                 {
-                    targets: 8,
+                    targets: [1 ,5],
                     render: function (data, type, row) {
-                        return type === 'display' ? dataTableHelper.translateBrand(data) : data;
-                    }
-                },
-                {
-                    targets: 9,
-                    render: function (data, type, row) {
-                        return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
-                    }
-                },
-                {
-                    targets: 10,
-                    orderable: false,
-                    searchable: false,
-                    render: function (data, type, row) {
-                        return `
-                            <div class="dropdown">
-                                <a class="text-reset fs-16 px-1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ri-settings-4-line"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-animated">
-                                    <li><a class="dropdown-item action-edit" data-id="${row.ad_set_id}" data-bs-toggle="modal" data-bs-target="#editModal" href="#" onclick="getAccounts('editModal');"><i class="ri-settings-3-line"></i> Edit</a></li>
-                                    <li><a class="dropdown-item action-delete" data-id="${row.ad_set_id}" href="#"><i class="ri-delete-bin-2-line"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        `;
+                        return dataTableHelper.columnWitheNowPreviousChange(data,true);
                     }
                 }
             ],
@@ -89,7 +67,7 @@ $(document).ready(() => {
                 loadingRecords: ` <div class="spinner-border avatar-sm text-secondary m-2" role="status"></div>`,
                 paginate: {
                     previous: "<i class='ri-arrow-left-s-line'></i>",
-                    next: "<i class='ri-arrow-right-s-line'></i>"
+                    next: "<i='ri-arrow-right-s-line'></i>"
                 }
             },
             drawCallback: function () {
@@ -97,8 +75,7 @@ $(document).ready(() => {
                 initialize.toolTip();
             },
             rowCallback: function (row, data) {
-                // Ensure the row is always expandable
-                $(row).find('td:not(:last-child)').off('click').on('click', function () {
+                $(row).off('click').on('click', function () {
                     let tr = $(this).closest('tr');
                     let row = dataTableInstance.row(tr);
 
@@ -106,7 +83,7 @@ $(document).ready(() => {
                         row.child.hide();
                         tr.removeClass('shown');
                     } else {
-                        row.child(formatGroup(data.details)).show();
+                        row.child(formatDetails(data.details)).show();
                         tr.addClass('shown');
                     }
                 });
@@ -114,36 +91,7 @@ $(document).ready(() => {
         });
     }
 
-    function groupDataByAdSetId(data) {
-        const grouped = {};
-        data.forEach(item => {
-            if (!grouped[item.ad_set_id]) {
-                grouped[item.ad_set_id] = {
-                    ad_set_id: item.ad_set_id,
-                    ad_set_name: item.ad_set_name,
-                    total_amount_spent: 0,
-                    total_content_views: 0,
-                    total_adds_to_cart: 0,
-                    total_purchases: 0,
-                    total_purchase_value: 0,
-                    total_impressions: 0, // Initialize total impressions
-                    brand_id: item.brand_id,
-                    market_place_id: item.market_place_id,
-                    details: []
-                };
-            }
-            grouped[item.ad_set_id].total_amount_spent += item.amount_spent;
-            grouped[item.ad_set_id].total_content_views += item.content_views_with_shared_items;
-            grouped[item.ad_set_id].total_adds_to_cart += item.adds_to_cart_with_shared_items;
-            grouped[item.ad_set_id].total_purchases += item.purchases_with_shared_items;
-            grouped[item.ad_set_id].total_purchase_value += item.purchases_conversion_value_for_shared_items_only;
-            grouped[item.ad_set_id].total_impressions += item.impressions; // Aggregate impressions
-            grouped[item.ad_set_id].details.push(item);
-        });
-        return Object.values(grouped);
-    }
-
-    function formatGroup(details) {
+    function formatDetails(details) {
         let tableId = 'nested-table-' + Math.random().toString(36).substr(2, 9);
         let table = `<table id="${tableId}" class="table table-sm"><thead><tr>`;
 
@@ -200,11 +148,31 @@ $(document).ready(() => {
             .catch(error => console.error('Error loading brands:', error));
     }
 
-    function fetchSummaryData(startDate, endDate, brandId) {
+    function fetchMarketPlaces() {
+        fetch('/market-place/read')
+            .then(response => response.json())
+            .then(data => {
+                const selectMarketPlace = document.getElementById('selectedMarketPlace');
+                selectMarketPlace.innerHTML = '';
+                const defaultOption = new Option('All Market Places', '0', true, true);
+                selectMarketPlace.add(defaultOption);
+
+                data.forEach(marketPlace => {
+                    const option = new Option(marketPlace.name, marketPlace.id);
+                    selectMarketPlace.add(option);
+                });
+
+                $(selectMarketPlace).trigger('change');
+            })
+            .catch(error => console.error('Error loading Market Places:', error));
+    }
+
+    function fetchSummaryData(startDate, endDate, brandId, marketPlaceId) {
         const data = {};
         if (startDate) data.start_date = startDate;
         if (endDate) data.end_date = endDate;
         if (brandId) data.brand_id = brandId;
+        if (marketPlaceId) data.market_place_id = marketPlaceId;
 
         $.ajax({
             url: '/meta/cpas/summary',
@@ -235,6 +203,7 @@ $(document).ready(() => {
         $('#btn-refresh').click(function () {
             var selectedDate = $('#selectedDate').text();
             var selectedBrand = $('#selectedBrand').val();
+            var selectedMarketPlace = $('#selectedMarketPlace').val();
 
             const dates = selectedDate.split(' - ');
             let startDate, endDate;
@@ -248,9 +217,10 @@ $(document).ready(() => {
 
             console.log(`Nilai input berubah menjadi: ${selectedDate}`);
             console.log(`Selected Brand: ${selectedBrand}`);
+            console.log(`Selected Market Place: ${selectedMarketPlace}`);
 
-            fetchSummaryData(startDate, endDate, selectedBrand);
-            initializeOrUpdateDataTable(startDate, endDate, selectedBrand);
+            fetchSummaryData(startDate, endDate, selectedBrand, selectedMarketPlace);
+            initializeOrUpdateDataTable(startDate, endDate, selectedBrand, selectedMarketPlace);
 
             if (!startDate || !endDate) {
                 console.log('Tanggal tidak tersedia, menggunakan hanya brand untuk filter.');
@@ -274,6 +244,7 @@ $(document).ready(() => {
     function init() {
         fetchLatestRetrievedData();
         fetchBrands();
+        fetchMarketPlaces();
         fetchSummaryData();
 
         // Data Table
@@ -283,3 +254,4 @@ $(document).ready(() => {
 
     init();
 });
+

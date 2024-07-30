@@ -35,6 +35,7 @@ class ShopeeSellerCenterVoucherDataController extends Controller
                 'total_buyers' => $items->sum('buyers'),
                 'average_sales_per_buyer' => $items->avg('sales_per_buyer'),
                 'average_roi' => $items->avg('roi'),
+                'average_usage_rate' => $items->avg('usage_rate'),
                 'brand_id' => $brandId,
                 'details' => $items->map(function ($item) {
                     // Menyertakan semua data yang relevan untuk setiap voucher dalam detail
@@ -48,6 +49,7 @@ class ShopeeSellerCenterVoucherDataController extends Controller
                         'claim' => $item->claim,
                         'order' => $item->order,
                         'sales' => $item->sales,
+                        'usage_rate' => $item->usage_rate,
                         'cost' => $item->cost,
                         'units_sold' => $item->units_sold,
                         'buyers' => $item->buyers,
@@ -60,5 +62,63 @@ class ShopeeSellerCenterVoucherDataController extends Controller
         })->values()->all();
 
         return response()->json($vouchers);
+    }
+
+
+    public function summary(Request $request)
+    {
+        $startDate = Carbon::parse($request->input('start_date', now()->subMonth()->toDateString()));
+        $endDate = Carbon::parse($request->input('end_date', now()->toDateString()));
+        $brandId = $request->input('brand_id');
+
+        $interval = $startDate->diffInDays($endDate) + 1;
+        $previousStartDate = $startDate->copy()->subDays($interval);
+        $previousEndDate = $endDate->copy()->subDays($interval);
+
+        $currentData = $this->fetchData($startDate, $endDate, $brandId);
+        $previousData = $this->fetchData($previousStartDate, $previousEndDate, $brandId);
+
+        $changes = $this->calculatePercentageChanges($currentData, $previousData);
+
+        $summary = [
+            'current' => $currentData,
+            'previous' => $previousData,
+            'changes' => $changes,
+            'start_date' => $startDate->toDateString(),
+            'end_date' => $endDate->toDateString(),
+            'brand_id' => $brandId
+        ];
+
+        return response()->json($summary);
+    }
+
+    private function fetchData($startDate, $endDate, $brandId)
+    {
+        $query = ShopeeSellerCenterVoucherData::selectRaw(
+            'SUM(claim) as total_claims,
+             SUM(sales) as total_sales,
+             SUM(cost) as total_costs,
+             AVG(usage_rate) as average_usage_rate,
+             AVG(roi) as average_roi'
+        )->whereBetween('data_date', [$startDate->toDateString(), $endDate->toDateString()]);
+
+        if ($brandId && $brandId != 0) {
+            $query->where('brand_id', $brandId);
+        }
+
+        return $query->first();
+    }
+
+    private function calculatePercentageChanges($currentData, $previousData)
+    {
+        $changes = [];
+        foreach ($currentData->toArray() as $key => $value) {
+            if (strpos($key, 'total_') === 0 || $key === 'average_usage_rate' || $key === 'average_roi') {
+                $prevValue = $previousData->$key ?? 0;
+                $change = $prevValue == 0 ? null : round((($value - $prevValue) / $prevValue) * 100, 2);
+                $changes[$key . '_change_percentage'] = $change;
+            }
+        }
+        return $changes;
     }
 }

@@ -74,6 +74,9 @@
                 <div class="collapse" id="sidebarMultiLevel">
                     <ul class="side-nav-second-level">
                         <li class="side-nav-item">
+                            <a href="{{ route('second', ['shopee', 'summary']) }}"  aria-controls="sidebarSecondLevel">
+                                <span> Summary </span>
+                            </a>
                             <a data-bs-toggle="collapse" href="#sidebarBrandPortal" aria-expanded="false" aria-controls="sidebarSecondLevel">
                                 <span> Brand Portal </span>
                                 <span class="menu-arrow"></span>

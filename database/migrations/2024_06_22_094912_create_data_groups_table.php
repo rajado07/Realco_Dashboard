@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('data_groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('type');
             $table->longText('id_mapping')->nullable();
             $table->text('description')->nullable();
             $table->unsignedBigInteger('brand_id');

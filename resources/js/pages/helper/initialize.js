@@ -127,6 +127,33 @@ export default (function ($) {
     window.requestAnimationFrame(step);
   }
 
+  function animateCounterDuration($element, endValue, duration = 1000) {
+    if (!$element.length) return;
+
+    let startValue = parseFloat($element.text().replace(/[^0-9.-]+/g, '') || '0');
+    const startTimestamp = performance.now();
+
+    const convertSecondsToHHMM = (seconds) => {
+      const totalHours = Math.floor(seconds / 3600);
+      const totalMinutes = Math.floor((seconds % 3600) / 60);
+      return `${totalHours}H ${totalMinutes}M`;
+    };
+
+    const step = (currentTimestamp) => {
+      const progress = Math.min((currentTimestamp - startTimestamp) / duration, 1);
+      const currentValue = progress * (endValue - startValue) + startValue;
+      const displayValue = convertSecondsToHHMM(currentValue);
+
+      $element.text(displayValue);
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+
   function updatePercentageChange(element, changePercentage, startDate, endDate) {
     element.empty(); // Clear any existing content
 
@@ -176,13 +203,44 @@ export default (function ($) {
     element.after(intervalElement);
   }
 
+  function updatePercentageChangeLiveSteraming(element, changePercentage) {
+    element.empty(); // Clear any existing content
+
+    // Set class and icon based on the value
+    let iconHtml = '';
+    if (changePercentage > 0) {
+        element.removeClass('bg-danger bg-secondary').addClass('bg-success');
+        iconHtml = '<i class="ri-arrow-up-line"></i> ';
+    } else if (changePercentage < 0) {
+        element.removeClass('bg-success bg-secondary').addClass('bg-danger');
+        iconHtml = '<i class="ri-arrow-down-line"></i> ';
+    } else {
+        element.removeClass('bg-success bg-danger').addClass('bg-secondary');
+    }
+
+    // Append the icon and percentage change
+    element.html(iconHtml + `${Math.abs(changePercentage).toFixed(2)}%`);
+
+    // Remove any existing interval description element
+    element.next('.interval-description').remove();
+
+    // Create a new span element for the average change description
+    const intervalElement = $('<span>').addClass('text-muted interval-description').text('Average change');
+
+    // Append the average change description span after the main element
+    element.after(intervalElement);
+}
+
+
   const initialise = {
     dateTimePicker,
     toolTip,
     toast,
     animateCounter,
+    animateCounterDuration,
     formatDate,
     updatePercentageChange,
+    updatePercentageChangeLiveSteraming,
 
 
   };

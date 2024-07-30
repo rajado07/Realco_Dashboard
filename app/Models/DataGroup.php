@@ -15,4 +15,9 @@ class DataGroup extends Model
     {
         return $this->hasMany(ShopeeBrandPortalShopData::class, 'data_group_id');
     }
+
+    public function shopeeBrandPortalShopData()
+    {
+        return $this->hasMany(ShopeeBrandPortalShopData::class, 'data_group_id');
+    }
 }

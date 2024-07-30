@@ -28,7 +28,10 @@ $(document).ready(() => {
                     if (endDate) d.endDate = endDate;
                     if (brandId) d.brand_id = brandId;
                 },
-                dataSrc: '',
+                dataSrc: function (json) {
+                    summaryData(json);
+                    return json;
+                },
             },
             stateSave: true,
             pageLength: 25,
@@ -42,31 +45,38 @@ $(document).ready(() => {
                 { title: "Average Watch Time", data: "avg_watch_time" },
                 { title: "Orders", data: "orders" },
                 { title: "Sales", data: "sales" },
+                { title: "GMV / Hour", data: "sales_per_hour" },
                 { title: "Brand", data: "brand_id" },
                 { title: "Action", defaultContent: '' }
             ],
             columnDefs: [
                 {
-                    targets: [1, 2, 3, 4, 5], // duration, unique viewers, peak viewers, avg watch time, orders, sales
+                    targets: [1, 2, 5],
                     render: function (data, type, row) {
-                        return dataTableHelper.columnWithChangePercentage(data);
+                        return dataTableHelper.columnWitheNowPreviousChange(data);
                     }
                 },
                 {
-                    targets: 6, // duration, unique viewers, peak viewers, avg watch time, orders, sales
+                    targets: [3, 4],
                     render: function (data, type, row) {
-                        return dataTableHelper.columnWithChangePercentage(data,true);
+                        return dataTableHelper.columnWitheNowPreviousChange(data, false, false);
+                    }
+                },
+                {
+                    targets: [6, 7],
+                    render: function (data, type, row) {
+                        return dataTableHelper.columnWitheNowPreviousChange(data, true);
                     }
                 },
 
                 {
-                    targets: 7, // brand_id
+                    targets: 8,
                     render: function (data, type, row) {
                         return type === 'display' ? dataTableHelper.translateBrand(data) : data;
                     }
                 },
                 {
-                    targets: 8, // Action
+                    targets: 9, // Action
                     orderable: false,
                     searchable: false,
                     render: function (data, type, row) {
@@ -168,36 +178,83 @@ $(document).ready(() => {
             .catch(error => console.error('Error loading brands:', error));
     }
 
-    function fetchSummaryData(startDate, endDate, brandId) {
-        const data = {};
-        if (startDate) data.start_date = startDate;
-        if (endDate) data.end_date = endDate;
-        if (brandId) data.brand_id = brandId;
-
-        $.ajax({
-            url: '/shopee/brand-portal-ads/summary',
-            type: 'GET',
-            data: data,
-            success: function (response) {
-                initialize.animateCounter($('#impressions'), response.current.total_impressions);
-                initialize.animateCounter($('#orders'), response.current.total_orders);
-                initialize.animateCounter($('#gross-sales'), response.current.total_gross_sales, true);
-                initialize.animateCounter($('#ads-spends'), response.current.total_ads_spend, true);
-                initialize.animateCounter($('#units-sold'), response.current.total_units_sold);
-                initialize.animateCounter($('#return-on-ads-spend'), response.current.average_roas, false, 1000, 2);
-
-                initialize.updatePercentageChange($('#impressions-change-percentage'), response.changes.total_impressions_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#orders-change-percentage'), response.changes.total_orders_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#gross-sales-change-percentage'), response.changes.total_gross_sales_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#ads-spends-change-percentage'), response.changes.total_ads_spend_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#units-sold-change-percentage'), response.changes.total_units_sold_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#return-on-ads-spend-change-percentage'), response.changes.average_roas_change, startDate, endDate);
-            },
-            error: function (error) {
-                console.error('Error fetching summary data:', error);
-            }
+    function summaryData(data) {
+        let totalDurationSeconds = 0;
+        let totalUniqueViewers = 0;
+        let totalOrders = 0;
+        let totalSales = 0;
+        let totalSalesPerHour = 0;
+        let totalDurationChange = 0;
+        let totalUniqueViewersChange = 0;
+        let totalOrdersChange = 0;
+        let totalSalesChange = 0;
+        let totalSalesPerHourChange = 0;
+        let itemCount = data.length;
+    
+        data.forEach(item => {
+            // Convert duration to seconds
+            let [hours, minutes] = item.duration.now.split('H').map(part => part.trim());
+            minutes = minutes.split('M')[0].trim();
+            let durationSeconds = (parseInt(hours) * 3600) + (parseInt(minutes) * 60);
+            totalDurationSeconds += durationSeconds;
+    
+            totalDurationChange += item.duration.change;
+            totalUniqueViewers += item.unique_viewers.now;
+            totalUniqueViewersChange += item.unique_viewers.change;
+            totalOrders += item.orders.now;
+            totalOrdersChange += item.orders.change;
+            totalSales += item.sales.now;
+            totalSalesChange += item.sales.change;
+            totalSalesPerHour += item.sales_per_hour.now;
+            totalSalesPerHourChange += item.sales_per_hour.change;
         });
+    
+        // Calculate averages
+        let averageDurationChange = totalDurationChange / itemCount;
+        let averageUniqueViewersChange = totalUniqueViewersChange / itemCount;
+        let averageOrdersChange = totalOrdersChange / itemCount;
+        let averageSalesChange = totalSalesChange / itemCount;
+        let averageSalesPerHourChange = totalSalesPerHourChange / itemCount;
+    
+        // Convert total duration seconds back to HH MM format
+        let totalHours = Math.floor(totalDurationSeconds / 3600);
+        let totalMinutes = Math.floor((totalDurationSeconds % 3600) / 60);
+        let totalDuration = `${totalHours}H ${totalMinutes}M`;
+    
+        // Create summary object
+        let summary = {
+            totalDuration,
+            totalDurationSeconds,  // Added to include total duration in seconds
+            totalUniqueViewers,
+            totalOrders,
+            totalSales,
+            totalSalesPerHour,
+            averageDurationChange,
+            averageUniqueViewersChange,
+            averageOrdersChange,
+            averageSalesChange,
+            averageSalesPerHourChange
+        };
+    
+        // If you have animated counters, you can use the initialize.animateCounter method
+        initialize.animateCounterDuration($('#duration'), totalDurationSeconds);
+        initialize.animateCounter($('#sales'), totalSales, true);
+        initialize.animateCounter($('#sales-per-hour'), totalSalesPerHour, true);
+        initialize.animateCounter($('#viewers'), totalUniqueViewers);
+        initialize.animateCounter($('#order'), totalOrders);
+
+        initialize.updatePercentageChangeLiveSteraming($('#duration-change-percentage'), averageDurationChange);
+        initialize.updatePercentageChangeLiveSteraming($('#sales-change-percentage'), averageDurationChange);
+        initialize.updatePercentageChangeLiveSteraming($('#sales-per-hour-change-percentage'), averageSalesPerHourChange);
+        initialize.updatePercentageChangeLiveSteraming($('#viewers-change-percentage'), averageUniqueViewersChange);
+        initialize.updatePercentageChangeLiveSteraming($('#order-change-percentage'), averageOrdersChange);
+
+
+
+        console.log(summary)
     }
+    
+
 
     function initializeRefreshButton() {
         $('#btn-refresh').click(function () {
@@ -217,7 +274,6 @@ $(document).ready(() => {
             console.log(`Nilai input berubah menjadi: ${selectedDate}`);
             console.log(`Selected Brand: ${selectedBrand}`);
 
-            fetchSummaryData(startDate, endDate, selectedBrand);
             initializeOrUpdateDataTable(startDate, endDate, selectedBrand);
 
             if (!startDate || !endDate) {
@@ -242,7 +298,6 @@ $(document).ready(() => {
     function init() {
         fetchLatestRetrievedData();
         fetchBrands();
-        fetchSummaryData();
         initializeOrUpdateDataTable();
         initializeRefreshButton();
     }
