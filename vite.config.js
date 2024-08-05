@@ -140,7 +140,33 @@ export default defineConfig({
                 'node_modules/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js',
                 'node_modules/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js',
                 'bootstrap-timepicker/js/bootstrap-timepicker.min.js',
-                'node_modules/jquery-mask-plugin/dist/jquery.mask.min.js'
+                'node_modules/jquery-mask-plugin/dist/jquery.mask.min.js',
+
+                // Meta js
+                'resources/js/pages/meta/cpas.js',
+
+                // Shopee
+                'resources/js/pages/shopee/brand-portal-ads.js',
+                'resources/js/pages/shopee/brand-portal-shop.js',
+                'resources/js/pages/shopee/seller-center-coin.js',
+                'resources/js/pages/shopee/seller-center-live-streaming.js',
+                'resources/js/pages/shopee/seller-center-voucher.js',
+                'resources/js/pages/shopee/summary.js',
+
+                 // System
+                 'resources/js/pages/system/group.js',
+                 'resources/js/pages/system/raw-data.js',
+                 'resources/js/pages/system/task-generator.js',
+                 'resources/js/pages/system/task.js',
+
+
+
+
+
+
+
+
+
             ],
             refresh: true,
         }),
