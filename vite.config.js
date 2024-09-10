@@ -154,6 +154,8 @@ export default defineConfig({
                 'resources/js/pages/shopee/summary.js',
 
                  // System
+                 'resources/js/pages/system/brand.js',
+                 'resources/js/pages/system/market-place.js',
                  'resources/js/pages/system/group.js',
                  'resources/js/pages/system/raw-data.js',
                  'resources/js/pages/system/task-generator.js',
