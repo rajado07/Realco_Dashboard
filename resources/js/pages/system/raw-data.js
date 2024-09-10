@@ -48,25 +48,25 @@ $(document).ready(() => {
                     {
                         targets: 5,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.shortenText(data) : data;
+                            return dataTableHelper.shortenText(data);
                         }
                     },
                     {
                         targets: 6,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                            return dataTableHelper.translateMarketPlace(data);
                         }
                     },
                     {
                         targets: 7,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
+                            return  dataTableHelper.translateBrand(data);
                         }
                     },
                     {
                         targets: 8,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateStatusRawData(data) : data;
+                            return dataTableHelper.translateStatusRawData(data);
                         }
                     },
                     {
@@ -299,6 +299,21 @@ $(document).ready(() => {
         });
     }
 
+    function getRawDataStatusCount() {
+        fetch('/raw-data/status-count')
+          .then(response => response.json())
+          .then(newData => {
+            // Gunakan animateCounter dengan jQuery untuk memperbarui nilai elemen
+            initialize.animateCounter($('#ready'), newData[1] || 0);
+            initialize.animateCounter($('#data_moved'), newData[2] || 0);
+            initialize.animateCounter($('#partial_moved'), newData[3] || 0);
+            initialize.animateCounter($('#partial_failed'), newData[4] || 0);
+            initialize.animateCounter($('#failed'), newData[5] || 0);
+          })
+          .catch(error => console.error('Error updating status:', error));
+      }
+
+
     // Add event listener for opening and closing details on row click
     $('#basic-datatable tbody').on('click', 'tr', function () {
         let row = dataTableInstance.row(this);
@@ -329,6 +344,7 @@ $(document).ready(() => {
         // Data Table
         initializeOrUpdateDataTable();
         periodicallyUpdateAllDataTable();
+        getRawDataStatusCount();
         getSelectedData();
 
     }

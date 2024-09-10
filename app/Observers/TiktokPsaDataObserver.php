@@ -23,7 +23,7 @@ class TiktokPsaDataObserver
             foreach ($jsonData as $dataItem) {
                 try {
                     // Check for existing data
-                    $existingData = TiktokPsaData::where('data_date', $dataItem['Date'])
+                    $existingData = TiktokPsaData::where('data_date', $dataItem['By Day'])
                         ->where('ad_group_id', $dataItem['Ad group ID'])
                         ->where('brand_id', $rawData->brand_id)
                         ->exists();
@@ -35,14 +35,14 @@ class TiktokPsaDataObserver
                     }
 
                     TiktokPsaData::create([
-                        'data_date' => $dataItem['Date'],
-                        'ad_group_name' => $dataItem['Ad Group Name'],
+                        'data_date' => $dataItem['By Day'],
+                        'ad_group_name' => $dataItem['Ad group name'],
                         'ad_group_id' => $dataItem['Ad group ID'],
-                        'ad_name' => $dataItem['Ad Name'],
+                        'ad_name' => $dataItem['Ad name'],
                         'cost' => $dataItem['Cost'],
                         'purchases' => $dataItem['Purchases (Shop)'],
                         'gross_revenue' => $dataItem['Gross revenue (Shop)'],
-                        'impressions' => $dataItem['Impression'],
+                        'impressions' => $dataItem['Impressions'],
                         'retrieved_at' => $rawData->retrieved_at,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,

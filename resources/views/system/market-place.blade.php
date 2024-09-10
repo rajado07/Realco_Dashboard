@@ -24,10 +24,10 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">System</a></li>
-                        <li class="breadcrumb-item active">Task Generator</a></li>
+                        <li class="breadcrumb-item active">Market Places</a></li>
                     </ol>
                 </div>
-                <h4 class="page-title">Task Generator</h4>
+                <h4 class="page-title">Market Places</h4>
             </div>
         </div>
     </div>
@@ -45,30 +45,11 @@
                     <form id="edit">
                         <input type="hidden" id="editRowId" name="id">
                         <div class="mb-3">
-                            <select id="selectBrand" name="brand_id" class="form-control select2"
-                                data-toggle="select2" required></select>
+                            <input class="form-control" name="name" placeholder="Enter Name" id="name" required>
                         </div>
                         <div class="mb-3">
-                            <select id="selectType" name="type" class="form-control select2"
-                                data-toggle="select2" required></select>
-                        </div>
-                        <div class="mb-3">
-                            <select id="selectMarketPlace" name="market_place_id" class="form-control select2"
-                                data-toggle="select2" required></select>
-                        </div>
-                        <div class="mb-3">
-                            <select id="editFrequency" name="frequency" class="form-control select2"
-                                data-toggle="select2">
-                                <option disabled selected>Select Frequency</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="daily">Daily</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <input id="editLink" class="form-control" name="link" placeholder="Enter Link" required>
-                        </div>
-                        <div class="mb-3">
-                            <input id="editRunAt" class="form-control" name="run_at" placeholder="Enter Time To Run">
+                            <textarea class="form-control" name="description" id="editDescription"
+                                placeholder="Descriptions" rows="3"></textarea>
                         </div>
                     </form>
                 </div>
@@ -82,7 +63,6 @@
     </div>
     <!-- End Form Modal Edit -->
 
-
     <!-- Start Form Modal Add -->
     <div id="addModal" class="modal fade">
         <div class="modal-dialog  modal-dialog-centered">
@@ -94,30 +74,11 @@
                 <div class="modal-body">
                     <form id="add">
                         <div class="mb-3">
-                            <select id="selectBrand" name="brand_id" class="form-control select2"
-                                data-toggle="select2" required></select>
+                            <input class="form-control" name="name" placeholder="Enter Name" required>
                         </div>
                         <div class="mb-3">
-                            <select id="selectType" name="type" class="form-control select2"
-                                data-toggle="select2" required></select>
-                        </div>
-                        <div class="mb-3">
-                            <select id="selectMarketPlace" name="market_place_id" class="form-control select2"
-                                data-toggle="select2" required></select>
-                        </div>
-                        <div class="mb-3">
-                            <select name="frequency" class="form-control select2"
-                                data-toggle="select2">
-                                <option disabled selected>Select Frequency</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="daily">Daily</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <input class="form-control" name="link" placeholder="Enter Link" required>
-                        </div>
-                        <div class="mb-3">
-                            <input class="form-control" name="run_at" placeholder="Enter Time To Run">
+                            <textarea class="form-control" name="description" id="addDescription"
+                                placeholder="Descriptions" rows="3"></textarea>
                         </div>
                     </form>
                 </div>
@@ -131,6 +92,7 @@
     </div>
     <!-- End Form Modal Add -->
 
+
     <!-- Start Data Table-->
     <div class="row">
         <div class="col">
@@ -139,13 +101,12 @@
                     <div class="d-flex flex-wrap gap-2 justify-content-between">
                         <div class="d-flex flex-wrap">
                             <!-- Grup Tombol Kiri -->
-                            <button type="button" id="exportExcel" onclick="exportPDF()"
-                                class="btn btn-outline-seconday"><i class="ri-file-excel-2-line me-1"></i>
-                                Export</button>
-                            <button type="button" id="exportPDF" onclick="exportDataTableToPDF()"
-                                class="btn btn-outline-scondary"><i class="bi bi-file-pdf"></i> PDF</button>
-                            <button type="button" id="copyClipboard" onclick="copyClipboard()"
-                                class="btn btn-outline-scondary"><i class="ri-file-copy-line me-1"></i> Copy</button>
+                            <button type="button" class="btn btn-outline-seconday" id="exportButton"><i
+                                    class="ri-file-excel-2-line me-1"></i> Export</button>
+                            <button type="button" class="btn btn-outline-scondary"><i class="bi bi-file-pdf"></i>
+                                PDF</button>
+                            <button type="button" class="btn btn-outline-scondary"><i
+                                    class="ri-file-copy-line me-1"></i> Copy</button>
                         </div>
                         <div class="d-flex flex-wrap">
                             <!-- Grup Tombol Kanan -->
@@ -153,16 +114,13 @@
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                                 style="display: none;"><i class="ri-settings-5-line"></i> Settings</button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#" id="runSelected">Run Selected Task</a>
-                                {{-- <a class="dropdown-item" href="#" id="deleteSelected">Delete Selected Task</a> --}}
-                                <a class="dropdown-item" href="#" id="archivedSelected">Archived Selected Task</a>
-                                {{-- <a class="dropdown-item" href="#" id="editSelected">Edit Selected Task</a> --}}
+                                <a class="dropdown-item" id="runSelected" href="#">Run Selected</a>
+                                <a class="dropdown-item" id="stopSelected" href="#">Stop Selected</a>
+                                {{-- <a class="dropdown-item" id="deleteSelected" href="#">Delete Selected Task</a> --}}
+                                <a class="dropdown-item" id="forceStopSelected" href="#">Force Stop Selected Task</a>
                             </div>
-                            <button type="button" id="import" class="btn btn-outline-seconday" data-bs-toggle="modal"
-                                data-bs-target="#importModal"><i class="bi bi-upload"></i> Import</button>
-                            <button type="button" id="addNew" onclick="getScripts('addModal');getMarketPlaces('addModal');getBrands('addModal');"
-                                class="btn btn-outline-scondary" data-bs-toggle="modal" data-bs-target="#addModal"><i
-                                    class="ri-play-list-add-line me-1"></i> Add New</button>
+                            <button type="button" id="addNew" class="btn btn-outline-scondary" data-bs-toggle="modal"
+                                data-bs-target="#addModal"><i class="ri-play-list-add-line me-1"></i> Add New</button>
                         </div>
                     </div>
                 </div>
@@ -180,10 +138,10 @@
         </div>
         <!-- End Data Table-->
 
-    </div> <!-- container -->
 
+    </div> <!-- container -->
     @endsection
 
     @section('script')
-    @vite(['resources/js/pages/system/task-generator.js'])
+    @vite(['resources/js/pages/system/market-place.js'])
     @endsection

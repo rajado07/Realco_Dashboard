@@ -10,4 +10,11 @@ class Brand extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+
 }

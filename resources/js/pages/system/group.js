@@ -46,19 +46,19 @@ $(document).ready(() => {
                     {
                         targets: 4,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.shortenText(data) : data;
+                            return  dataTableHelper.shortenText(data);
                         }
                     },
                     {
                         targets: 5,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                            return dataTableHelper.translateMarketPlace(data);
                         }
                     },
                     {
                         targets: 6,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
+                            return dataTableHelper.translateBrand(data);
                         }
                     },
                     {

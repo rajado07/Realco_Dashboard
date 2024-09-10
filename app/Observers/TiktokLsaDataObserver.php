@@ -23,7 +23,7 @@ class TiktokLsaDataObserver
             foreach ($jsonData as $dataItem) {
                 try {
                     // Check for existing data
-                    $existingData = TiktokLsaData::where('data_date', $dataItem['Date'])
+                    $existingData = TiktokLsaData::where('data_date', $dataItem['By Day'])
                         ->where('ad_group_id', $dataItem['Ad group ID'])
                         ->where('brand_id', $rawData->brand_id)
                         ->exists();
@@ -35,17 +35,17 @@ class TiktokLsaDataObserver
                     }
 
                     TiktokLsaData::create([
-                        'data_date' => $dataItem['Date'],
-                        'ad_group_name' => $dataItem['Ad Group Name'],
+                        'data_date' => $dataItem['By Day'],
+                        'ad_group_name' => $dataItem['Ad group name'],
                         'ad_group_id' => $dataItem['Ad group ID'],
-                        'ad_name' => $dataItem['Ad Name'],
+                        'ad_name' => $dataItem['Ad name'],
                         'cost' => $dataItem['Cost'],
-                        'live_views' => $dataItem['LIVE Views'],
-                        'live_unique_views' => $dataItem['LIVE Unique Views'],
-                        'effective_live_views' => $dataItem['Effective LIVE Views'],
+                        'live_views' => $dataItem['LIVE views'],
+                        'live_unique_views' => $dataItem['LIVE unique views'],
+                        // 'effective_live_views' => $dataItem['Effective LIVE Views'],
                         'purchases' => $dataItem['Purchases (Shop)'],
                         'gross_revenue' => $dataItem['Gross revenue (Shop)'],
-                        'impressions' => $dataItem['Impression'],
+                        'impressions' => $dataItem['Impressions'],
                         'retrieved_at' => $rawData->retrieved_at,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,
@@ -55,7 +55,7 @@ class TiktokLsaDataObserver
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
-                        'ad_group_name' => $dataItem['Ad Group Name'],
+                        'ad_group_name' => $dataItem['Ad group name'],
                         'error' => $e->getMessage(),
                     ];
                 }

@@ -203,6 +203,20 @@
             <li class="side-nav-title">System</li>
 
             <li class="side-nav-item">
+                <a href="{{ route('second', ['system', 'market-place']) }}" class="side-nav-link">
+                    <i class="ri-store-line"></i>
+                    <span> Market Places </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('second', ['system', 'brand']) }}" class="side-nav-link">
+                    <i class="ri-leaf-line"></i>
+                    <span> Brand </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
                 <a href="{{ route('second', ['system', 'raw-data']) }}" class="side-nav-link">
                     <i class="ri-database-2-line"></i>
                     <span> Raw Data </span>

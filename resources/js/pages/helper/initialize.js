@@ -29,8 +29,36 @@ export default (function ($) {
       allowHTML: true,
       interactive: true, // Membuat tooltip bisa diklik
       delay: [750, 0],
+      onShow(instance) {
+        const tooltipElement = instance.popper;
+        tooltipElement.addEventListener('click', function () {
+          const textToCopy = instance.props.content;
+          copyToClipboard(textToCopy);
+          toast({
+            type: 'success',
+            message: 'Copied To Clipboard'
+          });
+        });
+      }
     });
   }
+
+  function copyToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.error('Unable to copy', err);
+    }
+    document.body.removeChild(textArea);
+  }
+
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -209,13 +237,13 @@ export default (function ($) {
     // Set class and icon based on the value
     let iconHtml = '';
     if (changePercentage > 0) {
-        element.removeClass('bg-danger bg-secondary').addClass('bg-success');
-        iconHtml = '<i class="ri-arrow-up-line"></i> ';
+      element.removeClass('bg-danger bg-secondary').addClass('bg-success');
+      iconHtml = '<i class="ri-arrow-up-line"></i> ';
     } else if (changePercentage < 0) {
-        element.removeClass('bg-success bg-secondary').addClass('bg-danger');
-        iconHtml = '<i class="ri-arrow-down-line"></i> ';
+      element.removeClass('bg-success bg-secondary').addClass('bg-danger');
+      iconHtml = '<i class="ri-arrow-down-line"></i> ';
     } else {
-        element.removeClass('bg-success bg-danger').addClass('bg-secondary');
+      element.removeClass('bg-success bg-danger').addClass('bg-secondary');
     }
 
     // Append the icon and percentage change
@@ -229,7 +257,7 @@ export default (function ($) {
 
     // Append the average change description span after the main element
     element.after(intervalElement);
-}
+  }
 
 
   const initialise = {

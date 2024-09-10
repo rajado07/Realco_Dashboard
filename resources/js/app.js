@@ -17,6 +17,9 @@ import bootstrap from 'bootstrap/dist/js/bootstrap.min';
 window.bootstrap = bootstrap;
 import 'simplebar';
 
+import anime from 'animejs/lib/anime.es.js';
+
+
 $(document).ready(() => {
     (function ($) {
 
@@ -410,6 +413,59 @@ $(document).ready(() => {
             }
         }
 
+        // Fungsi untuk mengaktifkan scroll otomatis pada tabel
+        function enableSmoothAutoScrollOnTable(scrollSpeed = 5, scrollZone = 50) {
+            document.querySelectorAll('.table-responsive').forEach(function (table) {
+                let scrollInterval;
+
+                function startScrolling(direction) {
+                    if (scrollInterval) return;
+                    scrollInterval = requestAnimationFrame(function step() {
+                        table.scrollLeft += direction * scrollSpeed;
+                        scrollInterval = requestAnimationFrame(step);
+                    });
+                }
+
+                function stopScrolling() {
+                    if (scrollInterval) {
+                        cancelAnimationFrame(scrollInterval);
+                        scrollInterval = null;
+                    }
+                }
+
+                table.addEventListener('mousemove', function (e) {
+                    const visibleWidth = table.clientWidth;
+                    const mouseX = e.clientX - table.getBoundingClientRect().left;
+
+                    if (mouseX < scrollZone) {
+                        startScrolling(-1); // Scroll ke kiri
+                    } else if (mouseX > visibleWidth - scrollZone) {
+                        startScrolling(1); // Scroll ke kanan
+                    } else {
+                        stopScrolling(); // Berhenti scroll jika mouse tidak di area scroll
+                    }
+                });
+
+                table.addEventListener('mouseleave', stopScrolling);
+            });
+        }
+
+        function animateWidgetCards() {
+            const cards = document.querySelectorAll('.widget-flat');
+        
+            if (cards.length > 0) {
+                anime({
+                    targets: '.widget-flat',
+                    translateY: [
+                        { value: -30, duration: 300, easing: 'easeOutQuad' },  // Move up
+                        { value: 0, duration: 600, easing: 'easeOutBounce' }   // Bounce down
+                    ],
+                    delay: anime.stagger(100),  // Apply staggered animation to each card
+                    duration: 1000
+                });
+            }
+        }
+
         function init() {
             initComponents();
             initPortletCard();
@@ -421,9 +477,140 @@ $(document).ready(() => {
             initShowHidePassword();
             initFormValidation();
             initFormAdvance();
+            enableSmoothAutoScrollOnTable(5);
+            animateWidgetCards();
+            
         }
 
         init();
 
     })(jQuery)
 })
+
+
+window.getScripts = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/task-generator/get-script`; // Sesuaikan URL jika diperlukan
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Mengambil respons dalam format JSON
+            })
+            .then(data => {
+                // Ambil elemen modal yang akan diupdate
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectType');
+
+                // Bersihkan opsi yang sudah ada untuk menghindari duplikasi
+                select.innerHTML = `<option disabled selected>Select Script</option>`;
+
+                // Tambahkan opsi script dari respons
+                data.scripts.forEach(script => {
+                    const option = document.createElement('option');
+                    option.value = script;  // Menggunakan nama script sebagai value
+                    option.textContent = script;  // Menampilkan nama script sebagai teks
+                    select.appendChild(option);
+                });
+
+                // Inisialisasi select2 untuk dropdown dengan pencarian
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve(); // Resolusi promise ketika selesai
+            })
+            .catch(error => {
+                console.error('Error:', error); // Log kesalahan jika ada
+                reject(error); // Menolak promise jika terjadi kesalahan
+            });
+    });
+};
+
+
+window.getMarketPlaces = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/market-place/read`; // Endpoint Laravel untuk mendapatkan data marketplace
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Mengambil respons dalam format JSON
+            })
+            .then(data => {
+                // Ambil elemen modal yang akan diupdate
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectMarketPlace');
+
+                // Bersihkan opsi yang sudah ada untuk menghindari duplikasi
+                select.innerHTML = `<option disabled selected>Select MarketPlace</option>`;
+
+                // Tambahkan opsi marketplace dari respons
+                data.forEach(marketplace => {
+                    const option = document.createElement('option');
+                    option.value = marketplace.id;  // Menggunakan ID marketplace sebagai value
+                    option.textContent = marketplace.name;  // Menampilkan nama marketplace sebagai teks
+                    select.appendChild(option);
+                });
+
+                // Inisialisasi select2 untuk dropdown dengan pencarian
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve(); // Resolusi promise ketika selesai
+            })
+            .catch(error => {
+                console.error('Error:', error); // Log kesalahan jika ada
+                reject(error); // Menolak promise jika terjadi kesalahan
+            });
+    });
+};
+
+window.getBrands = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/brand/read`; // Endpoint Laravel untuk mendapatkan data brand
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Mengambil respons dalam format JSON
+            })
+            .then(data => {
+                // Ambil elemen modal yang akan diupdate
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectBrand');
+
+                // Bersihkan opsi yang sudah ada untuk menghindari duplikasi
+                select.innerHTML = `<option disabled selected>Select Brand</option>`;
+
+                // Tambahkan opsi brand dari respons
+                data.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand.id;  // Menggunakan ID brand sebagai value
+                    option.textContent = brand.name;  // Menampilkan nama brand sebagai teks
+                    select.appendChild(option);
+                });
+
+                // Inisialisasi select2 untuk dropdown dengan pencarian
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve(); // Resolusi promise ketika selesai
+            })
+            .catch(error => {
+                console.error('Error:', error); // Log kesalahan jika ada
+                reject(error); // Menolak promise jika terjadi kesalahan
+            });
+    });
+};

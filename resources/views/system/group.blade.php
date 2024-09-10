@@ -96,12 +96,14 @@
                         </div>                        
                     </div>
                     <div class="card-body">
-                        <table id="basic-datatable" class="table table-responsive-sm nowrap w-100">
-                            <thead>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="basic-datatable" class="table table-hover table-responsive-sm nowrap w-100">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div> 
             </div>

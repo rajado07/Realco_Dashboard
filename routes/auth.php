@@ -78,82 +78,74 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 
 // rawData
-Route::get('/raw-data/read', [RawDataController::class, 'index']);
+Route::get('/raw-data/read', [RawDataController::class, 'index'])->middleware('auth');
+Route::get('/raw-data/status-count', [RawDataController::class, 'getRawDataStatusCount'])->middleware('auth');
+
 
 // Brand
-Route::get('/brand/read', [BrandController::class, 'index']);
+Route::get('/brand/read', [BrandController::class, 'index'])->middleware('auth');
+Route::post('/brand/store', [BrandController::class, 'store'])->middleware('auth');
+Route::delete('/brand/destroy/{id}', [BrandController::class, 'destroy'])->middleware('auth');
+Route::get('/brand/edit/{id}', [BrandController::class, 'edit'])->middleware('auth');
+Route::post('/brand/update', [BrandController::class, 'update'])->middleware('auth');
 
 // Market Place
-Route::get('/market-place/read', [MarketPlaceController::class, 'index']);
+Route::get('/market-place/read', [MarketPlaceController::class, 'index'])->middleware('auth');
+Route::post('/market-place/store', [MarketPlaceController::class, 'store'])->middleware('auth');
+Route::delete('/market-place/destroy/{id}', [MarketPlaceController::class, 'destroy'])->middleware('auth');
+Route::get('/market-place/edit/{id}', [MarketPlaceController::class, 'edit'])->middleware('auth');
+Route::post('/market-place/update', [MarketPlaceController::class, 'update'])->middleware('auth');
 
 // Group
-Route::get('/group/read', [DataGroupController::class, 'index']);
-Route::get('/group/type', [DataGroupController::class, 'getDataGroupType']);
-Route::get('/group/bytype/{type?}', [DataGroupController::class, 'getDataGroupByType']);
+Route::get('/group/read', [DataGroupController::class, 'index'])->middleware('auth');
+Route::get('/group/type', [DataGroupController::class, 'getDataGroupType'])->middleware('auth');
+Route::get('/group/bytype/{type?}', [DataGroupController::class, 'getDataGroupByType'])->middleware('auth');
 
 // Task
-Route::get('/task/read', [TaskController::class, 'index']);
+Route::get('/task/read', [TaskController::class, 'index'])->middleware('auth');
+Route::get('/task/status-count', [TaskController::class, 'getTaskStatusCount'])->middleware('auth');
+Route::post('/task/update/status', [TaskController::class, 'updateStatus'])->middleware('auth');
+Route::post('/task/exception-details', [TaskController::class, 'getExceptionDetails'])->middleware('auth');
 
 // TaskGenerator
-Route::get('/task-generator/read', [TaskGeneratorController::class, 'index']);
+Route::get('/task-generator/read', [TaskGeneratorController::class, 'index'])->middleware('auth');
+Route::get('/task-generator/get-script', [TaskGeneratorController::class, 'getScript'])->middleware('auth');
+Route::get('/task-generator/edit/{id}', [TaskGeneratorController::class, 'edit'])->middleware('auth');
+Route::delete('/task-generator/destroy/{id}', [TaskGeneratorController::class, 'destroy'])->middleware('auth');
+Route::post('/task-generator/store', [TaskGeneratorController::class, 'store'])->middleware('auth');
+Route::post('/task-generator/update', [TaskGeneratorController::class, 'update'])->middleware('auth');
 
 //Shopee-BrandPortal-Shop
-Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])
-    ->middleware('auth');
-
-Route::get('/shopee/brand-portal-shop/summary', [ShopeeBrandPortalShopDataController::class, 'getSummary'])
-    ->middleware('auth');
-
-Route::get('/shopee/brand-portal-shop/latest-data', [ShopeeBrandPortalShopDataController::class, 'latestRetrievedAt'])
-    ->middleware('auth');
-
+Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])->middleware('auth');
+Route::get('/shopee/brand-portal-shop/summary', [ShopeeBrandPortalShopDataController::class, 'getSummary'])->middleware('auth');
+Route::get('/shopee/brand-portal-shop/latest-data', [ShopeeBrandPortalShopDataController::class, 'latestRetrievedAt'])->middleware('auth');
 
 //Shopee-BrandPortal-Ads
-Route::get('/shopee/brand-portal-ads/read', [ShopeeBrandPortalAdsDataController::class, 'index'])
-    ->middleware('auth');
-
-Route::get('/shopee/brand-portal-ads/summary', [ShopeeBrandPortalAdsDataController::class, 'getSummary'])
-    ->middleware('auth');
-
-Route::get('/shopee/brand-portal-ads/latest-data', [ShopeeBrandPortalAdsDataController::class, 'latestRetrievedAt'])
-    ->middleware('auth');
+Route::get('/shopee/brand-portal-ads/read', [ShopeeBrandPortalAdsDataController::class, 'index'])->middleware('auth');
+Route::get('/shopee/brand-portal-ads/summary', [ShopeeBrandPortalAdsDataController::class, 'getSummary'])->middleware('auth');
+Route::get('/shopee/brand-portal-ads/latest-data', [ShopeeBrandPortalAdsDataController::class, 'latestRetrievedAt'])->middleware('auth');
 
 //Shopee-SellerCenter-LiveStreaming
-Route::get('/shopee/seller-center-live-streaming/read', [ShopeeSellerCenterLiveStreamingDataController::class, 'index'])
-    ->middleware('auth');
+Route::get('/shopee/seller-center-live-streaming/read', [ShopeeSellerCenterLiveStreamingDataController::class, 'index'])->middleware('auth');
 
 //Shopee-SellerCenter-Voucher
-Route::get('/shopee/seller-center-voucher/read', [ShopeeSellerCenterVoucherDataController::class, 'index'])
-    ->middleware('auth');
-
-Route::get('/shopee/seller-center-voucher/summary', [ShopeeSellerCenterVoucherDataController::class, 'summary'])
-    ->middleware('auth');
+Route::get('/shopee/seller-center-voucher/read', [ShopeeSellerCenterVoucherDataController::class, 'index'])->middleware('auth');
+Route::get('/shopee/seller-center-voucher/summary', [ShopeeSellerCenterVoucherDataController::class, 'summary'])->middleware('auth');
 
 //Shopee-SellerCenter-Coin
-Route::get('/shopee/seller-center-coin/read', [ShopeeSellerCenterCoinDataController::class, 'index'])
-    ->middleware('auth');
-Route::get('/shopee/seller-center-coin/summary', [ShopeeSellerCenterCoinDataController::class, 'summary'])
-    ->middleware('auth');
+Route::get('/shopee/seller-center-coin/read', [ShopeeSellerCenterCoinDataController::class, 'index'])->middleware('auth');
+Route::get('/shopee/seller-center-coin/summary', [ShopeeSellerCenterCoinDataController::class, 'summary'])->middleware('auth');
 
 //Shopee-Summary
-Route::get('/shopee/summary/brand-performance/read', [ShopeeSummaryDataController::class, 'shopeeBrand'])
-    ->middleware('auth');
-Route::get('/shopee/summary/cpas/read', [ShopeeSummaryDataController::class, 'metaCpas'])
-    ->middleware('auth');
-Route::get('/shopee/summary/ads/read', [ShopeeSummaryDataController::class, 'shopeeAds'])
-    ->middleware('auth');
-Route::get('/shopee/summary/live-stream/read', [ShopeeSummaryDataController::class, 'shopeeLiveStream'])
-    ->middleware('auth');
+Route::get('/shopee/summary/brand-performance/read', [ShopeeSummaryDataController::class, 'shopeeBrand'])->middleware('auth');
+Route::get('/shopee/summary/cpas/read', [ShopeeSummaryDataController::class, 'metaCpas'])->middleware('auth');
+Route::get('/shopee/summary/ads/read', [ShopeeSummaryDataController::class, 'shopeeAds'])->middleware('auth');
+Route::get('/shopee/summary/live-stream/read', [ShopeeSummaryDataController::class, 'shopeeLiveStream'])->middleware('auth');
 
 //Meta-CPAS
-Route::get('/meta/cpas/read', [MetaCpasDataController::class, 'index'])
-    ->middleware('auth');
-
-Route::get('/meta/cpas/summary', [MetaCpasDataController::class, 'getSummary'])
-    ->middleware('auth');
-
-Route::get('/meta/cpas/latest-data', [MetaCpasDataController::class, 'latestRetrievedAt'])
-    ->middleware('auth');
+Route::get('/meta/cpas/read', [MetaCpasDataController::class, 'index'])->middleware('auth');
+Route::get('/meta/cpas/summary', [MetaCpasDataController::class, 'getSummary'])->middleware('auth');
+Route::get('/meta/cpas/latest-data', [MetaCpasDataController::class, 'latestRetrievedAt'])->middleware('auth');
 
 
 

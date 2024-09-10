@@ -2,6 +2,7 @@ import "datatables.net-bs5";
 import DataTable from "datatables.net";
 import initialize from "../helper/initialize";
 import dataTableHelper from "../helper/dataTableHelper";
+import 'daterangepicker/daterangepicker.js';
 
 $.fn.dataTable = DataTable;
 
@@ -28,10 +29,10 @@ $(document).ready(() => {
                     { title: "Type", data: "type" },
                     { title: "Link", data: "link" },
                     { title: "Scheduled To Run", data: "scheduled_to_run" },
+                    { title: "Created At", data: "created_at" },
                     { title: "Market Place", data: "market_place_id" },
                     { title: "Brand", data: "brand_id" },
                     { title: "Status", data: "status" },
-                    { title: "Action", defaultContent: '' }
                 ],
                 columnDefs: [
                     {
@@ -47,43 +48,31 @@ $(document).ready(() => {
                     {
                         targets: 3,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.shortenText(data) : data;
-                        }
-                    },
-                    {
-                        targets: 5,
-                        render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                            return dataTableHelper.shortenText(data);
                         }
                     },
                     {
                         targets: 6,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
+                            return dataTableHelper.translateMarketPlace(data);
                         }
                     },
                     {
                         targets: 7,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateStatusTask(data) : data;
+                            return dataTableHelper.translateBrand(data);
                         }
                     },
                     {
-                        targets: 8, // Updated target index for actions
-                        orderable: false,
-                        searchable: false,
+                        targets: 8, // Target kolom status
                         render: function (data, type, row) {
-                            return `
-                                <div class="dropdown">
-                                    <a class="text-reset fs-16 px-1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="ri-settings-4-line"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-animated">
-                                        <li><a class="dropdown-item action-edit" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#editModal" href="#" onclick="getAccounts('editModal');"><i class="ri-settings-3-line"></i> Edit</a></li>
-                                        <li><a class="dropdown-item action-delete" data-id="${row.id}" href="#"><i class="ri-delete-bin-2-line"></i> Delete</a></li>
-                                    </ul>
-                                </div>
-                            `;
+                            return dataTableHelper.translateStatusTask(data, row.id);
+                        }
+                    },
+                    {
+                        targets: [5, 4],
+                        render: function (data, type, row) {
+                            return dataTableHelper.formatSchedule(data);
                         }
                     }
                 ],
@@ -176,24 +165,109 @@ $(document).ready(() => {
         });
     }
 
-    // Add event listener for opening and closing details on row click
-    $('#basic-datatable tbody').on('click', 'tr', function () {
-        let row = dataTableInstance.row(this);
+    function getTaskStatusCount() {
+        fetch('/task/status-count')
+            .then(response => response.json())
+            .then(newData => {
+                // Gunakan animateCounter dengan jQuery untuk memperbarui nilai elemen
+                initialize.animateCounter($('#ready'), newData[1] || 0);
+                initialize.animateCounter($('#wait_for_running'), newData[2] || 0);
+                initialize.animateCounter($('#running'), newData[3] || 0);
+                initialize.animateCounter($('#exception'), newData[4] || 0);
+                initialize.animateCounter($('#completed'), newData[5] || 0);
+            })
+            .catch(error => console.error('Error updating status:', error));
+    }
 
-        if (row.child.isShown()) {
-            row.child.hide();
-            $(this).removeClass('shown');
-        } else {
-            row.child(format(row.data())).show();
-            $(this).addClass('shown');
-        }
-    });
+    function runSelected() {
+        $(document).on('click', '#runSelected', function () {
+            updateStatus(selectedData, 'start', 2);
+        });
+    }
 
-    // Add event listener for arrow icon toggle
-    $(document).on('click', '.toggle-section', function () {
-        let icon = $(this).find('.arrow-icon');
-        icon.toggleClass('bi-chevron-right bi-chevron-down');
-    });
+    function archivedSelected() {
+        $(document).on('click', '#archivedSelected', function () {
+            updateStatus(selectedData, 'archived', 100);
+        });
+    }
+
+    function updateStatus(ids, type, status) {
+        fetch(`/task/update/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({
+                ids: ids,
+                type: type,
+                status: status
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                dataTableInstance.ajax.reload(() => {
+                    initialize.toast(data);
+                });
+
+            })
+            .catch(error => console.error('Failed to fetch data:', error));
+
+    }
+
+    window.showExceptionModal = function (rowId) {
+        const url = `/task/exception-details`;
+
+        // Prepare the request data
+        const formData = new FormData();
+        formData.append('id', rowId);
+
+        // Show loading spinner and hide content sections
+        document.getElementById('loadingSpinner').style.display = 'block';
+        document.getElementById('imageSection').style.display = 'none';
+        document.getElementById('messageSection').style.display = 'none';
+
+        // Fetch the data from the backend using POST method
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-Token': csrfToken,  // Assuming csrfToken is available globally
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                const exceptionImage = document.getElementById('exceptionImage');
+                const exceptionDetails = document.getElementById('exceptionDetails');
+
+                // Set the image source and exception details
+                exceptionImage.src = data.imageUrl;
+                exceptionDetails.textContent = data.exceptionMessage;
+
+                // Add an error handler for the image in case it fails to load
+                exceptionImage.onerror = function () {
+                    exceptionImage.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+                    exceptionImage.alt = 'Image not found';
+                };
+
+                // Hide loading spinner and show content sections
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('imageSection').style.display = 'block';
+                document.getElementById('messageSection').style.display = 'block';
+
+                // Show the modal
+                var exceptionModal = new bootstrap.Modal(document.getElementById('exceptionModal'));
+                exceptionModal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching exception details:', error);
+                // Optionally, display an error message in the modal or a toast notification
+                document.getElementById('exceptionDetails').textContent = 'Failed to load exception details. Please try again.';
+                // Hide the spinner and display the error message
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('messageSection').style.display = 'block';
+            });
+    };
 
     function init() {
         // Initialise External Helper
@@ -207,6 +281,11 @@ $(document).ready(() => {
         initializeOrUpdateDataTable();
         periodicallyUpdateAllDataTable();
         getSelectedData();
+        getTaskStatusCount();
+
+        // Action
+        runSelected();
+        archivedSelected();
 
     }
     init();

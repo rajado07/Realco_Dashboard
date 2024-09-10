@@ -48,25 +48,25 @@ $(document).ready(() => {
                     {
                         targets: 3,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.shortenText(data) : data;
+                            return dataTableHelper.shortenText(data);
                         }
                     },
                     {
                         targets: 6,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateMarketPlace(data) : data;
+                            return dataTableHelper.translateMarketPlace(data);
                         }
                     },
                     {
                         targets: 7,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateBrand(data) : data;
+                            return  dataTableHelper.translateBrand(data);
                         }
                     },
                     {
                         targets: 8,
                         render: function (data, type, row) {
-                            return type === 'display' ? dataTableHelper.translateStatusTaskGenerator(data) : data;
+                            return  dataTableHelper.translateStatusTaskGenerator(data);
                         }
                     },
                     {
@@ -80,7 +80,7 @@ $(document).ready(() => {
                                         <i class="ri-settings-4-line"></i>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-animated">
-                                        <li><a class="dropdown-item action-edit" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#editModal" href="#" onclick="getAccounts('editModal');"><i class="ri-settings-3-line"></i> Edit</a></li>
+                                        <li><a class="dropdown-item action-edit" data-id="${row.id}"><i class="ri-settings-3-line"></i> Edit</a></li>
                                         <li><a class="dropdown-item action-delete" data-id="${row.id}" href="#"><i class="ri-delete-bin-2-line"></i> Delete</a></li>
                                     </ul>
                                 </div>
@@ -177,24 +177,171 @@ $(document).ready(() => {
         });
     }
 
-    // Add event listener for opening and closing details on row click
-    $('#basic-datatable tbody').on('click', 'tr', function () {
-        let row = dataTableInstance.row(this);
+    // Click Action
+    function deleteAction() {
+        $(document).on('click', '.action-delete', function () {
+            const id = $(this).data('id');
+            deleteRow(id);
+        });
+    }
 
-        if (row.child.isShown()) {
-            row.child.hide();
-            $(this).removeClass('shown');
-        } else {
-            row.child(format(row.data())).show();
-            $(this).addClass('shown');
+    function editAction() {
+        $(document).on('click', '.action-edit', function () {
+            const rowId = $(this).data('id');
+
+            // Store the row ID in the hidden input field
+            $('#editRowId').val(rowId);
+
+            // Call all necessary functions and wait for them to complete
+            Promise.all([
+                window.getScripts('editModal'),
+                window.getMarketPlaces('editModal'),
+                window.getBrands('editModal')
+            ]).then(() => {
+                // console.log('All data loaded, now calling editRow');
+                editRow(rowId);
+
+                // After all data is loaded and editRow is done, show the modal
+                $('#editModal').modal('show');
+            }).catch((error) => {
+                console.error('Failed to load data:', error);
+                // Optionally handle the error (e.g., show a notification)
+            });
+        });
+    }
+
+    function runSelected() {
+        $(document).on('click', '#runSelected', function () {
+            updateStatus(selectedData, 'start', 2);
+        });
+    }
+
+    function archivedSelected() {
+        $(document).on('click', '#archivedSelected', function () {
+            updateStatus(selectedData, 'archived', 100);
+        });
+    }
+
+    // Action
+    async function deleteRow(id) {
+        try {
+            const response = await fetch(`/task-generator/destroy/${id}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                dataTableInstance.ajax.reload(() => {
+                    initialize.toast(data);
+                });
+
+            } else {
+                initialize.toast(data);
+            }
+        } catch (error) {
+            initialize.toast(error);
         }
-    });
+    }
 
-    // Add event listener for arrow icon toggle
-    $(document).on('click', '.toggle-section', function () {
-        let icon = $(this).find('.arrow-icon');
-        icon.toggleClass('bi-chevron-right bi-chevron-down');
-    });
+    function editRow(id) {
+        fetch(`/task-generator/edit/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                $('#selectBrand').val(data.brand_id || '').trigger('change');
+                $('#selectType').val(data.type || '').trigger('change');
+                $('#selectMarketPlace').val(data.market_place_id || '').trigger('change');
+                $('#editFrequency').val(data.frequency || '').trigger('change');
+                $('#editLink').val(data.link || '');
+                $('#editRunAt').val(data.run_at || '');
+              ;
+            })
+            .catch(error => console.error('Failed to fetch data:', error));
+    }
+
+    function updateStatus(ids, type, status) {
+        fetch(`/uploads/task/update/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({
+                ids: ids,
+                type: type,
+                status: status
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                dataTableInstance.ajax.reload(() => {
+                    initialize.toast(data);
+                });
+
+            })
+            .catch(error => console.error('Failed to fetch data:', error));
+    }
+
+    window.submitAddForm = function () {
+        const form = document.getElementById('add');
+        const formData = new FormData(form);
+
+        fetch('/task-generator/store', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-Token': csrfToken,
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                $('#addNewFormSubmit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true">').prop('disabled', true);
+                // Reload dataTable dan tunggu hingga selesai
+                dataTableInstance.ajax.reload(() => {
+                    $('#addNewFormSubmit').html('Save changes').prop('disabled', false);
+                    initialize.toast(data);
+                    $('#addModal').modal('hide');
+                    form.reset();
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                initialize.toast(data);
+            });
+    }
+
+    window.submitEditForm = function () {
+        const form = document.getElementById('edit');
+        const formData = new FormData(form);
+
+        fetch('/task-generator/update', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-Token': csrfToken,
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                $('#editFormSubmit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true">').prop('disabled', true);
+                // Reload dataTable dan tunggu hingga selesai
+                dataTableInstance.ajax.reload(() => {
+                    $('#editFormSubmit').html('Save changes').prop('disabled', false);
+                    initialize.toast(data);
+                    $('#editModal').modal('hide');
+                    form.reset();
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                initialize.toast(data);
+            });
+    }
+
+
 
     function init() {
         // Initialise External Helper
@@ -208,6 +355,12 @@ $(document).ready(() => {
         initializeOrUpdateDataTable();
         periodicallyUpdateAllDataTable();
         getSelectedData();
+
+        // Action
+        deleteAction();
+        editAction();
+        runSelected();
+        archivedSelected();
 
     }
     init();

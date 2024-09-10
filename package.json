@@ -21,6 +21,7 @@
         "@fullcalendar/timegrid": "^6.1.6",
         "@popperjs/core": "^2.11.7",
         "admin-resources": "git+https://github.com/coderthemes/admin-resources.git#master",
+        "animejs": "^3.2.2",
         "apexcharts": "3.26.0",
         "bootstrap": "5.3.0",
         "bootstrap-datepicker": "1.9.0",

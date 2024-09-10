@@ -23,7 +23,7 @@ class TiktokVsaDataObserver
             foreach ($jsonData as $dataItem) {
                 try {
                     // Check for existing data
-                    $existingData = TiktokVsaData::where('data_date', $dataItem['Date'])
+                    $existingData = TiktokVsaData::where('data_date', $dataItem['By Day'])
                         ->where('ad_group_id', $dataItem['Ad group ID'])
                         ->where('brand_id', $rawData->brand_id)
                         ->exists();
@@ -35,18 +35,18 @@ class TiktokVsaDataObserver
                     }
 
                     TiktokVsaData::create([
-                        'data_date' => $dataItem['Date'],
-                        'ad_group_name' => $dataItem['Ad Group Name'],
+                        'data_date' => $dataItem['By Day'],
+                        'ad_group_name' => $dataItem['Ad group name'],
                         'ad_group_id' => $dataItem['Ad group ID'],
-                        'ad_name' => $dataItem['Ad Name'],
+                        'ad_name' => $dataItem['Ad name'],
                         'cost' => $dataItem['Cost'],
-                        'average_watch_time_per_video_view' => $dataItem['Average Watch Time per Video View'],
+                        'average_watch_time_per_video_view' => $dataItem['Average play time per video view'],
                         'adds_to_cart' => $dataItem['Adds to cart (Shop)'],
                         'purchases' => $dataItem['Purchases (Shop)'],
                         'gross_revenue' => $dataItem['Gross revenue (Shop)'],
                         'checkouts_initiated' => $dataItem['Checkouts initiated (Shop)'],
                         'product_page_views' => $dataItem['Product page views (Shop)'],
-                        'impressions' => $dataItem['Impression'],
+                        'impressions' => $dataItem['Impressions'],
                         'retrieved_at' => $rawData->retrieved_at,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,
@@ -56,7 +56,7 @@ class TiktokVsaDataObserver
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
-                        'ad_group_name' => $dataItem['Ad Group Name'],
+                        'ad_group_name' => $dataItem['Ad group name'],
                         'error' => $e->getMessage(),
                     ];
                 }

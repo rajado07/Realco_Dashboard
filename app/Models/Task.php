@@ -9,17 +9,11 @@ class Task extends Model
 {
     use HasFactory;
 
-    // protected $fillable = [
-    //     'brand_id',
-    //     'market_place_id',
-    //     'type',
-    //     'link',
-    //     'scheduled_to_run',
-    //     'status',
-    //     'task_generator_id',
-    //     'message',
-    // ];
-
     protected $guarded = ['id'];
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
 
 }

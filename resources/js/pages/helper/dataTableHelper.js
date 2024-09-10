@@ -1,31 +1,38 @@
-function translateStatusTask(status) {
+function translateStatusTask(status, rowId) {
   const statusMap = {
-    1: '<span class="badge bg-secondary text-light rounded-pill">Ready</span>',
-    2: '<span class="badge bg-info rounded-pill">Wait For Running</span>',
-    3: '<span class="badge bg-info rounded-pill">Running</span>',
-    4: '<span class="badge bg-warning rounded-pill">Exeption</span>',
-    5: '<span class="badge bg-success rounded-pill">Completed</span>',
+    1: '<span class="remixicon ri-checkbox-circle-line text-secondary"></span> Ready',
+    2: '<span class="remixicon ri-time-line text-info"></span> Wait For Running',
+    3: '<span class="remixicon ri-play-circle-line text-info"></span> Running',
+    4: `<span style="display: flex; align-items: center; cursor: pointer;" onclick="showExceptionModal(${rowId});">
+          <i class="remixicon ri-error-warning-line text-warning" style="font-size: 1.5em; margin-right: 0.5em;"></i> 
+          Exception
+        </span>`,
+    5: '<span class="remixicon ri-checkbox-circle-line text-success"></span> Completed',
   };
-  return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
-}
 
+  // Convert status to integer if it's not already
+  const statusInt = parseInt(status, 10);
+
+  // Check if the status exists in the map, otherwise return the default 'Unknown' status
+  return statusMap[statusInt] || '<span class="remixicon ri-question-line text-dark"></span> Unknown';
+}
 function translateStatusTaskGenerator(status) {
   const statusMap = {
-    1: '<span class="badge bg-success text-light rounded-pill">Active</span>',
-    2: '<span class="badge bg-secondary text-light rounded-pill">Deactive</span>',
+    1: '<i class="remixicon ri-checkbox-circle-line text-success"></i> Active',
+    2: '<i class="remixicon ri-close-circle-line text-secondary"></i> Deactive',
   };
-  return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+  return statusMap[parseInt(status, 10)] || '<i class="remixicon ri-question-line text-dark"></i> Unknown';
 }
 
 function translateStatusRawData(status) {
   const statusMap = {
-    1: '<span class="badge bg-secondary text-light rounded-pill">Ready</span>',
-    2: '<span class="badge bg-success rounded-pill">Data Moved</span>',
-    3: '<span class="badge bg-success rounded-pill">Partial Moved</span>',
-    4: '<span class="badge bg-warning rounded-pill">Partial Failed</span>',
-    5: '<span class="badge bg-danger rounded-pill">Failed</span>',
+    1: '<i class="remixicon ri-checkbox-circle-line text-secondary"></i> Ready',
+    2: '<i class="remixicon ri-database-2-line text-success"></i> Data Moved',
+    3: '<i class="remixicon ri-database-2-line text-warning"></i> Partial Moved',
+    4: '<i class="remixicon ri-database-2-line text-danger"></i> Partial Failed',
+    5: '<i class="remixicon ri-close-circle-line text-danger"></i> Failed',
   };
-  return statusMap[parseInt(status, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+  return statusMap[parseInt(status, 10)] || '<i class="remixicon ri-question-line text-dark"></i> Unknown';
 }
 
 function translateStatusLog(status) {
@@ -64,11 +71,28 @@ function shortenText(data, maxLength = 50) {
   }
 }
 
-function formatSchedule(schedule, locale = 'en-US') {
+function formatSchedule(schedule) {
   try {
     const date = new Date(schedule);
     if (isNaN(date.getTime())) throw new Error('Invalid date');
-    return `${new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit', hour12: false }).format(date)} ${new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }).format(date)}`;
+
+    // Format tanggal sebagai YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    // Format waktu sebagai HH:MM
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // Gabungkan tanggal dan waktu
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    // Ikon Remix untuk jam dan kalender
+    const clockIcon = '<i class="ri-time-line"></i>';
+    const calendarIcon = '<i class="ri-calendar-line"></i>';
+
+    return `${calendarIcon} ${year}-${month}-${day} ${clockIcon} ${hours}:${minutes}`;
   } catch (error) {
     console.error(error);
     return "Invalid date";
@@ -157,7 +181,7 @@ function columnWitheNowPreviousChange(data, isCurrency = false, showChange = tru
 function columnSummary(data, type) {
   let formattedNow = '';
   let badgeColor = 'bg-secondary'; // Default color for no change
-  
+
   switch (type) {
     case 'percentage':
       // Memastikan data adalah string dengan simbol '%'

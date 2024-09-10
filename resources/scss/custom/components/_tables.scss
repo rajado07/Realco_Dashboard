@@ -46,3 +46,13 @@
         white-space: nowrap;
     }
 }
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Untuk pengalaman scroll yang lebih baik di perangkat sentuh */
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 0; /* Hides the scrollbar */
+    height: 0; /* Hides the scrollbar */
+}
