@@ -34,7 +34,7 @@
     <!-- end page title -->
 
     <!-- Start row Status RawData-->
-    <div class="row row-cols-1 row-cols-xxl-5 row-cols-lg-3 row-cols-md-2">
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-6">
 
         <div class="col">
             <div class="card widget-flat">
@@ -56,6 +56,18 @@
                     </div>
                     <h5 class="text-muted fw-normal mt-0" title="Data Moved">Data Moved</h5>
                     <h4 class="my-0 counter" id="data_moved">0</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <div class="float-end mt-1">
+                        <i class="ri-database-2-line widget-icon text-bg-info rounded-circle fs-24"></i>
+                    </div>
+                    <h5 class="text-muted fw-normal mt-0" title="All Skipped">All Skippped</h5>
+                    <h4 class="my-0 counter" id="all_skipped">0</h4>
                 </div>
             </div>
         </div>
@@ -90,7 +102,7 @@
                     <div class="float-end mt-1">
                         <i class="ri-close-circle-line widget-icon text-bg-danger rounded-circle fs-24"></i>
                     </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Failed">Failed</h5>
+                    <h5 class="text-muted fw-normal mt-0" title="Failed">All Failed</h5>
                     <h4 class="my-0 counter" id="failed">0</h4>
                 </div>
             </div>

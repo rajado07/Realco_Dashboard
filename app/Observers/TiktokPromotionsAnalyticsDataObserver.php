@@ -2,15 +2,15 @@
 
 namespace App\Observers;
 
-use App\Models\TiktokPsaData;
+use App\Models\TiktokPromotionAnalyticsData;
 use App\Models\RawData;
 use Illuminate\Support\Facades\Log;
 
-class TiktokPsaDataObserver
+class TiktokPromotionsAnalyticsDataObserver
 {
     public function created(RawData $rawData)
     {
-        if ($rawData->type === 'tiktok_psa') {
+        if ($rawData->type === 'tiktok_promotion_analytics') {
             $jsonData = json_decode($rawData->data, true);
 
             $totalEntries = count($jsonData);
@@ -23,8 +23,8 @@ class TiktokPsaDataObserver
             foreach ($jsonData as $dataItem) {
                 try {
                     // Check for existing data
-                    $existingData = TiktokPsaData::where('data_date', $dataItem['By Day'])
-                        ->where('ad_group_id', $dataItem['Ad group ID'])
+                    $existingData = TiktokPromotionAnalyticsData::where('promotion_id', $dataItem['ID'])
+                        ->where('data_date', $rawData->data_date)
                         ->where('brand_id', $rawData->brand_id)
                         ->exists();
 
@@ -34,15 +34,35 @@ class TiktokPsaDataObserver
                         continue;
                     }
 
-                    TiktokPsaData::create([
-                        'data_date' => $dataItem['By Day'],
-                        'ad_group_name' => $dataItem['Ad group name'],
-                        'ad_group_id' => $dataItem['Ad group ID'],
-                        'ad_name' => $dataItem['Ad name'],
-                        'cost' => $dataItem['Cost'],
-                        'purchases' => $dataItem['Purchases (Shop)'],
-                        'gross_revenue' => $dataItem['Gross revenue (Shop)'],
-                        'impressions' => $dataItem['Impressions'],
+                    $percentageFieldsToReplace = [
+                        'ctor' => 'CTOR',
+                        'avg_discount_rate' => 'Avg. discount rate',
+                        'roi' => 'ROI',
+                    ];
+
+                    $cleanedPercentageData = [];
+                    foreach ($percentageFieldsToReplace as $key => $field) {
+                        $cleanedPercentageData[$key] = str_replace('%', '', $dataItem[$field]);
+                    }
+
+                    TiktokPromotionAnalyticsData::create([
+                        'data_date' =>  $rawData->data_date,
+                        'promotion_id' => $dataItem['ID'],
+                        'promotion_name' => $dataItem['Promotion name'],
+                        'promotion_period' => $dataItem['Promotion period'],
+                        'status' => $dataItem['Status'],
+                        'type' => $dataItem['Type'],
+                        'ctor' => $cleanedPercentageData['ctor'],
+                        'gmv' => $dataItem['GMV (Rp)'],
+                        'orders' => $dataItem['Orders'],
+                        'buyers' => $dataItem['Buyers'],
+                        'products_sold' => $dataItem['Products sold'],
+                        'new_buyers' => $dataItem['New buyers'],
+                        'avg_gmv_per_buyer' => $dataItem['Avg. GMV per buyer (Rp)'],
+                        'discount_amount' => $dataItem['Discount amount (Rp)'],
+                        'avg_discount_rate' => $cleanedPercentageData['avg_discount_rate'],
+                        'roi' => $cleanedPercentageData['roi'],
+                        
                         'retrieved_at' => $rawData->retrieved_at,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,
@@ -52,7 +72,7 @@ class TiktokPsaDataObserver
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
-                        'ad_group_id' => $dataItem['Ad group ID'],
+                        'promotion_id' => $dataItem['ID'],
                         'error' => $e->getMessage(),
                     ];
                 }
@@ -69,6 +89,7 @@ class TiktokPsaDataObserver
                 'errors' => $errorDetails,
             ];
 
+            
             if ($successCount === 0 && $skipCount === $totalEntries) {
                 $status = 6; // All skipped
             } elseif ($successCount === 0 && count($failedDetails) === $totalEntries) {

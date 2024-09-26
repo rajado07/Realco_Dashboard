@@ -76,7 +76,6 @@ class RunTasksFastApi extends Command
                         $rawData->brand_id = $task->brand_id;
                         $rawData->market_place_id = $task->market_place_id;
                         $rawData->task_id = $task->id;
-                        $rawData->save();
 
                         // Update task status to success (5)
                         $task->status = 5;
@@ -114,7 +113,9 @@ class RunTasksFastApi extends Command
                     ]);
                 }
 
-                $task->save();
+                $task->save(); // Memastikan Save Task Dulu
+                $rawData->save(); // // Setelah Task di Save, Baru Save RawData
+                
             } catch (\Exception $e) {
                 // Update task status to 4 (exception) if an error occurred
                 $task->status = 4;

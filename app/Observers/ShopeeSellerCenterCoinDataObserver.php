@@ -80,15 +80,17 @@ class ShopeeSellerCenterCoinDataObserver
                 'errors' => $errorDetails,
             ];
 
-            if ($successCount === 0) {
+            if ($successCount === 0 && $skipCount === $totalEntries) {
+                $status = 6; // All skipped
+            } elseif ($successCount === 0 && count($failedDetails) === $totalEntries) {
                 $status = 5; // All failed
             } elseif ($successCount === $totalEntries) {
                 $status = 2; // All successful
-            } elseif ($successCount > 0 && count($failedDetails) > 0) {
+            } elseif ($successCount > 0 && count($failedDetails) > 0) {  
                 $status = 4; // Partial error
             } elseif ($successCount > 0 && $skipCount > 0) {
                 $status = 3; // Partial success
-            }
+            } 
 
             // Log summary of the process
             Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Skipped: $skipCount, Failed: " . ($totalEntries - $successCount - $skipCount));

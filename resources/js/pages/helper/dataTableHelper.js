@@ -8,6 +8,10 @@ function translateStatusTask(status, rowId) {
           Exception
         </span>`,
     5: '<span class="remixicon ri-checkbox-circle-line text-success"></span> Completed',
+    6: '<span class="remixicon ri-checkbox-circle-line text-warning"></span> Partial Completed',
+    7: '<span class="remixicon ri-checkbox-circle-line text-danger"></span> Partial Failed',
+    8: '<span class="remixicon ri-close-circle-line text-danger"></span> Failed',
+    9: '<span class="remixicon ri-checkbox-circle-line text-info"></span> All Skipped',
   };
 
   // Convert status to integer if it's not already
@@ -31,6 +35,7 @@ function translateStatusRawData(status) {
     3: '<i class="remixicon ri-database-2-line text-warning"></i> Partial Moved',
     4: '<i class="remixicon ri-database-2-line text-danger"></i> Partial Failed',
     5: '<i class="remixicon ri-close-circle-line text-danger"></i> Failed',
+    6: '<i class="remixicon ri-database-2-line text-info"></i> All Skipped',
   };
   return statusMap[parseInt(status, 10)] || '<i class="remixicon ri-question-line text-dark"></i> Unknown';
 }

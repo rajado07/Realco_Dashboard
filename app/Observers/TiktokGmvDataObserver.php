@@ -2,15 +2,15 @@
 
 namespace App\Observers;
 
-use App\Models\TiktokPsaData;
+use App\Models\TiktokGmvData;
 use App\Models\RawData;
 use Illuminate\Support\Facades\Log;
 
-class TiktokPsaDataObserver
+class TiktokGmvDataObserver
 {
     public function created(RawData $rawData)
     {
-        if ($rawData->type === 'tiktok_psa') {
+        if ($rawData->type === 'tiktok_gmv') {
             $jsonData = json_decode($rawData->data, true);
 
             $totalEntries = count($jsonData);
@@ -23,8 +23,7 @@ class TiktokPsaDataObserver
             foreach ($jsonData as $dataItem) {
                 try {
                     // Check for existing data
-                    $existingData = TiktokPsaData::where('data_date', $dataItem['By Day'])
-                        ->where('ad_group_id', $dataItem['Ad group ID'])
+                    $existingData = TiktokGmvData::where('data_date', $dataItem['Date'])
                         ->where('brand_id', $rawData->brand_id)
                         ->exists();
 
@@ -34,15 +33,21 @@ class TiktokPsaDataObserver
                         continue;
                     }
 
-                    TiktokPsaData::create([
-                        'data_date' => $dataItem['By Day'],
-                        'ad_group_name' => $dataItem['Ad group name'],
-                        'ad_group_id' => $dataItem['Ad group ID'],
-                        'ad_name' => $dataItem['Ad name'],
-                        'cost' => $dataItem['Cost'],
-                        'purchases' => $dataItem['Purchases (Shop)'],
-                        'gross_revenue' => $dataItem['Gross revenue (Shop)'],
-                        'impressions' => $dataItem['Impressions'],
+                    $conversionRate = str_replace('%', '', $dataItem['Conversion rate']);
+
+                    TiktokGmvData::create([
+                        'data_date' => $dataItem['Date'],
+                        'gmv' => $dataItem['GMV (Rp)'],
+                        'refunds' => $dataItem['Refunds (Rp)'],
+                        'gross_revenue' => $dataItem['Gross Revenue (with platform product subsidy)'],
+                        'items_sold' => $dataItem['Items sold'],
+                        'buyers' => $dataItem['Buyers'],
+                        'page_views' => $dataItem['Page views'],
+                        'visitors' => $dataItem['Visitors'],
+                        'sku_orders' => $dataItem['SKU orders'],
+                        'orders' => $dataItem['Orders'],
+                        'conversion_rate' => $conversionRate,
+                        
                         'retrieved_at' => $rawData->retrieved_at,
                         'file_name' => $rawData->file_name,
                         'brand_id' => $rawData->brand_id,
@@ -52,7 +57,7 @@ class TiktokPsaDataObserver
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
-                        'ad_group_id' => $dataItem['Ad group ID'],
+                        'data_date' => $dataItem['Date'],
                         'error' => $e->getMessage(),
                     ];
                 }
@@ -69,17 +74,18 @@ class TiktokPsaDataObserver
                 'errors' => $errorDetails,
             ];
 
+            
             if ($successCount === 0 && $skipCount === $totalEntries) {
                 $status = 6; // All skipped
             } elseif ($successCount === 0 && count($failedDetails) === $totalEntries) {
                 $status = 5; // All failed
             } elseif ($successCount === $totalEntries) {
                 $status = 2; // All successful
-            } elseif ($successCount > 0 && count($failedDetails) > 0) {  
+            } elseif ($successCount > 0 && count($failedDetails) > 0) {
                 $status = 4; // Partial error
             } elseif ($successCount > 0 && $skipCount > 0) {
                 $status = 3; // Partial success
-            } 
+            }
 
             // Log summary of the process
             Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Skipped: $skipCount, Failed: " . ($totalEntries - $successCount - $skipCount));

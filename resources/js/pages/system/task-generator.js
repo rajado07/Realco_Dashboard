@@ -60,13 +60,13 @@ $(document).ready(() => {
                     {
                         targets: 7,
                         render: function (data, type, row) {
-                            return  dataTableHelper.translateBrand(data);
+                            return dataTableHelper.translateBrand(data);
                         }
                     },
                     {
                         targets: 8,
                         render: function (data, type, row) {
-                            return  dataTableHelper.translateStatusTaskGenerator(data);
+                            return dataTableHelper.translateStatusTaskGenerator(data);
                         }
                     },
                     {
@@ -257,7 +257,7 @@ $(document).ready(() => {
                 $('#editFrequency').val(data.frequency || '').trigger('change');
                 $('#editLink').val(data.link || '');
                 $('#editRunAt').val(data.run_at || '');
-              ;
+                ;
             })
             .catch(error => console.error('Failed to fetch data:', error));
     }
@@ -340,8 +340,6 @@ $(document).ready(() => {
                 initialize.toast(data);
             });
     }
-
-
 
     function init() {
         // Initialise External Helper

@@ -15,8 +15,7 @@ class ShopeeBrandPortalAdsDataObserver
 
             $totalEntries = count($jsonData);
             $successCount = 0;
-            $skippedAllCount = 0;
-            $skippedExistingCount = 0;
+            $skipCount = 0;
             $errorDetails = [];
             $skippedDetails = [];
             $failedDetails = [];
@@ -39,7 +38,7 @@ class ShopeeBrandPortalAdsDataObserver
                     ->where('data_date', $formattedDate)
                     ->exists();
                 if ($existingData) {
-                    $skippedExistingCount++;
+                    $skipCount++;
                     $skippedDetails[] = $dataItem;
                     continue;
                 }
@@ -73,26 +72,27 @@ class ShopeeBrandPortalAdsDataObserver
             $messageDetails = [
                 'total_entries' => $totalEntries,
                 'successful' => $successCount,
-                'skipped_all' => $skippedAllCount,
-                'skipped_existing' => $skippedExistingCount,
-                'failed' => $totalEntries - $successCount - $skippedAllCount - $skippedExistingCount,
+                'skipped' => $skipCount,
+                'failed' => $totalEntries - $successCount - $skipCount,
                 'skipped_details' => $skippedDetails,
                 'failed_details' => $failedDetails,
                 'errors' => $errorDetails,
             ];
 
-            if ($successCount === 0) {
+            if ($successCount === 0 && $skipCount === $totalEntries) {
+                $status = 6; // All skipped
+            } elseif ($successCount === 0 && count($failedDetails) === $totalEntries) {
                 $status = 5; // All failed
             } elseif ($successCount === $totalEntries) {
                 $status = 2; // All successful
-            } elseif ($successCount > 0 && count($failedDetails) > 0) {
+            } elseif ($successCount > 0 && count($failedDetails) > 0) {  
                 $status = 4; // Partial error
-            } elseif ($successCount > 0 && $skippedExistingCount > 0) {
+            } elseif ($successCount > 0 && $skipCount > 0) {
                 $status = 3; // Partial success
-            }
+            } 
 
             // Log summary of the process
-            Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Skipped (Existing data): $skippedExistingCount, Failed: " . ($totalEntries - $successCount - $skippedAllCount - $skippedExistingCount));
+            Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Skipped: $skipCount, Failed: " . ($totalEntries - $successCount - $skipCount));
 
             // Update the status and message in RawData
             $rawData->update([

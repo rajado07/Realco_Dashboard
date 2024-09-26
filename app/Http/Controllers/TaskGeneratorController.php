@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\TaskGenerator;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-
-
-
 
 class TaskGeneratorController extends Controller
 {
@@ -31,11 +29,11 @@ class TaskGeneratorController extends Controller
 
             $store = new TaskGenerator;
             $store->brand_id = $validatedData['brand_id'];
-            $store->type = $validatedData['type'] ?? null; 
-            $store->market_place_id = $validatedData['market_place_id']; 
-            $store->frequency = $validatedData['frequency']; 
-            $store->link = $validatedData['link']; 
-            $store->run_at = $validatedData['run_at']; 
+            $store->type = $validatedData['type'] ?? null;
+            $store->market_place_id = $validatedData['market_place_id'];
+            $store->frequency = $validatedData['frequency'];
+            $store->link = $validatedData['link'];
+            $store->run_at = $validatedData['run_at'];
             $store->save();
 
             return response()->json(['message' => 'Task Added Successfully', 'type' => 'success']);
@@ -59,13 +57,14 @@ class TaskGeneratorController extends Controller
         ];
         return response()->json($data);
     }
-    
+
 
     public function update(Request $request)
     {
         $id = $request->input('id');
 
         try {
+            // Validasi input
             $validatedData = $request->validate([
                 'brand_id' => 'required|integer',
                 'type' => 'required|string',
@@ -75,13 +74,28 @@ class TaskGeneratorController extends Controller
                 'run_at' => 'required|date_format:H:i:s',
             ]);
 
-            $update = TaskGenerator::findOrFail($id);
+            $taskGenerator = TaskGenerator::findOrFail($id);
 
-            $update->fill($validatedData);
+            $taskGenerator->fill($validatedData);
 
-            if ($update->isDirty()) {
-                $update->save();
-                return response()->json(['message' => 'Task Updated Successfully', 'type' => 'success']);
+            if ($taskGenerator->isDirty()) {
+                $taskGenerator->save(); 
+
+                $tasks = Task::where('task_generator_id', $taskGenerator->id)
+                    ->whereIn('status', [1, 4]) // Filter berdasarkan status 1 dan 4
+                    ->get();
+
+                // Loop melalui masing-masing Task dan update sesuai dengan TaskGenerator
+                foreach ($tasks as $task) {
+                    $task->update([
+                        'brand_id' => $taskGenerator->brand_id,
+                        'type' => $taskGenerator->type,
+                        'market_place_id' => $taskGenerator->market_place_id,
+                        'link' => $taskGenerator->link,
+                    ]);
+                }
+
+                return response()->json(['message' => 'Task Generator and related Tasks with status 1 or 4 updated successfully', 'type' => 'success']);
             } else {
                 return response()->json(['message' => 'No changes made', 'type' => 'warning']);
             }
@@ -93,10 +107,16 @@ class TaskGeneratorController extends Controller
     public function destroy(string $id)
     {
         try {
-            $destroy = TaskGenerator::findOrFail($id);
-            $destroy->delete();
+            $taskGenerator = TaskGenerator::findOrFail($id);
 
-            return response()->json(['message' => 'Task Deleted Sucessfully', 'type' => 'success']);
+            // Hapus seluruh Task yang berhubungan dengan TaskGenerator dan memiliki status 1
+            Task::where('task_generator_id', $taskGenerator->id)
+                ->where('status', 1)
+                ->delete();
+
+            $taskGenerator->delete();
+
+            return response()->json(['message' => 'Task Generator and related Tasks Deleted Successfully', 'type' => 'success']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed : ' . $e->getMessage(), 'type' => 'error']);
         }
@@ -126,5 +146,4 @@ class TaskGeneratorController extends Controller
             ], 500);
         }
     }
-
 }
