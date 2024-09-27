@@ -160,14 +160,9 @@ export default defineConfig({
                  'resources/js/pages/system/raw-data.js',
                  'resources/js/pages/system/task-generator.js',
                  'resources/js/pages/system/task.js',
-
-
-
-
-
-
-
-
+                 'resources/js/pages/system/task-completed.js',
+                 'resources/js/pages/system/task-exception.js',
+                 'resources/js/pages/system/task-failed.js',
 
             ],
             refresh: true,
