@@ -85,6 +85,11 @@ class RunTasksFastApi extends Command
                             'type' => $task->type,
                             'scheduled_to_run' => $task->scheduled_to_run,
                         ]);
+
+                        // Simpan task dan rawData setelah berhasil
+                        $task->save();
+                        $rawData->save();
+
                     } elseif ($responseData['status'] == 'error') {
                         // Update task status to 4 (exception) if an error occurred
                         $task->status = 4;
@@ -113,9 +118,8 @@ class RunTasksFastApi extends Command
                     ]);
                 }
 
-                $task->save(); // Memastikan Save Task Dulu
-                $rawData->save(); // // Setelah Task di Save, Baru Save RawData
-                
+                $task->save(); 
+
             } catch (\Exception $e) {
                 // Update task status to 4 (exception) if an error occurred
                 $task->status = 4;

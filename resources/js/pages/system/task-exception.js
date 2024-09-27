@@ -15,7 +15,7 @@ $(document).ready(() => {
         if (!dataTableInstance) {
             dataTableInstance = $('#basic-datatable').DataTable({
                 ajax: {
-                    url: '/task/read',
+                    url: '/task/read/exception',
                     type: 'GET',
                     dataSrc: '',
                 },
@@ -29,7 +29,7 @@ $(document).ready(() => {
                     { title: "Type", data: "type" },
                     { title: "Link", data: "link" },
                     { title: "Scheduled To Run", data: "scheduled_to_run" },
-                    { title: "Created At", data: "created_at" },
+                    { title: "Success At", data: "updated_at" },
                     { title: "Market Place", data: "market_place_id" },
                     { title: "Brand", data: "brand_id" },
                     { title: "Status", data: "status" },
@@ -95,7 +95,7 @@ $(document).ready(() => {
 
     function periodicallyUpdateAllDataTable() {
         setInterval(() => {
-            fetch('/task/read')
+            fetch('/task/read/exception')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -165,39 +165,6 @@ $(document).ready(() => {
         });
     }
 
-
-    let previousCountStatusData = {};
-    function getTaskStatusCount() {
-        fetch('/task/status-count')
-            .then(response => response.json())
-            .then(newData => {
-                updateCounterIfChanged('#ready', newData[1] || 0);
-                updateCounterIfChanged('#wait_for_running', newData[2] || 0);
-                updateCounterIfChanged('#running', newData[3] || 0);
-                updateCounterIfChanged('#exception', newData[4] || 0);
-                updateCounterIfChanged('#completed', newData['completed'] || 0);
-                updateCounterIfChanged('#failed', newData['failed'] || 0);
-            })
-            .catch(error => console.error('Error updating status:', error));
-    }
-
-    // Function to check if the value has changed and update the counter
-    function updateCounterIfChanged(selector, newValue) {
-        const currentValue = previousCountStatusData[selector] || 0;
-
-        if (currentValue !== newValue) {
-            initialize.animateCounter($(selector), newValue);
-            previousCountStatusData[selector] = newValue; // Store the new value
-        }
-    }
-
-    function periodicallyUpdateTaskStatusCount() {
-        getTaskStatusCount(); // Memperbarui status segera
-        setInterval(getTaskStatusCount, 3000); // Memperbarui status setiap 3 detik
-    }
-
-
-
     function runSelected() {
         $(document).on('click', '#runSelected', function () {
             updateStatus(selectedData, 'start', 2);
@@ -234,6 +201,60 @@ $(document).ready(() => {
 
     }
 
+    window.showExceptionModal = function (rowId) {
+        const url = `/task/exception-details`;
+
+        // Prepare the request data
+        const formData = new FormData();
+        formData.append('id', rowId);
+
+        // Show loading spinner and hide content sections
+        document.getElementById('loadingSpinner').style.display = 'block';
+        document.getElementById('imageSection').style.display = 'none';
+        document.getElementById('messageSection').style.display = 'none';
+
+        // Fetch the data from the backend using POST method
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-Token': csrfToken,  // Assuming csrfToken is available globally
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                const exceptionImage = document.getElementById('exceptionImage');
+                const exceptionDetails = document.getElementById('exceptionDetails');
+
+                // Set the image source and exception details
+                exceptionImage.src = data.imageUrl;
+                exceptionDetails.textContent = data.exceptionMessage;
+
+                // Add an error handler for the image in case it fails to load
+                exceptionImage.onerror = function () {
+                    exceptionImage.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+                    exceptionImage.alt = 'Image not found';
+                };
+
+                // Hide loading spinner and show content sections
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('imageSection').style.display = 'block';
+                document.getElementById('messageSection').style.display = 'block';
+
+                // Show the modal
+                var exceptionModal = new bootstrap.Modal(document.getElementById('exceptionModal'));
+                exceptionModal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching exception details:', error);
+                // Optionally, display an error message in the modal or a toast notification
+                document.getElementById('exceptionDetails').textContent = 'Failed to load exception details. Please try again.';
+                // Hide the spinner and display the error message
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('messageSection').style.display = 'block';
+            });
+    };
+
     function init() {
         // Initialise External Helper
         initialize.dateTimePicker();
@@ -246,7 +267,6 @@ $(document).ready(() => {
         initializeOrUpdateDataTable();
         periodicallyUpdateAllDataTable();
         getSelectedData();
-        periodicallyUpdateTaskStatusCount();
 
         // Action
         runSelected();

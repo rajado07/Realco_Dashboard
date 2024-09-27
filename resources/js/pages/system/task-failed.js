@@ -15,7 +15,7 @@ $(document).ready(() => {
         if (!dataTableInstance) {
             dataTableInstance = $('#basic-datatable').DataTable({
                 ajax: {
-                    url: '/task/read',
+                    url: '/task/read/failed',
                     type: 'GET',
                     dataSrc: '',
                 },
@@ -29,7 +29,7 @@ $(document).ready(() => {
                     { title: "Type", data: "type" },
                     { title: "Link", data: "link" },
                     { title: "Scheduled To Run", data: "scheduled_to_run" },
-                    { title: "Created At", data: "created_at" },
+                    { title: "Success At", data: "updated_at" },
                     { title: "Market Place", data: "market_place_id" },
                     { title: "Brand", data: "brand_id" },
                     { title: "Status", data: "status" },
@@ -95,7 +95,7 @@ $(document).ready(() => {
 
     function periodicallyUpdateAllDataTable() {
         setInterval(() => {
-            fetch('/task/read')
+            fetch('/task/read/failed')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -165,39 +165,6 @@ $(document).ready(() => {
         });
     }
 
-
-    let previousCountStatusData = {};
-    function getTaskStatusCount() {
-        fetch('/task/status-count')
-            .then(response => response.json())
-            .then(newData => {
-                updateCounterIfChanged('#ready', newData[1] || 0);
-                updateCounterIfChanged('#wait_for_running', newData[2] || 0);
-                updateCounterIfChanged('#running', newData[3] || 0);
-                updateCounterIfChanged('#exception', newData[4] || 0);
-                updateCounterIfChanged('#completed', newData['completed'] || 0);
-                updateCounterIfChanged('#failed', newData['failed'] || 0);
-            })
-            .catch(error => console.error('Error updating status:', error));
-    }
-
-    // Function to check if the value has changed and update the counter
-    function updateCounterIfChanged(selector, newValue) {
-        const currentValue = previousCountStatusData[selector] || 0;
-
-        if (currentValue !== newValue) {
-            initialize.animateCounter($(selector), newValue);
-            previousCountStatusData[selector] = newValue; // Store the new value
-        }
-    }
-
-    function periodicallyUpdateTaskStatusCount() {
-        getTaskStatusCount(); // Memperbarui status segera
-        setInterval(getTaskStatusCount, 3000); // Memperbarui status setiap 3 detik
-    }
-
-
-
     function runSelected() {
         $(document).on('click', '#runSelected', function () {
             updateStatus(selectedData, 'start', 2);
@@ -246,7 +213,6 @@ $(document).ready(() => {
         initializeOrUpdateDataTable();
         periodicallyUpdateAllDataTable();
         getSelectedData();
-        periodicallyUpdateTaskStatusCount();
 
         // Action
         runSelected();

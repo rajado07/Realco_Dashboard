@@ -15,7 +15,7 @@ $(document).ready(() => {
         if (!dataTableInstance) {
             dataTableInstance = $('#basic-datatable').DataTable({
                 ajax: {
-                    url: '/task/read',
+                    url: '/task/read/completed',
                     type: 'GET',
                     dataSrc: '',
                 },
@@ -29,7 +29,7 @@ $(document).ready(() => {
                     { title: "Type", data: "type" },
                     { title: "Link", data: "link" },
                     { title: "Scheduled To Run", data: "scheduled_to_run" },
-                    { title: "Created At", data: "created_at" },
+                    { title: "Success At", data: "updated_at" },
                     { title: "Market Place", data: "market_place_id" },
                     { title: "Brand", data: "brand_id" },
                     { title: "Status", data: "status" },
@@ -93,61 +93,6 @@ $(document).ready(() => {
         }
     }
 
-    function periodicallyUpdateAllDataTable() {
-        setInterval(() => {
-            fetch('/task/read')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(newData => {
-                    let isChanged = false;
-                    const newDataIds = newData.map(item => item.id);
-
-                    // Fade out rows that no longer exist in the new data
-                    dataTableInstance.rows().every(function () {
-                        const oldRowId = this.data().id;
-                        if (!newDataIds.includes(oldRowId)) {
-                            $(this.node()).fadeOut(500, () => {
-                                this.remove();
-                                dataTableInstance.draw(false);
-                            });
-                            isChanged = true;
-                        }
-                    });
-
-                    // Update or add rows with blink effect
-                    newData.forEach(newRow => {
-                        const currentRow = dataTableInstance.row((idx, data) => data.id === newRow.id);
-                        if (currentRow.length) {
-                            if (JSON.stringify(currentRow.data()) !== JSON.stringify(newRow)) {
-                                currentRow.data(newRow).invalidate(); // Prepare data for redraw
-                                const node = $(currentRow.node());
-                                // Start blink animation
-                                node.fadeTo(100, 0.5).fadeTo(100, 1.0).fadeTo(100, 0.5).fadeTo(100, 1.0);
-                                isChanged = true;
-                            }
-                        } else {
-                            // Fade in new rows
-                            const node = $(dataTableInstance.row.add(newRow).draw(false).node());
-                            node.hide().fadeIn(1000);
-                            isChanged = true;
-                        }
-                    });
-
-                    // Redraw the table once if there are changes
-                    if (isChanged) {
-                        dataTableInstance.draw(false);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating data table:', error);
-                });
-        }, 3000);
-    }
-
     let selectedData = [];
     function getSelectedData() {
         $(document).on('change', '.rowCheckbox, #checkAll', function () {
@@ -164,39 +109,6 @@ $(document).ready(() => {
             }
         });
     }
-
-
-    let previousCountStatusData = {};
-    function getTaskStatusCount() {
-        fetch('/task/status-count')
-            .then(response => response.json())
-            .then(newData => {
-                updateCounterIfChanged('#ready', newData[1] || 0);
-                updateCounterIfChanged('#wait_for_running', newData[2] || 0);
-                updateCounterIfChanged('#running', newData[3] || 0);
-                updateCounterIfChanged('#exception', newData[4] || 0);
-                updateCounterIfChanged('#completed', newData['completed'] || 0);
-                updateCounterIfChanged('#failed', newData['failed'] || 0);
-            })
-            .catch(error => console.error('Error updating status:', error));
-    }
-
-    // Function to check if the value has changed and update the counter
-    function updateCounterIfChanged(selector, newValue) {
-        const currentValue = previousCountStatusData[selector] || 0;
-
-        if (currentValue !== newValue) {
-            initialize.animateCounter($(selector), newValue);
-            previousCountStatusData[selector] = newValue; // Store the new value
-        }
-    }
-
-    function periodicallyUpdateTaskStatusCount() {
-        getTaskStatusCount(); // Memperbarui status segera
-        setInterval(getTaskStatusCount, 3000); // Memperbarui status setiap 3 detik
-    }
-
-
 
     function runSelected() {
         $(document).on('click', '#runSelected', function () {
@@ -244,9 +156,7 @@ $(document).ready(() => {
 
         // Data Table
         initializeOrUpdateDataTable();
-        periodicallyUpdateAllDataTable();
         getSelectedData();
-        periodicallyUpdateTaskStatusCount();
 
         // Action
         runSelected();

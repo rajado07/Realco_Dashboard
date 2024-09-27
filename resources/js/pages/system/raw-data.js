@@ -29,6 +29,7 @@ $(document).ready(() => {
                     { title: "Retrieved At", data: "retrieved_at" },
                     { title: "Data Date", data: "data_date" },
                     { title: "File Name", data: "file_name" },
+                    { title: "Task ID", data: "task_id" },
                     { title: "Market Place", data: "market_place_id" },
                     { title: "Brand", data: "brand_id" },
                     { title: "Status", data: "status" },
@@ -52,25 +53,25 @@ $(document).ready(() => {
                         }
                     },
                     {
-                        targets: 6,
+                        targets: 7,
                         render: function (data, type, row) {
                             return dataTableHelper.translateMarketPlace(data);
                         }
                     },
                     {
-                        targets: 7,
+                        targets: 8,
                         render: function (data, type, row) {
                             return  dataTableHelper.translateBrand(data);
                         }
                     },
                     {
-                        targets: 8,
+                        targets: 9,
                         render: function (data, type, row) {
                             return dataTableHelper.translateStatusRawData(data);
                         }
                     },
                     {
-                        targets: 9, // Updated target index for actions
+                        targets: 10, // Updated target index for actions
                         orderable: false,
                         searchable: false,
                         render: function (data, type, row) {
@@ -309,6 +310,7 @@ $(document).ready(() => {
             initialize.animateCounter($('#partial_moved'), newData[3] || 0);
             initialize.animateCounter($('#partial_failed'), newData[4] || 0);
             initialize.animateCounter($('#failed'), newData[5] || 0);
+            initialize.animateCounter($('#all_skipped'), newData[6] || 0);
           })
           .catch(error => console.error('Error updating status:', error));
       }

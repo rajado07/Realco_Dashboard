@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\RawData;
+use App\Models\Task; // Pastikan untuk menambahkan use Task
 use Illuminate\Support\Facades\Log;
 
 class RawDataStatusObserver
@@ -10,9 +11,11 @@ class RawDataStatusObserver
     public function updated(RawData $rawData)
     {
         if ($rawData->isDirty('status')) {
-            $task = $rawData->task;
+            // Cari task berdasarkan task_id yang ada di RawData
+            $task = Task::find($rawData->task_id);
 
             if ($task) {
+                // Update status task dengan memetakan dari status RawData
                 $task->status = $this->mapStatus($rawData->status);
                 $task->save();
 
@@ -23,6 +26,7 @@ class RawDataStatusObserver
         }
     }
 
+    // Fungsi untuk memetakan status RawData ke status Task
     protected function mapStatus($rawDataStatus)
     {
         switch ($rawDataStatus) {

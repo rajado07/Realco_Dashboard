@@ -11,9 +11,4 @@ class RawData extends Model
 
     protected $guarded = ['id'];
 
-    public function task()
-    {
-        return $this->belongsTo(Task::class);
-    }
-
 }

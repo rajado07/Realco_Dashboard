@@ -11,7 +11,42 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $data = Task::all();
+        $data = Task::whereIn('status', [1, 2, 3])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+        return response()->json($data);
+    }
+
+    public function getTaskByType($type)
+    {
+        // Tentukan status yang sesuai berdasarkan type
+        switch ($type) {
+            case 'completed':
+                // Status 5, 6, dan 9 untuk "completed"
+                $statuses = [5, 6, 9];
+                break;
+
+            case 'failed':
+                // Status 7 dan 8 untuk "failed"
+                $statuses = [7, 8];
+                break;
+
+            case 'exception':
+                // Status 4 untuk "exception"
+                $statuses = [4];
+                break;
+
+            default:
+                // Jika tipe tidak dikenali, kembalikan respon kosong atau error
+                return response()->json(['message' => 'Invalid task type'], 400);
+        }
+
+        // Ambil data berdasarkan status yang sesuai
+        $data = Task::whereIn('status', $statuses)
+            ->orderBy('updated_at', 'desc') // Urutkan berdasarkan updated_at secara descending
+            ->get();
+
+        // Kembalikan data sebagai response JSON
         return response()->json($data);
     }
 
@@ -19,7 +54,7 @@ class TaskController extends Controller
     {
         // Mengambil jumlah uploads berdasarkan status yang ditentukan
         $statusCounts = Task::select('status', DB::raw('count(*) as total'))
-            ->whereIn('status', [1, 2, 3, 4, 5])
+            ->whereIn('status', [1, 2, 3, 4, 5, 6, 7, 8, 9])
             ->groupBy('status')
             ->get()
             ->keyBy('status')
@@ -27,8 +62,15 @@ class TaskController extends Controller
                 return $item->total;
             });
 
-        $allStatusCounts = collect([1, 2, 3, 4, 5])->mapWithKeys(function ($status) use ($statusCounts) {
-            return [$status => $statusCounts->get($status, 0)];
+        // Menjumlahkan status 5, 6, dan 9 sebagai "completed"
+        $completedCount = $statusCounts->get(5, 0) + $statusCounts->get(6, 0) + $statusCounts->get(9, 0);
+
+        // Menjumlahkan status 7 dan 8 sebagai "failed"
+        $failedCount = $statusCounts->get(7, 0) + $statusCounts->get(8, 0);
+
+        // Membuat array status dengan completed dan failed
+        $allStatusCounts = collect([1, 2, 3, 4, 'completed' => $completedCount, 'failed' => $failedCount])->mapWithKeys(function ($status, $key) use ($statusCounts) {
+            return is_string($key) ? [$key => $status] : [$status => $statusCounts->get($status, 0)];
         });
 
         return response()->json($allStatusCounts);

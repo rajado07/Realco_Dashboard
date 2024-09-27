@@ -103,6 +103,7 @@ Route::get('/group/bytype/{type?}', [DataGroupController::class, 'getDataGroupBy
 
 // Task
 Route::get('/task/read', [TaskController::class, 'index'])->middleware('auth');
+Route::get('/task/read/{type}', [TaskController::class, 'getTaskByType'])->middleware('auth');
 Route::get('/task/status-count', [TaskController::class, 'getTaskStatusCount'])->middleware('auth');
 Route::post('/task/update/status', [TaskController::class, 'updateStatus'])->middleware('auth');
 Route::post('/task/exception-details', [TaskController::class, 'getExceptionDetails'])->middleware('auth');

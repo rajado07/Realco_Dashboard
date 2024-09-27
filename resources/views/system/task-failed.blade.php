@@ -26,91 +26,14 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">System</a></li>
-                        <li class="breadcrumb-item active">Task List</a></li>
+                        <li class="breadcrumb-item active">Task Failed</a></li>
                     </ol>
                 </div>
-                <h4 class="page-title">Task List</h4>
+                <h4 class="page-title">Task Failed</h4>
             </div>
         </div>
     </div>
     <!-- end page title -->
-
-    <!-- Start row Status RawData-->
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-6">
-
-        <div class="col" style="cursor: pointer;" onclick="window.location.href='/system/task-completed'">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end mt-1">
-                        <i class="ri-check-line text-success widget-icon text-bg-light rounded-circle fs-24"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Completed">Completed</h5>
-                    <h4 class="my-0 counter" id="completed">0</h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end mt-1">
-                        <i class="ri-flag-line widget-icon text-bg-secondary rounded-circle fs-24"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="ready">Ready</h5>
-                    <h4 class="my-0 counter" id="ready">0</h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end mt-1">
-                        <i class="ri-timer-line widget-icon text-bg-info rounded-circle fs-24"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Wait For Running">Wait For Running</h5>
-                    <h4 class="my-0 counter" id="wait_for_running">0</h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end mt-1">
-                        <i class="ri-loader-4-line widget-icon text-bg-success rounded-circle fs-24"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Running">Running</h5>
-                    <h4 class="my-0 counter" id="running">0</h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="col" style="cursor: pointer;" onclick="window.location.href='/system/task-exception'">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end mt-1">
-                        <i class="ri-error-warning-line widget-icon text-bg-warning rounded-circle fs-24"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Exception">Exception</h5>
-                    <h4 class="my-0 counter" id="exception">0</h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="col" style="cursor: pointer;" onclick="window.location.href='/system/task-failed'">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="float-end mt-1">
-                        <i class="ri-close-circle-line text-light widget-icon text-bg-danger rounded-circle fs-24"></i>
-                    </div>
-                    <h5 class="text-muted fw-normal mt-0" title="Failed">Failed</h5>
-                    <h4 class="my-0 counter" id="failed">0</h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end row Status RawData-->
 
     <!-- Start Data Table-->
     <div class="row">
@@ -167,5 +90,5 @@
     @endsection
 
     @section('script')
-    @vite(['resources/js/pages/system/task.js'])
+    @vite(['resources/js/pages/system/task-failed.js'])
     @endsection

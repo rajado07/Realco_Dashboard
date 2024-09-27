@@ -12,7 +12,7 @@ class RawDataController extends Controller
 {
     public function index()
     {
-        $data = RawData::all();
+        $data = RawData::orderBy('updated_at', 'desc')->get();
         return response()->json($data);
     }
     
@@ -20,7 +20,7 @@ class RawDataController extends Controller
     {
         // Mengambil jumlah uploads berdasarkan status yang ditentukan
         $statusCounts = RawData::select('status', DB::raw('count(*) as total'))
-            ->whereIn('status', [1, 2, 3, 4, 5])
+            ->whereIn('status', [1, 2, 3, 4, 5 , 6])
             ->groupBy('status')
             ->get()
             ->keyBy('status')
@@ -28,7 +28,7 @@ class RawDataController extends Controller
                 return $item->total;
             });
 
-        $allStatusCounts = collect([1, 2, 3, 4, 5])->mapWithKeys(function ($status) use ($statusCounts) {
+        $allStatusCounts = collect([1, 2, 3, 4, 5, 6])->mapWithKeys(function ($status) use ($statusCounts) {
             return [$status => $statusCounts->get($status, 0)];
         });
 
