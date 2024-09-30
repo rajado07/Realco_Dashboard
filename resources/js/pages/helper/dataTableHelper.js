@@ -64,7 +64,7 @@ function translateMarketPlace(brand) {
     3: '<i class="ri-shopping-cart-line"></i><span> Tokopedia</span>',
     4: '<i class="ri-shopping-bag-3-line"></i><span> Lazada</span>',
   };
-  return brandMap[parseInt(brand, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+  return brandMap[parseInt(brand, 10)] || '<span class="badge bg-secondary rounded-pill">No Market Place</span>';
 }
 
 function shortenText(data, maxLength = 50) {

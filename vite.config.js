@@ -155,6 +155,7 @@ export default defineConfig({
 
                  // System
                  'resources/js/pages/system/brand.js',
+                 'resources/js/pages/system/data-checker.js',
                  'resources/js/pages/system/market-place.js',
                  'resources/js/pages/system/group.js',
                  'resources/js/pages/system/raw-data.js',

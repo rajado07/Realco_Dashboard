@@ -245,6 +245,13 @@
             </li>
 
             <li class="side-nav-item">
+                <a href="{{ route('second', ['system', 'data-checker']) }}" class="side-nav-link">
+                    <i class="ri-server-line"></i>
+                    <span> Data Checker </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
                 <a href="{{ route('second', ['system', 'test']) }}" class="side-nav-link">
                     <i class="ri-bill-line"></i>
                     <span> Log </span>
