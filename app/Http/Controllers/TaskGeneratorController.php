@@ -126,7 +126,7 @@ class TaskGeneratorController extends Controller
     {
         try {
             // Kirim request GET ke FastAPI menggunakan Http Facade
-            $response = Http::get('http://127.0.0.1:8001/get-script');
+            $response = Http::get('http://192.165.10.20:8001/get-script');
 
             // Cek apakah request berhasil
             if ($response->successful()) {
