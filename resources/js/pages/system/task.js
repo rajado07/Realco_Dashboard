@@ -210,6 +210,12 @@ $(document).ready(() => {
         });
     }
 
+    function markedAsCompleted() {
+        $(document).on('click', '#markedAsCompleted', function () {
+            updateStatus(selectedData, 'marked_as_completed', 5);
+        });
+    }
+
     function updateStatus(ids, type, status) {
         fetch(`/task/update/status`, {
             method: 'POST',
@@ -251,6 +257,7 @@ $(document).ready(() => {
         // Action
         runSelected();
         archivedSelected();
+        markedAsCompleted();
 
     }
     init();

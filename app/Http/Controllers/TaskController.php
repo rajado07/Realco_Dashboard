@@ -89,6 +89,12 @@ class TaskController extends Controller
                 $model = Task::find($id);
                 if ($model) {
                     $model->status = $status;
+
+                    // Update the message if the type is marked_as_completed
+                    if ($type == 'marked_as_completed') {
+                        $model->message = 'Task marked as completed';
+                    }
+
                     $model->save();
                     $updateCount++;
                 }
@@ -99,6 +105,8 @@ class TaskController extends Controller
                 $successMessage = "$updateCount Task started successfully.";
             } elseif ($type == 'archived') {
                 $successMessage = "$updateCount Task archived successfully.";
+            } elseif ($type == 'marked_as_completed') {
+                $successMessage = "$updateCount Task marked as completed.";
             }
 
             return response()->json([

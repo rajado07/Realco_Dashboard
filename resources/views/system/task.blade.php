@@ -135,6 +135,7 @@
                                 style="display: none;"><i class="ri-settings-5-line"></i> Settings</button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="#" id="runSelected">Run Selected Task</a>
+                                <a class="dropdown-item" href="#" id="markedAsCompleted">Mark As Completed</a>
                                 {{-- <a class="dropdown-item" href="#" id="deleteSelected">Delete Selected Task</a> --}}
                                 <a class="dropdown-item" href="#" id="archivedSelected">Archived Selected Task</a>
                                 {{-- <a class="dropdown-item" href="#" id="editSelected">Edit Selected Task</a> --}}
