@@ -44,6 +44,9 @@ class DataCheckerController extends Controller
             'shopee_seller_center_live_streaming' => ShopeeSellerCenterLiveStreamingData::class,
             'shopee_seller_center_voucher' => ShopeeSellerCenterVoucherData::class,
             'meta_cpas' => MetaCpasData::class,
+            'tiktok_psa' => TiktokPsaData::class,
+            'tiktok_lsa' => TiktokLsaData::class,
+            'tiktok_vsa' => TiktokVsaData::class,
         ];
 
         $missingDatesData = [];
