@@ -25,6 +25,7 @@ class TiktokLsaDataObserver
                     // Check for existing data
                     $existingData = TiktokLsaData::where('data_date', $dataItem['By Day'])
                         ->where('ad_group_id', $dataItem['Ad group ID'])
+                        ->where('ad_id', $dataItem['Ad ID'])
                         ->where('brand_id', $rawData->brand_id)
                         ->exists();
 
@@ -38,6 +39,7 @@ class TiktokLsaDataObserver
                         'data_date' => $dataItem['By Day'],
                         'ad_group_name' => $dataItem['Ad group name'],
                         'ad_group_id' => $dataItem['Ad group ID'],
+                        'ad_id' => $dataItem['Ad ID'],
                         'ad_name' => $dataItem['Ad name'],
                         'cost' => $dataItem['Cost'],
                         'live_views' => $dataItem['LIVE views'],
@@ -55,7 +57,7 @@ class TiktokLsaDataObserver
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
-                        'ad_group_name' => $dataItem['Ad group name'],
+                        'ad_id' => $dataItem['Ad ID'],
                         'error' => $e->getMessage(),
                     ];
                 }
