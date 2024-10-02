@@ -25,6 +25,8 @@ class MetaCpasDataObserver
                     // Check for existing data
                     $existingData = MetaCpasData::where('data_date', $dataItem['Day'])
                         ->where('ad_set_id', $dataItem['Ad set ID'])
+                        ->where('ad_set_name', $dataItem['Ad set name'])
+                        ->where('ad_name', $dataItem['Ad name'])
                         ->where('brand_id', $rawData->brand_id)
                         ->where('market_place_id', $rawData->market_place_id)
                         ->exists();
