@@ -61,7 +61,7 @@ class RunTasksFastApi extends Command
 
             try {
                 // Make the POST request using the combined fast_api_url and merged data
-                $response = Http::timeout(120)->post($fastApiUrl, $mergedData);
+                $response = Http::timeout(300)->post($fastApiUrl, $mergedData);
 
                 if ($response->successful()) {
                     $responseData = $response->json();
