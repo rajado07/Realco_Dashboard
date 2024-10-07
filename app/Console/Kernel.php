@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('generate:tasks')->everyMinute();
+        $schedule->command('generate:tasks')->everyTwoMinutes();
         
         // $schedule->command('update:task-status')->everyTenSeconds();
 
