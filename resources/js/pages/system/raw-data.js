@@ -345,7 +345,7 @@ $(document).ready(() => {
 
         // Data Table
         initializeOrUpdateDataTable();
-        periodicallyUpdateAllDataTable();
+        // periodicallyUpdateAllDataTable();
         getRawDataStatusCount();
         getSelectedData();
 

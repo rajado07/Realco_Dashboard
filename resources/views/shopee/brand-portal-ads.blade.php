@@ -65,37 +65,6 @@
             </div>
         </div>
 
-        <div class="row justify-content-end mb-2">
-            <div class="col-auto">
-                <span class="form-control">
-                    Latest Retrieved Data At : <span id="latestRetrievedData">N/A</span>
-                </span>
-            </div>
-            <div class="col-auto">
-                <!-- Date Picker -->
-                <div class="form-group">
-                    <div id="reportrange" class="form-control d-flex justify-content-between align-items-center" data-toggle="date-picker-range" data-target-display="#selectedDate" data-cancel-class="btn-light">
-                        <i class="ri-calendar-2-line"></i>
-                        <span id="selectedDate">Select date</span>
-                        <i class="ri-arrow-down-s-line"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-1">
-                <!-- Select Brand -->
-                <div class="form-group">
-                    <select id="selectedBrand" name="brand" class="form-control select2" data-toggle="select2" required>
-                        <!-- Options will be dynamically populated here -->
-                    </select>
-                </div>
-            </div>
-            <div class="col-auto">
-                <!-- Button -->
-                <button type="button" id="btn-refresh" class="btn btn-primary"><i class="ri-refresh-line"></i></button>
-            </div>
-        </div>
-        
-
         <!-- start dashboar card -->
         <div class="row">
             <div class="col">

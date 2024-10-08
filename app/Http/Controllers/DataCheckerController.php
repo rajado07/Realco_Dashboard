@@ -10,13 +10,11 @@ use App\Models\ShopeeSellerCenterVoucherData;
 use App\Models\TiktokPsaData;
 use App\Models\TiktokLsaData;
 use App\Models\TiktokVsaData;
-
 use App\Models\TiktokGmvData;
 use App\Models\TiktokLiveStreamingData;
 use App\Models\TiktokVideoAnalyticsData;
 use App\Models\TiktokProductAnalyticsData;
 use App\Models\TiktokPromotionAnalyticsData;
-
 use App\Models\MetaCpasData;
 use App\Models\Brand;
 use App\Models\MarketPlace;
@@ -63,6 +61,8 @@ class DataCheckerController extends Controller
                 'model' => TiktokVideoAnalyticsData::class,
                 'type' => 'affiliate',
             ],
+            'tiktok_product_analytics' => TiktokProductAnalyticsData::class,
+            'tiktok_promotion_analytics' => TiktokPromotionAnalyticsData::class,
         ];
 
         $missingDatesData = [];
