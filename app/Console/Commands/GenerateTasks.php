@@ -29,15 +29,16 @@ class GenerateTasks extends Command
     protected function generateTasksForGenerator(TaskGenerator $generator)
     {
         $now = Carbon::now();
+
         // Use last_generated_at as the starting point, or created_at if not available
         $startDate = $generator->last_generated_at 
             ? Carbon::parse($generator->last_generated_at) 
             : Carbon::parse($generator->created_at);
 
-        // Limit the generation of past tasks to 1 month ago
-        $oneMonthAgo = $now->copy()->subMonth();
-        if ($startDate->lt($oneMonthAgo)) {
-            $startDate = $oneMonthAgo;
+        // Limit the generation of past tasks to 2 months ago, starting from the beginning of the month
+        $twoMonthsAgo = $now->copy()->subMonths(2)->startOfMonth();
+        if ($startDate->lt($twoMonthsAgo)) {
+            $startDate = $twoMonthsAgo;
         }
 
         // Generate missed tasks based on frequency
@@ -63,7 +64,6 @@ class GenerateTasks extends Command
                 break;
 
             default:
-                $this->error('Unknown frequency: ' . $generator->frequency);
                 break;
         }
 
@@ -81,7 +81,6 @@ class GenerateTasks extends Command
         // Generate all missed daily tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
-
             // Check if the task already exists, then generate if it doesn't
             $this->createTaskIfNotExists($generator, $scheduledToRun);
         }
@@ -96,7 +95,6 @@ class GenerateTasks extends Command
         // Generate all missed weekly tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
-
             $this->createTaskIfNotExists($generator, $scheduledToRun);
         }
     }
@@ -110,7 +108,6 @@ class GenerateTasks extends Command
         // Generate all missed hourly tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addHour()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
-
             $this->createTaskIfNotExists($generator, $scheduledToRun);
         }
     }
@@ -124,7 +121,6 @@ class GenerateTasks extends Command
         // Generate all missed minutely tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addMinute()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
-
             $this->createTaskIfNotExists($generator, $scheduledToRun);
         }
     }
@@ -139,7 +135,6 @@ class GenerateTasks extends Command
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
             foreach ([Carbon::MONDAY, Carbon::WEDNESDAY, Carbon::FRIDAY] as $dayOfWeek) {
                 $scheduledToRun = $date->copy()->next($dayOfWeek)->setTimeFrom(Carbon::parse($generator->run_at));
-
                 // Ensure the scheduled date is not beyond the endDate
                 if ($scheduledToRun->lte($endDate)) {
                     $this->createTaskIfNotExists($generator, $scheduledToRun);
@@ -150,12 +145,11 @@ class GenerateTasks extends Command
 
     protected function createTaskIfNotExists(TaskGenerator $generator, $scheduledToRun)
     {
-        // Limit generation to one month ago
-        $oneMonthAgo = Carbon::now()->subMonth();
+        // Limit generation to two months ago, starting from the beginning of the month
+        $twoMonthsAgo = Carbon::now()->subMonths(2)->startOfMonth();
 
-        // Check if scheduled_to_run is within the one-month limit
-        if ($scheduledToRun->lt($oneMonthAgo)) {
-            $this->info("Task not generated because scheduled time is beyond the 1-month limit.");
+        // Check if scheduled_to_run is within the two-month limit
+        if ($scheduledToRun->lt($twoMonthsAgo)) {
             return;
         }
 
@@ -178,11 +172,6 @@ class GenerateTasks extends Command
                 'status' => 1, // status ready
                 'task_generator_id' => $generator->id,
             ]);
-
-            $this->info("Task generated for {$generator->type} scheduled to run at {$scheduledToRun}");
-        } else {
-            // If the task already exists, show a message indicating it has been scheduled
-            $this->info("Task for {$generator->type} already scheduled to run at {$scheduledToRun}");
         }
     }
 }
