@@ -29,12 +29,18 @@ class GenerateTasks extends Command
     protected function generateTasksForGenerator(TaskGenerator $generator)
     {
         $now = Carbon::now();
-        // Gunakan last_generated_at sebagai titik awal, atau created_at jika belum ada, pastikan menggunakan Carbon
+        // Use last_generated_at as the starting point, or created_at if not available
         $startDate = $generator->last_generated_at 
-            ? Carbon::parse($generator->last_generated_at) // Konversi menjadi Carbon jika diperlukan
-            : Carbon::parse($generator->created_at); // Konversi menjadi Carbon jika diperlukan
+            ? Carbon::parse($generator->last_generated_at) 
+            : Carbon::parse($generator->created_at);
 
-        // Generate tasks yang terlewat berdasarkan frekuensi
+        // Limit the generation of past tasks to 1 month ago
+        $oneMonthAgo = $now->copy()->subMonth();
+        if ($startDate->lt($oneMonthAgo)) {
+            $startDate = $oneMonthAgo;
+        }
+
+        // Generate missed tasks based on frequency
         switch ($generator->frequency) {
             case 'daily':
                 $this->generateDailyTasks($generator, $startDate, $now);
@@ -52,38 +58,42 @@ class GenerateTasks extends Command
                 $this->generateMinutelyTasks($generator, $startDate, $now);
                 break;
 
+            case 'three_times_weekly':
+                $this->generateThreeTimesWeeklyTasks($generator, $startDate, $now);
+                break;
+
             default:
                 $this->error('Unknown frequency: ' . $generator->frequency);
                 break;
         }
 
-        // Update last_generated_at ke waktu sekarang setelah task di-generate
+        // Update last_generated_at to now after generating tasks
         $generator->last_generated_at = $now;
         $generator->save();
     }
 
     protected function generateDailyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
-        // Pastikan startDate dan endDate adalah objek Carbon
+        // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
 
-        // Pastikan semua task harian yang terlewat digenerate
+        // Generate all missed daily tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
 
-            // Cek apakah task sudah ada atau belum, lalu generate jika belum ada
+            // Check if the task already exists, then generate if it doesn't
             $this->createTaskIfNotExists($generator, $scheduledToRun);
         }
     }
 
     protected function generateWeeklyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
-        // Pastikan startDate dan endDate adalah objek Carbon
-        $startDate = Carbon::parse($startDate);
+        // Ensure startDate and endDate are Carbon instances
+        $startDate = Carbon::parse($startDate)->startOfWeek();
         $endDate = Carbon::parse($endDate);
 
-        // Pastikan semua task mingguan yang terlewat digenerate
+        // Generate all missed weekly tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
 
@@ -93,11 +103,11 @@ class GenerateTasks extends Command
 
     protected function generateHourlyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
-        // Pastikan startDate dan endDate adalah objek Carbon
+        // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
 
-        // Pastikan semua task hourly yang terlewat digenerate
+        // Generate all missed hourly tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addHour()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
 
@@ -107,11 +117,11 @@ class GenerateTasks extends Command
 
     protected function generateMinutelyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
-        // Pastikan startDate dan endDate adalah objek Carbon
+        // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
 
-        // Pastikan semua task minutely yang terlewat digenerate
+        // Generate all missed minutely tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addMinute()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
 
@@ -119,18 +129,37 @@ class GenerateTasks extends Command
         }
     }
 
+    protected function generateThreeTimesWeeklyTasks(TaskGenerator $generator, $startDate, $endDate)
+    {
+        // Ensure startDate and endDate are Carbon instances
+        $startDate = Carbon::parse($startDate)->startOfWeek();
+        $endDate = Carbon::parse($endDate);
+
+        // Generate tasks on Monday, Wednesday, and Friday of each week
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
+            foreach ([Carbon::MONDAY, Carbon::WEDNESDAY, Carbon::FRIDAY] as $dayOfWeek) {
+                $scheduledToRun = $date->copy()->next($dayOfWeek)->setTimeFrom(Carbon::parse($generator->run_at));
+
+                // Ensure the scheduled date is not beyond the endDate
+                if ($scheduledToRun->lte($endDate)) {
+                    $this->createTaskIfNotExists($generator, $scheduledToRun);
+                }
+            }
+        }
+    }
+
     protected function createTaskIfNotExists(TaskGenerator $generator, $scheduledToRun)
     {
-        // Tentukan batas satu bulan ke belakang menggunakan Carbon
+        // Limit generation to one month ago
         $oneMonthAgo = Carbon::now()->subMonth();
 
-        // Cek apakah scheduled_to_run berada dalam rentang satu bulan ke belakang
+        // Check if scheduled_to_run is within the one-month limit
         if ($scheduledToRun->lt($oneMonthAgo)) {
             $this->info("Task not generated because scheduled time is beyond the 1-month limit.");
             return;
         }
 
-        // Cek apakah task dengan waktu tertentu sudah ada di database
+        // Check if a task with the specific time already exists in the database
         $existingTask = Task::where('brand_id', $generator->brand_id)
             ->where('market_place_id', $generator->market_place_id)
             ->where('type', $generator->type)
@@ -138,7 +167,7 @@ class GenerateTasks extends Command
             ->where('scheduled_to_run', $scheduledToRun)
             ->first();
 
-        // Jika task belum ada, maka buat task baru
+        // If the task does not exist, create a new task
         if (!$existingTask) {
             Task::create([
                 'brand_id' => $generator->brand_id,
@@ -152,7 +181,7 @@ class GenerateTasks extends Command
 
             $this->info("Task generated for {$generator->type} scheduled to run at {$scheduledToRun}");
         } else {
-            // Jika task sudah ada, tampilkan pesan bahwa task sudah dijadwalkan
+            // If the task already exists, show a message indicating it has been scheduled
             $this->info("Task for {$generator->type} already scheduled to run at {$scheduledToRun}");
         }
     }
