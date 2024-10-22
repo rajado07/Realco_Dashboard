@@ -55,7 +55,7 @@ class TiktokPromotionsAnalyticsDataObserver
                         'ctor' => $cleanedPercentageData['ctor'],
                         'gmv' => $dataItem['GMV (Rp)'],
                         'orders' => $dataItem['Orders'],
-                        'buyers' => $dataItem['Buyers'],
+                        'buyers' => $dataItem['Buyers'] ?? null,
                         'products_sold' => $dataItem['Products sold'],
                         'new_buyers' => $dataItem['New buyers'],
                         'avg_gmv_per_buyer' => $dataItem['Avg. GMV per buyer (Rp)'],

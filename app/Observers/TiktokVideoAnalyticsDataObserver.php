@@ -76,7 +76,7 @@ class TiktokVideoAnalyticsDataObserver
                         'v_to_l_clicks' => $dataItem['V-to-L clicks'],
                         'product_impressions' => $dataItem['Product Impressions'],
                         'product_clicks' => $dataItem['Product Clicks'],
-                        'buyers' => $dataItem['Buyers'],
+                        'buyers' => $dataItem['Buyers'] ?? null,
                         'orders' => $dataItem['Orders'],
                         'unit_sales' => $dataItem['Unit Sales'],
                         'video_revenue' => $dataItem['Video Revenue (Rp)'],

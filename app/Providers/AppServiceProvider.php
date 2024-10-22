@@ -11,6 +11,7 @@ use App\Observers\ShopeeSellerCenterLiveStreamingDataObserver;
 use App\Observers\ShopeeSellerCenterVoucherDataObserver;
 use App\Observers\ShopeeSellerCenterCoinDataObserver;
 use App\Observers\MetaCpasDataObserver;
+use App\Observers\OdooSoDataObserver;
 use App\Observers\TiktokPsaDataObserver;
 use App\Observers\TiktokLsaDataObserver;
 use App\Observers\TiktokVsaDataObserver;
@@ -38,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         RawData::observe(ShopeeSellerCenterVoucherDataObserver::class);
         RawData::observe(ShopeeSellerCenterCoinDataObserver::class);
         RawData::observe(MetaCpasDataObserver::class);
+        RawData::observe(OdooSoDataObserver::class);
         RawData::observe(TiktokPsaDataObserver::class);
         RawData::observe(TiktokLsaDataObserver::class);
         RawData::observe(TiktokVsaDataObserver::class);
