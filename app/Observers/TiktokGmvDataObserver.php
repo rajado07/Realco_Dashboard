@@ -41,7 +41,7 @@ class TiktokGmvDataObserver
                         'refunds' => $dataItem['Refunds (Rp)'],
                         'gross_revenue' => $dataItem['Gross Revenue (with platform product subsidy)'],
                         'items_sold' => $dataItem['Items sold'],
-                        'buyers' => $dataItem['Buyers'],
+                        'customers' => $dataItem['Customers'], # dirubah dari sebelum nya penamaan nya buyers
                         'page_views' => $dataItem['Page views'],
                         'visitors' => $dataItem['Visitors'],
                         'sku_orders' => $dataItem['SKU orders'],
