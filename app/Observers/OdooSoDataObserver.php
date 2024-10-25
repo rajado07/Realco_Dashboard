@@ -192,6 +192,20 @@ class OdooSoDataObserver
             'ol_discount_fixed' => $orderLine['discount_fixed'],
             'ol_price_subtotal' => $orderLine['price_subtotal'],
             'ol_price_total' => $orderLine['price_total'],
+
+            //Tambahan
+            'ol_brand_id' => is_array($orderLine['brand_id']) ? ($orderLine['brand_id'][0] ?? null) : null,
+            'ol_brand_name' => is_array($orderLine['brand_id']) ? ($orderLine['brand_id'][1] ?? null) : null,
+            'ol_product_identifier_id' => is_array($orderLine['product_identifier_id']) ? ($orderLine['product_identifier_id'][0] ?? null) : null,
+            'ol_product_identifier_name' => is_array($orderLine['product_identifier_id']) ? ($orderLine['product_identifier_id'][1] ?? null) : null,
+            'ol_market_id' => is_array($orderLine['market_id']) ? ($orderLine['market_id'][0] ?? null) : null,
+            'ol_market_name' => is_array($orderLine['market_id']) ? ($orderLine['market_id'][1] ?? null) : null,
+
+            'ol_city_id' => $orderLine['ns_raja_ongkir_city'][0] ?? null,
+            'ol_city_name' => $orderLine['ns_raja_ongkir_city'][1] ?? null,
+            'ol_province_id' => $orderLine['ns_raja_ongkir_province'][0] ?? null,
+            'ol_province_name' => $orderLine['ns_raja_ongkir_province'][1] ?? null,
+            
             'retrieved_at' => $rawData->retrieved_at,
             'file_name' => $rawData->file_name,
             'brand_id' => $rawData->brand_id,
