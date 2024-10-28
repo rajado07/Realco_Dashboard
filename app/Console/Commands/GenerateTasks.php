@@ -41,39 +41,45 @@ class GenerateTasks extends Command
             $startDate = $twoMonthsAgo;
         }
 
+        // Track if any tasks were generated
+        $tasksGenerated = false;
+
         // Generate missed tasks based on frequency
         switch ($generator->frequency) {
             case 'daily':
-                $this->generateDailyTasks($generator, $startDate, $now);
+                $tasksGenerated = $this->generateDailyTasks($generator, $startDate, $now);
                 break;
 
             case 'weekly':
-                $this->generateWeeklyTasks($generator, $startDate, $now);
+                $tasksGenerated = $this->generateWeeklyTasks($generator, $startDate, $now);
                 break;
 
             case 'hourly':
-                $this->generateHourlyTasks($generator, $startDate, $now);
+                $tasksGenerated = $this->generateHourlyTasks($generator, $startDate, $now);
                 break;
 
             case 'minutely':
-                $this->generateMinutelyTasks($generator, $startDate, $now);
+                $tasksGenerated = $this->generateMinutelyTasks($generator, $startDate, $now);
                 break;
 
             case 'three_times_weekly':
-                $this->generateThreeTimesWeeklyTasks($generator, $startDate, $now);
+                $tasksGenerated = $this->generateThreeTimesWeeklyTasks($generator, $startDate, $now);
                 break;
 
             default:
                 break;
         }
 
-        // Update last_generated_at to now after generating tasks
-        $generator->last_generated_at = $now;
-        $generator->save();
+        // Update last_generated_at to now only if tasks were generated
+        if ($tasksGenerated) {
+            $generator->last_generated_at = $now;
+            $generator->save();
+        }
     }
 
     protected function generateDailyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
+        $tasksGenerated = false;
         // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
@@ -82,12 +88,16 @@ class GenerateTasks extends Command
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
             // Check if the task already exists, then generate if it doesn't
-            $this->createTaskIfNotExists($generator, $scheduledToRun);
+            if ($this->createTaskIfNotExists($generator, $scheduledToRun)) {
+                $tasksGenerated = true;
+            }
         }
+        return $tasksGenerated;
     }
 
     protected function generateWeeklyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
+        $tasksGenerated = false;
         // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate)->startOfWeek();
         $endDate = Carbon::parse($endDate);
@@ -95,12 +105,16 @@ class GenerateTasks extends Command
         // Generate all missed weekly tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addWeek()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
-            $this->createTaskIfNotExists($generator, $scheduledToRun);
+            if ($this->createTaskIfNotExists($generator, $scheduledToRun)) {
+                $tasksGenerated = true;
+            }
         }
+        return $tasksGenerated;
     }
 
     protected function generateHourlyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
+        $tasksGenerated = false;
         // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
@@ -108,12 +122,16 @@ class GenerateTasks extends Command
         // Generate all missed hourly tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addHour()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
-            $this->createTaskIfNotExists($generator, $scheduledToRun);
+            if ($this->createTaskIfNotExists($generator, $scheduledToRun)) {
+                $tasksGenerated = true;
+            }
         }
+        return $tasksGenerated;
     }
 
     protected function generateMinutelyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
+        $tasksGenerated = false;
         // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate);
         $endDate = Carbon::parse($endDate);
@@ -121,12 +139,16 @@ class GenerateTasks extends Command
         // Generate all missed minutely tasks
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addMinute()) {
             $scheduledToRun = $date->setTimeFrom(Carbon::parse($generator->run_at));
-            $this->createTaskIfNotExists($generator, $scheduledToRun);
+            if ($this->createTaskIfNotExists($generator, $scheduledToRun)) {
+                $tasksGenerated = true;
+            }
         }
+        return $tasksGenerated;
     }
 
     protected function generateThreeTimesWeeklyTasks(TaskGenerator $generator, $startDate, $endDate)
     {
+        $tasksGenerated = false;
         // Ensure startDate and endDate are Carbon instances
         $startDate = Carbon::parse($startDate)->startOfWeek();
         $endDate = Carbon::parse($endDate);
@@ -137,10 +159,13 @@ class GenerateTasks extends Command
                 $scheduledToRun = $date->copy()->next($dayOfWeek)->setTimeFrom(Carbon::parse($generator->run_at));
                 // Ensure the scheduled date is not beyond the endDate
                 if ($scheduledToRun->lte($endDate)) {
-                    $this->createTaskIfNotExists($generator, $scheduledToRun);
+                    if ($this->createTaskIfNotExists($generator, $scheduledToRun)) {
+                        $tasksGenerated = true;
+                    }
                 }
             }
         }
+        return $tasksGenerated;
     }
 
     protected function createTaskIfNotExists(TaskGenerator $generator, $scheduledToRun)
@@ -150,7 +175,7 @@ class GenerateTasks extends Command
 
         // Check if scheduled_to_run is within the two-month limit
         if ($scheduledToRun->lt($twoMonthsAgo)) {
-            return;
+            return false;
         }
 
         // Check if a task with the specific time already exists in the database
@@ -172,6 +197,8 @@ class GenerateTasks extends Command
                 'status' => 1, // status ready
                 'task_generator_id' => $generator->id,
             ]);
+            return true;
         }
+        return false;
     }
 }
