@@ -53,6 +53,7 @@ function translateBrand(brand) {
     1: '<span class="badge rounded-pill text-light" style="background-color: #20a3a9;">Realfood</span>',
     2: '<span class="badge rounded-pill text-dark" style="background-color: #f1e5b3;">Skindoze</span>',
     3: '<span class="badge rounded-pill text-light" style="background-color: #9e8ad6;">Elora</span>',
+    4: '<span class="badge rounded-pill text-light" style="background-color: #a24688;">Odoo</span>',
   };
   return brandMap[parseInt(brand, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
 }
@@ -63,6 +64,7 @@ function translateMarketPlace(brand) {
     2: '<i class="ri-tiktok-line"></i><span> Tiktok</span>',
     3: '<i class="ri-shopping-cart-line"></i><span> Tokopedia</span>',
     4: '<i class="ri-shopping-bag-3-line"></i><span> Lazada</span>',
+    5: '<i class="ri-shopping-bag-fill"></i><span> Odoo</span>',
   };
   return brandMap[parseInt(brand, 10)] || '<span class="badge bg-secondary rounded-pill">No Market Place</span>';
 }
