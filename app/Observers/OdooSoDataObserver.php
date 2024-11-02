@@ -184,6 +184,12 @@ class OdooSoDataObserver
             'source_name' => $dataItem['source_name'],
             'odoo_partner_cust_rank_id' => $dataItem['partner_cust_rank'][0] ?? null,
             'odoo_partner_cust_rank_name' => $dataItem['partner_cust_rank'][1] ?? null,
+            // Tambahan
+            'partner_shipping_city_id' => is_array($dataItem['partner_shipping_city']) ? ($dataItem['partner_shipping_city'][0] ?? null) : null,
+            'partner_shipping_city' => is_array($dataItem['partner_shipping_city']) ? ($dataItem['partner_shipping_city'][1] ?? null) : null,
+            'partner_shipping_province_id' => is_array($dataItem['partner_shipping_province']) ? ($dataItem['partner_shipping_province'][0] ?? null) : null,
+            'partner_shipping_province' => is_array($dataItem['partner_shipping_province']) ? ($dataItem['partner_shipping_province'][1] ?? null) : null,
+            // End Of Tambahan
             'ol_id' => $orderLine['id'],
             'ol_name' => $orderLine['name'],
             'ol_product_uom_qty' => $orderLine['product_uom_qty'],
@@ -192,7 +198,6 @@ class OdooSoDataObserver
             'ol_discount_fixed' => $orderLine['discount_fixed'],
             'ol_price_subtotal' => $orderLine['price_subtotal'],
             'ol_price_total' => $orderLine['price_total'],
-
             //Tambahan
             'ol_brand_id' => is_array($orderLine['brand_id']) ? ($orderLine['brand_id'][0] ?? null) : null,
             'ol_brand_name' => is_array($orderLine['brand_id']) ? ($orderLine['brand_id'][1] ?? null) : null,
@@ -200,12 +205,11 @@ class OdooSoDataObserver
             'ol_product_identifier_name' => is_array($orderLine['product_identifier_id']) ? ($orderLine['product_identifier_id'][1] ?? null) : null,
             'ol_market_id' => is_array($orderLine['market_id']) ? ($orderLine['market_id'][0] ?? null) : null,
             'ol_market_name' => is_array($orderLine['market_id']) ? ($orderLine['market_id'][1] ?? null) : null,
-
             'ol_city_id' => $orderLine['ns_raja_ongkir_city'][0] ?? null,
             'ol_city_name' => $orderLine['ns_raja_ongkir_city'][1] ?? null,
             'ol_province_id' => $orderLine['ns_raja_ongkir_province'][0] ?? null,
             'ol_province_name' => $orderLine['ns_raja_ongkir_province'][1] ?? null,
-            
+            // End Of Tambahan
             'retrieved_at' => $rawData->retrieved_at,
             'file_name' => $rawData->file_name,
             'brand_id' => $rawData->brand_id,
