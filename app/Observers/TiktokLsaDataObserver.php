@@ -15,9 +15,9 @@ class TiktokLsaDataObserver
 
             $totalEntries = count($jsonData);
             $successCount = 0;
+            $updateCount = 0;
             $skipCount = 0;
             $errorDetails = [];
-            $skippedDetails = [];
             $failedDetails = [];
 
             foreach ($jsonData as $dataItem) {
@@ -27,33 +27,51 @@ class TiktokLsaDataObserver
                         ->where('ad_group_id', $dataItem['Ad group ID'])
                         ->where('ad_id', $dataItem['Ad ID'])
                         ->where('brand_id', $rawData->brand_id)
-                        ->exists();
+                        ->first();
 
                     if ($existingData) {
-                        $skipCount++;
-                        $skippedDetails[] = $dataItem;
-                        continue;
-                    }
+                        // Update the existing record if data is dirty (excluding retrieved_at and file_name)
+                        $existingData->fill([
+                            'ad_group_name' => $dataItem['Ad group name'],
+                            'ad_name' => $dataItem['Ad name'],
+                            'cost' => $dataItem['Cost'],
+                            'live_views' => $dataItem['LIVE views'],
+                            'live_unique_views' => $dataItem['LIVE unique views'],
+                            'purchases' => $dataItem['Purchases (Shop)'],
+                            'gross_revenue' => $dataItem['Gross revenue (Shop)'],
+                            'impressions' => $dataItem['Impressions'],
+                        ]);
 
-                    TiktokLsaData::create([
-                        'data_date' => $dataItem['By Day'],
-                        'ad_group_name' => $dataItem['Ad group name'],
-                        'ad_group_id' => $dataItem['Ad group ID'],
-                        'ad_id' => $dataItem['Ad ID'],
-                        'ad_name' => $dataItem['Ad name'],
-                        'cost' => $dataItem['Cost'],
-                        'live_views' => $dataItem['LIVE views'],
-                        'live_unique_views' => $dataItem['LIVE unique views'],
-                        // 'effective_live_views' => $dataItem['Effective LIVE Views'],
-                        'purchases' => $dataItem['Purchases (Shop)'],
-                        'gross_revenue' => $dataItem['Gross revenue (Shop)'],
-                        'impressions' => $dataItem['Impressions'],
-                        'retrieved_at' => $rawData->retrieved_at,
-                        'file_name' => $rawData->file_name,
-                        'brand_id' => $rawData->brand_id,
-                        'raw_data_id' => $rawData->id,
-                    ]);
-                    $successCount++;
+                        if ($existingData->isDirty()) {
+                            $existingData->retrieved_at = $rawData->retrieved_at;
+                            $existingData->file_name = $rawData->file_name;
+                            $existingData->raw_data_id = $rawData->id;
+                            $existingData->save();
+                            $updateCount++;
+                        } else {
+                            $skipCount++;
+                        }
+                    } else {
+                        // Create a new record
+                        TiktokLsaData::create([
+                            'data_date' => $dataItem['By Day'],
+                            'ad_group_name' => $dataItem['Ad group name'],
+                            'ad_group_id' => $dataItem['Ad group ID'],
+                            'ad_id' => $dataItem['Ad ID'],
+                            'ad_name' => $dataItem['Ad name'],
+                            'cost' => $dataItem['Cost'],
+                            'live_views' => $dataItem['LIVE views'],
+                            'live_unique_views' => $dataItem['LIVE unique views'],
+                            'purchases' => $dataItem['Purchases (Shop)'],
+                            'gross_revenue' => $dataItem['Gross revenue (Shop)'],
+                            'impressions' => $dataItem['Impressions'],
+                            'retrieved_at' => $rawData->retrieved_at,
+                            'file_name' => $rawData->file_name,
+                            'brand_id' => $rawData->brand_id,
+                            'raw_data_id' => $rawData->id,
+                        ]);
+                        $successCount++;
+                    }
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
@@ -67,28 +85,27 @@ class TiktokLsaDataObserver
             $messageDetails = [
                 'total_entries' => $totalEntries,
                 'successful' => $successCount,
+                'updated' => $updateCount,
                 'skipped' => $skipCount,
-                'failed' => $totalEntries - $successCount - $skipCount,
-                'skipped_details' => $skippedDetails,
+                'failed' => $totalEntries - $successCount - $updateCount - $skipCount,
                 'failed_details' => $failedDetails,
                 'errors' => $errorDetails,
             ];
 
-            
-            if ($successCount === 0 && $skipCount === $totalEntries) {
+            if ($successCount === 0 && $updateCount === 0 && $skipCount === $totalEntries) {
                 $status = 6; // All skipped
-            } elseif ($successCount === 0 && count($failedDetails) === $totalEntries) {
+            } elseif ($successCount === 0 && $updateCount === 0 && count($failedDetails) === $totalEntries) {
                 $status = 5; // All failed
-            } elseif ($successCount === $totalEntries) {
+            } elseif ($successCount + $updateCount === $totalEntries) {
                 $status = 2; // All successful
-            } elseif ($successCount > 0 && count($failedDetails) > 0) {  
+            } elseif (($successCount > 0 || $updateCount > 0) && count($failedDetails) > 0) {  
                 $status = 4; // Partial error
-            } elseif ($successCount > 0 && $skipCount > 0) {
-                $status = 3; // Partial success
-            } 
+            } else {
+                $status = 2; // Default to all successful if no partial errors
+            }
 
             // Log summary of the process
-            Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Skipped: $skipCount, Failed: " . ($totalEntries - $successCount - $skipCount));
+            Log::info("RawData ID $rawData->id, processing result: Total entries: $totalEntries, Successful: $successCount, Updated: $updateCount, Skipped: $skipCount, Failed: " . ($totalEntries - $successCount - $updateCount - $skipCount));
 
             // Update the status and message in RawData
             $rawData->update([
