@@ -11,22 +11,31 @@ const csrfToken = $('meta[name="csrf-token"]').attr('content');
 $(document).ready(() => {
     // Data Table for Shopee Summary Data
     let shopeeDataTableInstance;
-    function initializeOrUpdateShopeeDataTable(startDate, endDate, brandId) {
+    function initializeOrUpdateShopeeDataTable(startDate1, endDate1, startDate2, endDate2, brandId) {
         // Destroy existing instance if it exists
         if (shopeeDataTableInstance) {
             shopeeDataTableInstance.destroy();
             $('#shopee-datatable').empty();
         }
 
+        // Build the URL with parameters
+        let url = '/shopee/summary/brand-performance/read';
+        let params = [];
+
+        if (startDate1) params.push(`startDate1=${encodeURIComponent(startDate1)}`);
+        if (endDate1) params.push(`endDate1=${encodeURIComponent(endDate1)}`);
+        if (startDate2) params.push(`startDate2=${encodeURIComponent(startDate2)}`);
+        if (endDate2) params.push(`endDate2=${encodeURIComponent(endDate2)}`);
+        if (brandId) params.push(`brandId=${encodeURIComponent(brandId)}`);
+
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
         shopeeDataTableInstance = $('#shopee-datatable').DataTable({
             ajax: {
-                url: '/shopee/summary/brand-performance/read',
+                url: url,
                 type: 'GET',
-                data: function (d) {
-                    if (startDate) d.startDate = startDate;
-                    if (endDate) d.endDate = endDate;
-                    if (brandId) d.brand_id = brandId;
-                },
                 dataSrc: '',
             },
             stateSave: true,
@@ -38,15 +47,15 @@ $(document).ready(() => {
             deferLoading: true,
             columns: [
                 { title: "Brand", data: "data_group_name" },
-                { title: "This Week", data: "product_views.this_week" },
-                { title: "Previous Week", data: "product_views.previous_week" },
+                { title: "Now", data: "product_views.first_period" },
+                { title: "Previous", data: "product_views.second_period" },
                 { title: "Growth", data: "product_views.growth" },
-                { title: "This Week", data: "conversion.this_week" },
-                { title: "Previous Week", data: "conversion.previous_week" },
+                { title: "Now", data: "conversion.first_period" },
+                { title: "Previous", data: "conversion.second_period" },
                 { title: "Growth", data: "conversion.growth" },
-                { title: "This Week", data: "GMV.this_week" },
-                { title: "Previous Week", data: "GMV.previous_week" },
-                { title: "Growth", data: "GMV.growth" }
+                { title: "Now", data: "gmv.first_period" },
+                { title: "Previous", data: "gmv.second_period" },
+                { title: "Growth", data: "gmv.growth" }
             ],
             columnDefs: [
                 {
@@ -86,24 +95,34 @@ $(document).ready(() => {
         });
     }
 
+
     // Data Table for MetaCpas Data
     let metaCpasDataTableInstance;
-    function initializeOrUpdateMetaCpasDataTable(startDate, endDate, brandId) {
+    function initializeOrUpdateMetaCpasDataTable(startDate1, endDate1, startDate2, endDate2, brandId) {
         // Destroy existing instance if it exists
         if (metaCpasDataTableInstance) {
             metaCpasDataTableInstance.destroy();
             $('#meta-cpas-datatable').empty();
         }
 
+        // Build the URL with parameters
+        let url = '/shopee/summary/cpas/read';
+        let params = [];
+
+        if (startDate1) params.push(`startDate1=${encodeURIComponent(startDate1)}`);
+        if (endDate1) params.push(`endDate1=${encodeURIComponent(endDate1)}`);
+        if (startDate2) params.push(`startDate2=${encodeURIComponent(startDate2)}`);
+        if (endDate2) params.push(`endDate2=${encodeURIComponent(endDate2)}`);
+        if (brandId) params.push(`brandId=${encodeURIComponent(brandId)}`);
+
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
         metaCpasDataTableInstance = $('#meta-cpas-datatable').DataTable({
             ajax: {
-                url: '/shopee/summary/cpas/read',
+                url: url,
                 type: 'GET',
-                data: function (d) {
-                    if (startDate) d.startDate = startDate;
-                    if (endDate) d.endDate = endDate;
-                    if (brandId) d.brand_id = brandId;
-                },
                 dataSrc: '',
             },
             stateSave: true,
@@ -115,14 +134,14 @@ $(document).ready(() => {
             deferLoading: true,
             columns: [
                 { title: "Brand", data: "data_group_name" },
-                { title: "This Week", data: "amount_spent.this_week" },
-                { title: "Previous Week", data: "amount_spent.previous_week" },
+                { title: "Now", data: "amount_spent.first_period" },
+                { title: "Previous", data: "amount_spent.second_period" },
                 { title: "Growth", data: "amount_spent.growth" },
-                { title: "This Week", data: "purchases_conversion_value.this_week" },
-                { title: "Previous Week", data: "purchases_conversion_value.previous_week" },
+                { title: "Now", data: "purchases_conversion_value.first_period" },
+                { title: "Previous", data: "purchases_conversion_value.second_period" },
                 { title: "Growth", data: "purchases_conversion_value.growth" },
-                { title: "This Week", data: "roas.this_week" },
-                { title: "Previous Week", data: "roas.previous_week" },
+                { title: "Now", data: "roas.first_period" },
+                { title: "Previous", data: "roas.second_period" },
                 { title: "Growth", data: "roas.growth" }
             ],
             columnDefs: [
@@ -156,7 +175,7 @@ $(document).ready(() => {
                 },
             ],
             language: {
-                loadingRecords: `<div class="spinner-border avatar-sm text-secondary m-2" role="status"></div>`,
+                loadingRecords: '<div class="spinner-border avatar-sm text-secondary m-2" role="status"></div>',
                 paginate: {
                     previous: "<i class='ri-arrow-left-s-line'></i>",
                     next: "<i class='ri-arrow-right-s-line'></i>"
@@ -169,28 +188,38 @@ $(document).ready(() => {
         });
     }
 
+
     // Data Table for Shopee Ads Data
     let shopeeAdsDataTableInstance;
-    function initializeOrUpdateShopeeAdsDataTable(startDate, endDate, brandId) {
+    function initializeOrUpdateShopeeAdsDataTable(startDate1, endDate1, startDate2, endDate2, brandId) {
         // Destroy existing instance if it exists
         if (shopeeAdsDataTableInstance) {
             shopeeAdsDataTableInstance.destroy();
             $('#shopee-ads-datatable').empty();
         }
 
+        // Build the URL with parameters
+        let url = '/shopee/summary/ads/read';
+        let params = [];
+
+        if (startDate1) params.push(`startDate1=${encodeURIComponent(startDate1)}`);
+        if (endDate1) params.push(`endDate1=${encodeURIComponent(endDate1)}`);
+        if (startDate2) params.push(`startDate2=${encodeURIComponent(startDate2)}`);
+        if (endDate2) params.push(`endDate2=${encodeURIComponent(endDate2)}`);
+        if (brandId) params.push(`brandId=${encodeURIComponent(brandId)}`);
+
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
         shopeeAdsDataTableInstance = $('#shopee-ads-datatable').DataTable({
             ajax: {
-                url: '/shopee/summary/ads/read',
+                url: url,
                 type: 'GET',
-                data: function (d) {
-                    if (startDate) d.startDate = startDate;
-                    if (endDate) d.endDate = endDate;
-                    if (brandId) d.brand_id = brandId;
-                },
                 dataSrc: function (json) {
                     // Transform the response into an array of objects for DataTables
                     return [{
-                        ads_spent: json.ads_spent,
+                        ads_spend: json.ads_spend,
                         gross_sales: json.gross_sales,
                         roas: json.roas
                     }];
@@ -204,14 +233,14 @@ $(document).ready(() => {
             info: false,
             deferLoading: true,
             columns: [
-                { title: "This Week", data: "ads_spent.this_week" },
-                { title: "Previous Week", data: "ads_spent.previous_week" },
-                { title: "Growth", data: "ads_spent.growth" },
-                { title: "This Week", data: "gross_sales.this_week" },
-                { title: "Previous Week", data: "gross_sales.previous_week" },
+                { title: "Now", data: "ads_spend.first_period" },
+                { title: "Previous", data: "ads_spend.second_period" },
+                { title: "Growth", data: "ads_spend.growth" },
+                { title: "Now", data: "gross_sales.first_period" },
+                { title: "Previous", data: "gross_sales.second_period" },
                 { title: "Growth", data: "gross_sales.growth" },
-                { title: "ROAS", data: "roas.this_week" },
-                { title: "Previous Week", data: "roas.previous_week" },
+                { title: "ROAS", data: "roas.first_period" },
+                { title: "Previous", data: "roas.second_period" },
                 { title: "Growth", data: "roas.growth" }
             ],
             columnDefs: [
@@ -244,34 +273,44 @@ $(document).ready(() => {
         });
     }
 
+
     let shopeeLiveDataTableInstance;
-    function initializeOrUpdateShopeeLiveDataTable(startDate, endDate, brandId) {
+    function initializeOrUpdateShopeeLiveDataTable(startDate1, endDate1, startDate2, endDate2, brandId) {
         // Destroy existing instance if it exists
         if (shopeeLiveDataTableInstance) {
             shopeeLiveDataTableInstance.destroy();
             $('#shopee-live-datatable').empty();
         }
 
+        // Build the URL with parameters
+        let url = '/shopee/summary/live-stream/read';
+        let params = [];
+
+        if (startDate1) params.push(`startDate1=${encodeURIComponent(startDate1)}`);
+        if (endDate1) params.push(`endDate1=${encodeURIComponent(endDate1)}`);
+        if (startDate2) params.push(`startDate2=${encodeURIComponent(startDate2)}`);
+        if (endDate2) params.push(`endDate2=${encodeURIComponent(endDate2)}`);
+        if (brandId) params.push(`brandId=${encodeURIComponent(brandId)}`);
+
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
         shopeeLiveDataTableInstance = $('#shopee-live-datatable').DataTable({
             ajax: {
-                url: '/shopee/summary/live-stream/read',
+                url: url,
                 type: 'GET',
-                data: function (d) {
-                    if (startDate) d.startDate = startDate;
-                    if (endDate) d.endDate = endDate;
-                    if (brandId) d.brand_id = brandId;
-                },
                 dataSrc: function (json) {
                     // Transform the response into an array of objects for DataTables
                     return [{
-                        total_sales_this_week: json.total_sales.may,
-                        total_sales_previous_week: json.total_sales.june,
+                        total_sales_first_period: json.total_sales.first_period,
+                        total_sales_second_period: json.total_sales.second_period,
                         total_sales_growth: json.total_sales.growth,
-                        total_duration_this_week: json.total_duration.may,
-                        total_duration_previous_week: json.total_duration.june,
+                        total_duration_first_period: json.total_duration.first_period,
+                        total_duration_second_period: json.total_duration.second_period,
                         total_duration_growth: json.total_duration.growth,
-                        gmv_per_hour_this_week: json.gmv_per_hour.may,
-                        gmv_per_hour_previous_week: json.gmv_per_hour.june,
+                        gmv_per_hour_first_period: json.gmv_per_hour.first_period,
+                        gmv_per_hour_second_period: json.gmv_per_hour.second_period,
                         gmv_per_hour_growth: json.gmv_per_hour.growth
                     }];
                 }
@@ -284,14 +323,14 @@ $(document).ready(() => {
             info: false,
             deferLoading: true,
             columns: [
-                { title: "This Week", data: "total_sales_this_week" },
-                { title: "Previous Week", data: "total_sales_previous_week" },
+                { title: "First Period", data: "total_sales_first_period" },
+                { title: "Second Period", data: "total_sales_second_period" },
                 { title: "Growth", data: "total_sales_growth" },
-                { title: "This Week", data: "total_duration_this_week" },
-                { title: "Previous Week", data: "total_duration_previous_week" },
+                { title: "First Period", data: "total_duration_first_period" },
+                { title: "Second Period", data: "total_duration_second_period" },
                 { title: "Growth", data: "total_duration_growth" },
-                { title: "This Week", data: "gmv_per_hour_this_week" },
-                { title: "Previous Week", data: "gmv_per_hour_previous_week" },
+                { title: "First Period", data: "gmv_per_hour_first_period" },
+                { title: "Second Period", data: "gmv_per_hour_second_period" },
                 { title: "Growth", data: "gmv_per_hour_growth" }
             ],
             columnDefs: [
@@ -347,47 +386,57 @@ $(document).ready(() => {
     function initializeRefreshButton() {
         $('#btn-refresh').click(function () {
             var selectedDate = $('#selectedDate').text();
+            var selectedDate2 = $('#selectedDate2').text();
             var selectedBrand = $('#selectedBrand').val();
 
-            const dates = selectedDate.split(' - ');
-            let startDate, endDate;
-
-            if (dates.length === 2) {
-                startDate = initialize.formatDate(dates[0]);
-                endDate = initialize.formatDate(dates[1]);
-                console.log(`Start Date: ${startDate}`);
-                console.log(`End Date: ${endDate}`);
+            // Helper function to parse date ranges
+            function parseDateRange(dateStr) {
+                if (dateStr && dateStr !== 'Select date') {
+                    const dates = dateStr.split(' - ');
+                    if (dates.length === 2) {
+                        return {
+                            startDate: initialize.formatDate(dates[0]),
+                            endDate: initialize.formatDate(dates[1]),
+                        };
+                    }
+                }
+                return { startDate: null, endDate: null };
             }
 
-            console.log(`Nilai input berubah menjadi: ${selectedDate}`);
+            const { startDate: startDate1, endDate: endDate1 } = parseDateRange(selectedDate);
+            const { startDate: startDate2, endDate: endDate2 } = parseDateRange(selectedDate2);
+
+            console.log(`Start Date 1: ${startDate1}`);
+            console.log(`End Date 1: ${endDate1}`);
+            console.log(`Start Date 2: ${startDate2}`);
+            console.log(`End Date 2: ${endDate2}`);
             console.log(`Selected Brand: ${selectedBrand}`);
 
-            initializeOrUpdateShopeeDataTable(startDate, endDate, selectedBrand);
-            initializeOrUpdateMetaCpasDataTable(startDate, endDate, selectedBrand);
-            initializeOrUpdateShopeeAdsDataTable(startDate, endDate, selectedBrand);
+            // Call functions with the parsed dates and selected brand
+            initializeOrUpdateShopeeDataTable(startDate1, endDate1, startDate2, endDate2, selectedBrand);
+            initializeOrUpdateMetaCpasDataTable(startDate1, endDate1, startDate2, endDate2, selectedBrand);
+            initializeOrUpdateShopeeAdsDataTable(startDate1, endDate1, startDate2, endDate2, selectedBrand);
+            initializeOrUpdateShopeeLiveDataTable(startDate1, endDate1, startDate2, endDate2, selectedBrand);
 
-            if (!startDate || !endDate) {
+            if (!startDate1 || !endDate1) {
                 console.log('Tanggal tidak tersedia, menggunakan hanya brand untuk filter.');
             }
         });
     }
 
-    function fetchLatestRetrievedData() {
-        $.ajax({
-            url: '/shopee/brand-portal-ads/latest-data',
-            type: 'GET',
-            success: function (response) {
-                $('#latestRetrievedData').text(response);
-            },
-            error: function (error) {
-                console.error('Error fetching latest retrieved data:', error);
+    function toggleDatePickerAdvancedComparisonsVisibility() {
+        $('#advanced-comparisons').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#datePickerContainer').slideDown(400); // Tampilkan elemen dengan efek slide
+            } else {
+                $('#datePickerContainer').slideUp(400); // Sembunyikan elemen dengan efek slide
             }
         });
     }
 
     function init() {
-        fetchLatestRetrievedData();
         fetchBrands();
+        toggleDatePickerAdvancedComparisonsVisibility();
 
         // Initialize Data Tables
         initializeOrUpdateShopeeDataTable();

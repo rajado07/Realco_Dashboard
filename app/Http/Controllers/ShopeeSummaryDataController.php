@@ -13,16 +13,56 @@ use App\Models\DataGroup;
 
 class ShopeeSummaryDataController extends Controller
 {
+
+    private function getDateRanges(Request $request)
+    {
+        // Set default date ranges
+        $firstPeriodStart = Carbon::now()->startOfWeek();
+        $firstPeriodEnd = Carbon::now()->endOfWeek();
+        $secondPeriodStart = Carbon::now()->subWeek()->startOfWeek();
+        $secondPeriodEnd = Carbon::now()->subWeek()->endOfWeek();
+
+        // Check for custom date range requests
+        $startDate1 = $request->input('startDate1');
+        $endDate1 = $request->input('endDate1');
+        $startDate2 = $request->input('startDate2');
+        $endDate2 = $request->input('endDate2');
+
+        if ($startDate1 && $endDate1) {
+            // Set custom date range for comparison
+            $firstPeriodStart = Carbon::parse($startDate1);
+            $firstPeriodEnd = Carbon::parse($endDate1);
+
+            if ($startDate2 && $endDate2) {
+                // If startDate2 and endDate2 are provided, use them for the comparison range
+                $secondPeriodStart = Carbon::parse($startDate2);
+                $secondPeriodEnd = Carbon::parse($endDate2);
+            } else {
+                // If only startDate1 and endDate1 are provided, set previous range to the same duration before startDate1
+                $diffInDays = $firstPeriodStart->diffInDays($firstPeriodEnd);
+                $secondPeriodStart = $firstPeriodStart->copy()->subDays($diffInDays + 1);
+                $secondPeriodEnd = $secondPeriodStart->copy()->addDays($diffInDays);
+            }
+        }
+
+        return [$firstPeriodStart, $firstPeriodEnd, $secondPeriodStart, $secondPeriodEnd];
+    }
+
     public function shopeeBrand(Request $request)
     {
-        // Set the date range for this week and previous week
-        $thisWeekStart = Carbon::now()->startOfWeek();
-        $thisWeekEnd = Carbon::now()->endOfWeek();
-        $previousWeekStart = Carbon::now()->subWeek()->startOfWeek();
-        $previousWeekEnd = Carbon::now()->subWeek()->endOfWeek();
+        // Get date ranges
+        list($firstPeriodStart, $firstPeriodEnd, $secondPeriodStart, $secondPeriodEnd) = $this->getDateRanges($request);
 
         // Fetch data
-        $data = ShopeeBrandPortalShopData::whereBetween('data_date', [$previousWeekStart, $thisWeekEnd])->get();
+        $data = ShopeeBrandPortalShopData::whereBetween('data_date', [$secondPeriodStart, $firstPeriodEnd]);
+
+        // Filter by brandId if provided
+        $brandId = $request->input('brandId', 0);
+        if ($brandId != 0) {
+            $data = $data->where('brand_id', $brandId);
+        }
+
+        $data = $data->get();
 
         // Group data by data_group_id
         $groupedData = $data->groupBy('data_group_id');
@@ -37,49 +77,49 @@ class ShopeeSummaryDataController extends Controller
                 $groupName = $group ? $group->name : 'Unknown Group';
             }
 
-            // Calculate totals for this week
-            $thisWeekItems = $items->filter(function ($item) use ($thisWeekStart, $thisWeekEnd) {
-                return Carbon::parse($item->data_date)->between($thisWeekStart, $thisWeekEnd);
+            // Calculate totals for the first period
+            $firstPeriodItems = $items->filter(function ($item) use ($firstPeriodStart, $firstPeriodEnd) {
+                return Carbon::parse($item->data_date)->between($firstPeriodStart, $firstPeriodEnd);
             });
-            $thisWeekProductViews = $thisWeekItems->sum('product_views');
-            $thisWeekGrossUnitsSold = $thisWeekItems->sum('gross_units_sold');
-            $thisWeekGrossSales = $thisWeekItems->sum('gross_sales');
+            $firstPeriodProductViews = $firstPeriodItems->sum('product_views');
+            $firstPeriodGrossUnitsSold = $firstPeriodItems->sum('gross_units_sold');
+            $firstPeriodGrossSales = $firstPeriodItems->sum('gross_sales');
 
-            // Calculate totals for previous week
-            $previousWeekItems = $items->filter(function ($item) use ($previousWeekStart, $previousWeekEnd) {
-                return Carbon::parse($item->data_date)->between($previousWeekStart, $previousWeekEnd);
+            // Calculate totals for the second period
+            $secondPeriodItems = $items->filter(function ($item) use ($secondPeriodStart, $secondPeriodEnd) {
+                return Carbon::parse($item->data_date)->between($secondPeriodStart, $secondPeriodEnd);
             });
-            $previousWeekProductViews = $previousWeekItems->sum('product_views');
-            $previousWeekGrossUnitsSold = $previousWeekItems->sum('gross_units_sold');
-            $previousWeekGrossSales = $previousWeekItems->sum('gross_sales');
+            $secondPeriodProductViews = $secondPeriodItems->sum('product_views');
+            $secondPeriodGrossUnitsSold = $secondPeriodItems->sum('gross_units_sold');
+            $secondPeriodGrossSales = $secondPeriodItems->sum('gross_sales');
 
             // Calculate growth
-            $productViewsGrowth = $previousWeekProductViews > 0 ? (($thisWeekProductViews - $previousWeekProductViews) / $previousWeekProductViews) * 100 : 0;
+            $productViewsGrowth = $secondPeriodProductViews > 0 ? (($firstPeriodProductViews - $secondPeriodProductViews) / $secondPeriodProductViews) * 100 : 0;
 
-            if ($thisWeekProductViews > 0 && $previousWeekProductViews > 0 && $previousWeekGrossUnitsSold > 0) {
-                $conversionGrowth = ((($thisWeekGrossUnitsSold / $thisWeekProductViews) - ($previousWeekGrossUnitsSold / $previousWeekProductViews)) / ($previousWeekGrossUnitsSold / $previousWeekProductViews)) * 100;
+            if ($firstPeriodProductViews > 0 && $secondPeriodProductViews > 0 && $secondPeriodGrossUnitsSold > 0) {
+                $conversionGrowth = ((($firstPeriodGrossUnitsSold / $firstPeriodProductViews) - ($secondPeriodGrossUnitsSold / $secondPeriodProductViews)) / ($secondPeriodGrossUnitsSold / $secondPeriodProductViews)) * 100;
             } else {
                 $conversionGrowth = 0;
             }
 
-            $gmvGrowth = $previousWeekGrossSales > 0 ? (($thisWeekGrossSales - $previousWeekGrossSales) / $previousWeekGrossSales) * 100 : 0;
+            $gmvGrowth = $secondPeriodGrossSales > 0 ? (($firstPeriodGrossSales - $secondPeriodGrossSales) / $secondPeriodGrossSales) * 100 : 0;
 
             // Prepare the result
             $result[] = [
                 'data_group_name' => $groupName,
                 'product_views' => [
-                    'this_week' => $thisWeekProductViews,
-                    'previous_week' => $previousWeekProductViews,
+                    'first_period' => $firstPeriodProductViews,
+                    'second_period' => $secondPeriodProductViews,
                     'growth' => number_format($productViewsGrowth, 2) . '%'
                 ],
                 'conversion' => [
-                    'this_week' => $thisWeekProductViews > 0 ? number_format($thisWeekGrossUnitsSold / $thisWeekProductViews * 100, 2) . '%' : '0%',
-                    'previous_week' => $previousWeekProductViews > 0 ? number_format($previousWeekGrossUnitsSold / $previousWeekProductViews * 100, 2) . '%' : '0%',
+                    'first_period' => $firstPeriodProductViews > 0 ? number_format($firstPeriodGrossUnitsSold / $firstPeriodProductViews * 100, 2) . '%' : '0%',
+                    'second_period' => $secondPeriodProductViews > 0 ? number_format($secondPeriodGrossUnitsSold / $secondPeriodProductViews * 100, 2) . '%' : '0%',
                     'growth' => number_format($conversionGrowth, 2) . '%'
                 ],
-                'GMV' => [
-                    'this_week' => $thisWeekGrossSales,
-                    'previous_week' => $previousWeekGrossSales,
+                'gmv' => [
+                    'first_period' => $firstPeriodGrossSales,
+                    'second_period' => $secondPeriodGrossSales,
                     'growth' => number_format($gmvGrowth, 2) . '%'
                 ]
             ];
@@ -88,16 +128,23 @@ class ShopeeSummaryDataController extends Controller
         return response()->json($result);
     }
 
+
     public function metaCpas(Request $request)
     {
-        // Set the date range for this week and previous week
-        $thisWeekStart = Carbon::now()->startOfWeek();
-        $thisWeekEnd = Carbon::now()->endOfWeek();
-        $previousWeekStart = Carbon::now()->subWeek()->startOfWeek();
-        $previousWeekEnd = Carbon::now()->subWeek()->endOfWeek();
+        // Get date ranges
+        list($firstPeriodStart, $firstPeriodEnd, $secondPeriodStart, $secondPeriodEnd) = $this->getDateRanges($request);
 
-        // Fetch data
-        $data = MetaCpasData::whereBetween('data_date', [$previousWeekStart, $thisWeekEnd])->get();
+        // Fetch data with filters
+        $dataQuery = MetaCpasData::where('market_place_id', 1)
+            ->whereBetween('data_date', [$secondPeriodStart, $firstPeriodEnd]);
+
+        // Filter by brand_id if provided
+        $brandId = $request->input('brandId', 0);
+        if ($brandId != 0) {
+            $dataQuery = $dataQuery->where('brand_id', $brandId);
+        }
+
+        $data = $dataQuery->get();
 
         // Group data by data_group_id
         $groupedData = $data->groupBy('data_group_id');
@@ -112,45 +159,45 @@ class ShopeeSummaryDataController extends Controller
                 $groupName = $group ? $group->name : 'Unknown Group';
             }
 
-            // Calculate totals for this week
-            $thisWeekItems = $items->filter(function ($item) use ($thisWeekStart, $thisWeekEnd) {
-                return Carbon::parse($item->data_date)->between($thisWeekStart, $thisWeekEnd);
+            // Calculate totals for the first period
+            $firstPeriodItems = $items->filter(function ($item) use ($firstPeriodStart, $firstPeriodEnd) {
+                return Carbon::parse($item->data_date)->between($firstPeriodStart, $firstPeriodEnd);
             });
-            $thisWeekAmountSpent = $thisWeekItems->sum('amount_spent');
-            $thisWeekPurchasesConversionValue = $thisWeekItems->sum('purchases_conversion_value_for_shared_items_only');
+            $firstPeriodAmountSpent = $firstPeriodItems->sum('amount_spent');
+            $firstPeriodPurchasesConversionValue = $firstPeriodItems->sum('purchases_conversion_value_for_shared_items_only');
 
-            // Calculate totals for previous week
-            $previousWeekItems = $items->filter(function ($item) use ($previousWeekStart, $previousWeekEnd) {
-                return Carbon::parse($item->data_date)->between($previousWeekStart, $previousWeekEnd);
+            // Calculate totals for the second period
+            $secondPeriodItems = $items->filter(function ($item) use ($secondPeriodStart, $secondPeriodEnd) {
+                return Carbon::parse($item->data_date)->between($secondPeriodStart, $secondPeriodEnd);
             });
-            $previousWeekAmountSpent = $previousWeekItems->sum('amount_spent');
-            $previousWeekPurchasesConversionValue = $previousWeekItems->sum('purchases_conversion_value_for_shared_items_only');
+            $secondPeriodAmountSpent = $secondPeriodItems->sum('amount_spent');
+            $secondPeriodPurchasesConversionValue = $secondPeriodItems->sum('purchases_conversion_value_for_shared_items_only');
 
             // Calculate growth
-            $amountSpentGrowth = $previousWeekAmountSpent > 0 ? (($thisWeekAmountSpent - $previousWeekAmountSpent) / $previousWeekAmountSpent) * 100 : 0;
-            $purchasesConversionValueGrowth = $previousWeekPurchasesConversionValue > 0 ? (($thisWeekPurchasesConversionValue - $previousWeekPurchasesConversionValue) / $previousWeekPurchasesConversionValue) * 100 : 0;
+            $amountSpentGrowth = $secondPeriodAmountSpent > 0 ? (($firstPeriodAmountSpent - $secondPeriodAmountSpent) / $secondPeriodAmountSpent) * 100 : 0;
+            $purchasesConversionValueGrowth = $secondPeriodPurchasesConversionValue > 0 ? (($firstPeriodPurchasesConversionValue - $secondPeriodPurchasesConversionValue) / $secondPeriodPurchasesConversionValue) * 100 : 0;
 
             // Calculate ROAS
-            $thisWeekROAS = $thisWeekAmountSpent > 0 ? $thisWeekPurchasesConversionValue / $thisWeekAmountSpent : 0;
-            $previousWeekROAS = $previousWeekAmountSpent > 0 ? $previousWeekPurchasesConversionValue / $previousWeekAmountSpent : 0;
-            $roasGrowth = $previousWeekROAS > 0 ? (($thisWeekROAS - $previousWeekROAS) / $previousWeekROAS) * 100 : 0;
+            $firstPeriodROAS = $firstPeriodAmountSpent > 0 ? $firstPeriodPurchasesConversionValue / $firstPeriodAmountSpent : 0;
+            $secondPeriodROAS = $secondPeriodAmountSpent > 0 ? $secondPeriodPurchasesConversionValue / $secondPeriodAmountSpent : 0;
+            $roasGrowth = $secondPeriodROAS > 0 ? (($firstPeriodROAS - $secondPeriodROAS) / $secondPeriodROAS) * 100 : 0;
 
             // Prepare the result
             $result[] = [
                 'data_group_name' => $groupName,
                 'amount_spent' => [
-                    'this_week' => $thisWeekAmountSpent,
-                    'previous_week' => $previousWeekAmountSpent,
+                    'first_period' => $firstPeriodAmountSpent,
+                    'second_period' => $secondPeriodAmountSpent,
                     'growth' => number_format($amountSpentGrowth, 2) . '%'
                 ],
                 'purchases_conversion_value' => [
-                    'this_week' => $thisWeekPurchasesConversionValue,
-                    'previous_week' => $previousWeekPurchasesConversionValue,
+                    'first_period' => $firstPeriodPurchasesConversionValue,
+                    'second_period' => $secondPeriodPurchasesConversionValue,
                     'growth' => number_format($purchasesConversionValueGrowth, 2) . '%'
                 ],
                 'roas' => [
-                    'this_week' => number_format($thisWeekROAS, 2),
-                    'previous_week' => number_format($previousWeekROAS, 2),
+                    'first_period' => number_format($firstPeriodROAS, 2),
+                    'second_period' => number_format($secondPeriodROAS, 2),
                     'growth' => number_format($roasGrowth, 2) . '%'
                 ]
             ];
@@ -161,49 +208,55 @@ class ShopeeSummaryDataController extends Controller
 
     public function shopeeAds(Request $request)
     {
-        // Set the date range for this week (last 7 days) and previous week (7 days before the last 7 days)
-        $thisWeekEnd = Carbon::now();
-        $thisWeekStart = Carbon::now()->subDays(6); // 7 days including today
-        $previousWeekEnd = Carbon::now()->subDays(7);
-        $previousWeekStart = Carbon::now()->subDays(13); // 7 days before the last 7 days
+        // Ambil range tanggal berdasarkan request atau default
+        [$firstPeriodStart, $firstPeriodEnd, $secondPeriodStart, $secondPeriodEnd] = $this->getDateRanges($request);
 
-        // Fetch data for the specified date range
-        $data = ShopeeBrandPortalAdsData::whereBetween('data_date', [$previousWeekStart, $thisWeekEnd])->get();
+        // Ambil data dari database berdasarkan periode yang diberikan
+        $data = ShopeeBrandPortalAdsData::whereBetween('data_date', [$secondPeriodStart, $firstPeriodEnd]);
 
-        // Calculate totals for this week
-        $thisWeekItems = $data->filter(function ($item) use ($thisWeekStart, $thisWeekEnd) {
-            return Carbon::parse($item->data_date)->between($thisWeekStart, $thisWeekEnd);
+        // Filter berdasarkan brandId jika disediakan
+        $brandId = $request->input('brandId', 0);
+        if ($brandId != 0) {
+            $data = $data->where('brand_id', $brandId);
+        }
+
+        // Dapatkan data dari database
+        $data = $data->get();
+
+        // Perhitungan untuk first period
+        $firstPeriodItems = $data->filter(function ($item) use ($firstPeriodStart, $firstPeriodEnd) {
+            return Carbon::parse($item->data_date)->between($firstPeriodStart, $firstPeriodEnd);
         });
-        $thisWeekAdsSpent = $thisWeekItems->sum('ads_spent');
-        $thisWeekGrossSales = $thisWeekItems->sum('gross_sales');
+        $firstPeriodAdsSpend = $firstPeriodItems->sum('ads_spend');
+        $firstPeriodGrossSales = $firstPeriodItems->sum('gross_sales');
 
-        // Calculate totals for previous week
-        $previousWeekItems = $data->filter(function ($item) use ($previousWeekStart, $previousWeekEnd) {
-            return Carbon::parse($item->data_date)->between($previousWeekStart, $previousWeekEnd);
+        // Perhitungan untuk second period
+        $secondPeriodItems = $data->filter(function ($item) use ($secondPeriodStart, $secondPeriodEnd) {
+            return Carbon::parse($item->data_date)->between($secondPeriodStart, $secondPeriodEnd);
         });
-        $previousWeekAdsSpent = $previousWeekItems->sum('ads_spent');
-        $previousWeekGrossSales = $previousWeekItems->sum('gross_sales');
+        $secondPeriodAdsSpend = $secondPeriodItems->sum('ads_spend');
+        $secondPeriodGrossSales = $secondPeriodItems->sum('gross_sales');
 
-        // Calculate ROAS
-        $thisWeekROAS = $thisWeekAdsSpent > 0 ? $thisWeekGrossSales / $thisWeekAdsSpent : 0;
-        $previousWeekROAS = $previousWeekAdsSpent > 0 ? $previousWeekGrossSales / $previousWeekAdsSpent : 0;
-        $roasGrowth = $previousWeekROAS > 0 ? (($thisWeekROAS - $previousWeekROAS) / $previousWeekROAS) * 100 : 0;
+        // Hitung ROAS
+        $firstPeriodROAS = $firstPeriodAdsSpend > 0 ? $firstPeriodGrossSales / $firstPeriodAdsSpend : 0;
+        $secondPeriodROAS = $secondPeriodAdsSpend > 0 ? $secondPeriodGrossSales / $secondPeriodAdsSpend : 0;
+        $roasGrowth = $secondPeriodROAS > 0 ? (($firstPeriodROAS - $secondPeriodROAS) / $secondPeriodROAS) * 100 : 0;
 
-        // Prepare the result
+        // Siapkan hasil untuk response
         $result = [
-            'ads_spent' => [
-                'this_week' => $thisWeekAdsSpent,
-                'previous_week' => $previousWeekAdsSpent,
-                'growth' => number_format($thisWeekAdsSpent > 0 && $previousWeekAdsSpent > 0 ? (($thisWeekAdsSpent - $previousWeekAdsSpent) / $previousWeekAdsSpent) * 100 : 0, 2) . '%'
+            'ads_spend' => [
+                'first_period' => $firstPeriodAdsSpend,
+                'second_period' => $secondPeriodAdsSpend,
+                'growth' => number_format($firstPeriodAdsSpend > 0 && $secondPeriodAdsSpend > 0 ? (($firstPeriodAdsSpend - $secondPeriodAdsSpend) / $secondPeriodAdsSpend) * 100 : 0, 2) . '%'
             ],
             'gross_sales' => [
-                'this_week' => $thisWeekGrossSales,
-                'previous_week' => $previousWeekGrossSales,
-                'growth' => number_format($thisWeekGrossSales > 0 && $previousWeekGrossSales > 0 ? (($thisWeekGrossSales - $previousWeekGrossSales) / $previousWeekGrossSales) * 100 : 0, 2) . '%'
+                'first_period' => $firstPeriodGrossSales,
+                'second_period' => $secondPeriodGrossSales,
+                'growth' => number_format($firstPeriodGrossSales > 0 && $secondPeriodGrossSales > 0 ? (($firstPeriodGrossSales - $secondPeriodGrossSales) / $secondPeriodGrossSales) * 100 : 0, 2) . '%'
             ],
             'roas' => [
-                'this_week' => number_format($thisWeekROAS, 2),
-                'previous_week' => number_format($previousWeekROAS, 2),
+                'first_period' => number_format($firstPeriodROAS, 2),
+                'second_period' => number_format($secondPeriodROAS, 2),
                 'growth' => number_format($roasGrowth, 2) . '%'
             ]
         ];
@@ -214,61 +267,67 @@ class ShopeeSummaryDataController extends Controller
 
     public function shopeeLiveStream(Request $request)
     {
-        // Set the date range for May and June
-        $mayStart = Carbon::create(null, 5, 1)->startOfDay();
-        $mayEnd = Carbon::create(null, 5, 31)->endOfDay();
-        $juneStart = Carbon::create(null, 6, 1)->startOfDay();
-        $juneEnd = Carbon::create(null, 6, 30)->endOfDay();
+        // Ambil range tanggal berdasarkan request atau default
+        [$firstPeriodStart, $firstPeriodEnd, $secondPeriodStart, $secondPeriodEnd] = $this->getDateRanges($request);
 
-        // Fetch data for May and June
-        $data = ShopeeSellerCenterLiveStreamingData::whereBetween('data_date', [$mayStart, $juneEnd])->get();
+        // Ambil data dari database berdasarkan periode yang diberikan
+        $data = ShopeeSellerCenterLiveStreamingData::whereBetween('data_date', [$secondPeriodStart, $firstPeriodEnd]);
 
-        // Calculate totals for May
-        $mayItems = $data->filter(function ($item) use ($mayStart, $mayEnd) {
-            return Carbon::parse($item->data_date)->between($mayStart, $mayEnd);
+        // Filter berdasarkan brandId jika disediakan
+        $brandId = $request->input('brandId', 0);
+        if ($brandId != 0) {
+            $data = $data->where('brand_id', $brandId);
+        }
+
+        // Dapatkan data dari database
+        $data = $data->get();
+
+        // Perhitungan untuk first period
+        $firstPeriodItems = $data->filter(function ($item) use ($firstPeriodStart, $firstPeriodEnd) {
+            return Carbon::parse($item->data_date)->between($firstPeriodStart, $firstPeriodEnd);
         });
-        $mayTotalSales = $mayItems->sum('sales');
-        $mayTotalDurationInSeconds = $mayItems->sum('duration');
-        $mayTotalDurationInHours = $mayTotalDurationInSeconds / 3600;
-        $mayGMVPerHour = $mayTotalDurationInHours > 0 ? $mayTotalSales / $mayTotalDurationInHours : 0;
+        $firstPeriodTotalSales = $firstPeriodItems->sum('sales');
+        $firstPeriodTotalDurationInSeconds = $firstPeriodItems->sum('duration');
+        $firstPeriodTotalDurationInHours = $firstPeriodTotalDurationInSeconds / 3600;
+        $firstPeriodGMVPerHour = $firstPeriodTotalDurationInHours > 0 ? $firstPeriodTotalSales / $firstPeriodTotalDurationInHours : 0;
 
-        // Calculate totals for June
-        $juneItems = $data->filter(function ($item) use ($juneStart, $juneEnd) {
-            return Carbon::parse($item->data_date)->between($juneStart, $juneEnd);
+        // Perhitungan untuk second period
+        $secondPeriodItems = $data->filter(function ($item) use ($secondPeriodStart, $secondPeriodEnd) {
+            return Carbon::parse($item->data_date)->between($secondPeriodStart, $secondPeriodEnd);
         });
-        $juneTotalSales = $juneItems->sum('sales');
-        $juneTotalDurationInSeconds = $juneItems->sum('duration');
-        $juneTotalDurationInHours = $juneTotalDurationInSeconds / 3600;
-        $juneGMVPerHour = $juneTotalDurationInHours > 0 ? $juneTotalSales / $juneTotalDurationInHours : 0;
+        $secondPeriodTotalSales = $secondPeriodItems->sum('sales');
+        $secondPeriodTotalDurationInSeconds = $secondPeriodItems->sum('duration');
+        $secondPeriodTotalDurationInHours = $secondPeriodTotalDurationInSeconds / 3600;
+        $secondPeriodGMVPerHour = $secondPeriodTotalDurationInHours > 0 ? $secondPeriodTotalSales / $secondPeriodTotalDurationInHours : 0;
 
-        // Convert total duration to hours and minutes for May
-        $mayHours = floor($mayTotalDurationInSeconds / 3600);
-        $mayMinutes = floor(($mayTotalDurationInSeconds % 3600) / 60);
+        // Konversi durasi total ke jam dan menit untuk first period
+        $firstPeriodHours = floor($firstPeriodTotalDurationInSeconds / 3600);
+        $firstPeriodMinutes = floor(($firstPeriodTotalDurationInSeconds % 3600) / 60);
 
-        // Convert total duration to hours and minutes for June
-        $juneHours = floor($juneTotalDurationInSeconds / 3600);
-        $juneMinutes = floor(($juneTotalDurationInSeconds % 3600) / 60);
+        // Konversi durasi total ke jam dan menit untuk second period
+        $secondPeriodHours = floor($secondPeriodTotalDurationInSeconds / 3600);
+        $secondPeriodMinutes = floor(($secondPeriodTotalDurationInSeconds % 3600) / 60);
 
-        // Calculate growth
-        $salesGrowth = $mayTotalSales > 0 ? (($juneTotalSales - $mayTotalSales) / $mayTotalSales) * 100 : 0;
-        $gmvPerHourGrowth = $mayGMVPerHour > 0 ? (($juneGMVPerHour - $mayGMVPerHour) / $mayGMVPerHour) * 100 : 0;
-        $durationGrowth = $mayTotalDurationInSeconds > 0 ? (($juneTotalDurationInSeconds - $mayTotalDurationInSeconds) / $mayTotalDurationInSeconds) * 100 : 0;
+        // Hitung pertumbuhan
+        $salesGrowth = $firstPeriodTotalSales > 0 ? (($secondPeriodTotalSales - $firstPeriodTotalSales) / $firstPeriodTotalSales) * 100 : 0;
+        $gmvPerHourGrowth = $firstPeriodGMVPerHour > 0 ? (($secondPeriodGMVPerHour - $firstPeriodGMVPerHour) / $firstPeriodGMVPerHour) * 100 : 0;
+        $durationGrowth = $firstPeriodTotalDurationInSeconds > 0 ? (($secondPeriodTotalDurationInSeconds - $firstPeriodTotalDurationInSeconds) / $firstPeriodTotalDurationInSeconds) * 100 : 0;
 
-        // Prepare the result
+        // Siapkan hasil untuk response
         $result = [
             'total_sales' => [
-                'may' => $mayTotalSales,
-                'june' => $juneTotalSales,
+                'first_period' => $firstPeriodTotalSales,
+                'second_period' => $secondPeriodTotalSales,
                 'growth' => number_format($salesGrowth, 2) . '%'
             ],
             'total_duration' => [
-                'may' => sprintf('%d hours %d minutes', $mayHours, $mayMinutes),
-                'june' => sprintf('%d hours %d minutes', $juneHours, $juneMinutes),
+                'first_period' => sprintf('%d hours %d minutes', $firstPeriodHours, $firstPeriodMinutes),
+                'second_period' => sprintf('%d hours %d minutes', $secondPeriodHours, $secondPeriodMinutes),
                 'growth' => number_format($durationGrowth, 2) . '%'
             ],
             'gmv_per_hour' => [
-                'may' => number_format($mayGMVPerHour, 2),
-                'june' => number_format($juneGMVPerHour, 2),
+                'first_period' => number_format($firstPeriodGMVPerHour, 2),
+                'second_period' => number_format($secondPeriodGMVPerHour, 2),
                 'growth' => number_format($gmvPerHourGrowth, 2) . '%'
             ]
         ];

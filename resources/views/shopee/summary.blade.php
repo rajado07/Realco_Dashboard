@@ -25,22 +25,24 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Shopee</a></li>
-                            <li class="breadcrumb-item">Brand Portal</a></li>
-                            <li class="breadcrumb-item active">Ads</a></li>
+                            <li class="breadcrumb-item active">Summary</a></li>
                         </ol>
                     </div>
-                    <h4 class="page-title">Shopee Portal Ads</h4>
+                    <h4 class="page-title">Shopee Summary</h4>
                 </div>
             </div>
         </div>
         <!-- end page title -->
 
         <div class="row justify-content-end mb-2">
-            <div class="col-auto">
-                <span class="form-control">
-                    Latest Retrieved Data At : <span id="latestRetrievedData">N/A</span>
-                </span>
+
+            <div class="col-auto mt-1" style="margin-right: auto;">
+                <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input" id="advanced-comparisons">
+                    <label class="form-check-label" for="customSwitch1">Advanced Comparisons</label>
+                </div>
             </div>
+            
             <div class="col-auto">
                 <!-- Date Picker -->
                 <div class="form-group">
@@ -51,10 +53,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-auto">
+            <div class="col-auto" id="datePickerContainer" style="display: none;">
                 <!-- Date Picker -->
                 <div class="form-group">
-                    <div id="reportrange" class="form-control d-flex justify-content-between align-items-center" data-toggle="date-picker-range" data-target-display="#selectedDate" data-cancel-class="btn-light">
+                    <div id="reportrange" class="form-control d-flex justify-content-between align-items-center" data-toggle="date-picker-range" data-target-display="#selectedDate2" data-cancel-class="btn-light">
                         <i class="ri-calendar-2-line"></i>
                         <span id="selectedDate2">Select date</span>
                         <i class="ri-arrow-down-s-line"></i>
