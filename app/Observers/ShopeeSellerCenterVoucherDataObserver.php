@@ -59,6 +59,7 @@ class ShopeeSellerCenterVoucherDataObserver
                     $existingData = ShopeeSellerCenterVoucherData::where('data_date', $rawData->data_date)
                         ->where('voucher_name', $dataItem['Nama Voucher'])
                         ->where('voucher_code', $dataItem['Kode Voucher'])
+                        ->where('brand_id', $rawData->brand_id)
                         ->exists();
 
                     if ($existingData) {

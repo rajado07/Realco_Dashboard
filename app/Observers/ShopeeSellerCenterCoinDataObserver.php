@@ -40,6 +40,7 @@ class ShopeeSellerCenterCoinDataObserver
                     $existingData = ShopeeSellerCenterCoinData::where('data_date', $date)
                         ->where('time', $time)
                         ->where('coins_amount', $dataItem['Jumlah Koin Penjual'])
+                        ->where('brand_id', $rawData->brand_id)
                         ->exists();
 
                     if ($existingData) {

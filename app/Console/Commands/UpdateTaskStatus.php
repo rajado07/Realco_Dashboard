@@ -30,8 +30,8 @@ class UpdateTaskStatus extends Command
 
             if ($taskGenerator && $taskGenerator->frequency === 'daily') {
                 $scheduledDate = Carbon::parse($task->scheduled_to_run);
-                if ($scheduledDate->addDays()->lte(Carbon::now())) {
-                    // Update status task menjadi 2 (sudah dijalankan) jika sudah H+1
+                if ($scheduledDate->addDays(2)->lte(Carbon::now())) {
+                    // Update status task menjadi 2 (sudah dijalankan) jika sudah H+2
                     $task->status = 2;
                     $task->save();
 

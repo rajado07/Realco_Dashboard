@@ -36,6 +36,7 @@ class ShopeeBrandPortalAdsDataObserver
                 // Skip data if shop_id and data_date already exist
                 $existingData = ShopeeBrandPortalAdsData::where('shop_id', $dataItem['Shop ID'])
                     ->where('data_date', $formattedDate)
+                    ->where('brand_id', $rawData->brand_id)
                     ->exists();
                 if ($existingData) {
                     $skipCount++;

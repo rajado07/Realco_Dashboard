@@ -31,6 +31,7 @@ class ShopeeBrandPortalShopDataObserver
                     // Check if the data already exists
                     $existingData = ShopeeBrandPortalShopData::where('product_id', $dataItem['Product ID'])
                         ->where('data_date', $rawData->data_date)
+                        ->where('brand_id', $rawData->brand_id)
                         ->exists();
 
                     if ($existingData) {

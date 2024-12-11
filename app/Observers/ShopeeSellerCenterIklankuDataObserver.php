@@ -2,16 +2,16 @@
 
 namespace App\Observers;
 
-use App\Models\ShopeeSellerCenterLiveStreamingData;
+use App\Models\ShopeeSellerCenterIklankuData;
 use App\Models\RawData;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
-class ShopeeSellerCenterLiveStreamingDataObserver
+class ShopeeSellerCenterIklankuDataObserver
 {
     public function created(RawData $rawData)
     {
-        if ($rawData->type === 'shopee_seller_center_live_streaming') {
+        if ($rawData->type === 'shopee_seller_center_iklanku') {
             $jsonData = json_decode($rawData->data, true);
 
             $totalEntries = count($jsonData);
@@ -23,19 +23,13 @@ class ShopeeSellerCenterLiveStreamingDataObserver
 
             foreach ($jsonData as $dataItem) {
                 try {
-                    $infoParts = explode("\n", $dataItem['Informasi Streaming']);
-                    $duration = $infoParts[0];
-                    $name = $infoParts[1];
-                    $datetime = str_replace('Dimulai pada ', '', $infoParts[2]);
 
-                    $datetimeParts = explode(' ', $datetime);
-                    $data_date = Carbon::createFromFormat('d-m-Y', $datetimeParts[0])->toDateString();
-                    $start_at = $datetimeParts[1];
+                    // Convert Acos
+                    $acos = isset($dataItem['Persentase Biaya Iklan terhadap Penjualan dari Iklan (ACOS)'])? str_replace('%', '', $dataItem['Persentase Biaya Iklan terhadap Penjualan dari Iklan (ACOS)']): null;
 
                     // Check for existing data
-                    $existingData = ShopeeSellerCenterLiveStreamingData::where('data_date', $data_date)
-                        ->where('start_at', $start_at)
-                        ->where('name', $name)
+                    $existingData = ShopeeSellerCenterIklankuData::where('data_date', $rawData->data_date)
+                        ->where('name', $dataItem['Nama Iklan'])
                         ->where('brand_id', $rawData->brand_id)
                         ->exists();
 
@@ -45,32 +39,24 @@ class ShopeeSellerCenterLiveStreamingDataObserver
                         continue;
                     }
 
-                    // Convert necessary fields
-                    $durationParts = explode(':', $duration);
-                    $durationInSeconds = $durationParts[0] * 3600 + $durationParts[1] * 60 + $durationParts[2];
-                    $durationInMinutes = $durationInSeconds / 60;
-
-
-                    $averageWatchDurationParts = explode(':', $dataItem['Rata-rata Durasi Menonton']);
-                    $averageWatchDurationInSeconds = $averageWatchDurationParts[0] * 3600 + $averageWatchDurationParts[1] * 60 + $averageWatchDurationParts[2];
-
-                    $salesAmount = str_replace(['Rp', '.', 'K'], '', $dataItem['Penjualan']);
-                    $salesAmount = str_replace(',', '.', $salesAmount) * 1000;
-
-                    // Calculate sales_per_hour
-                    $salesPerHour = $salesAmount / $durationInMinutes;
-
-                    ShopeeSellerCenterLiveStreamingData::create([
-                        'duration' => $durationInSeconds,
-                        'name' => $name,
-                        'data_date' => $data_date,
-                        'start_at' => $start_at,
-                        'unique_viewers' => str_replace('.', '', $dataItem['Pengunjung']),
-                        'peak_viewers' => str_replace('.', '', $dataItem['Penonton Terbanyak']),
-                        'avg_watch_time' => $averageWatchDurationInSeconds,
-                        'orders' => $dataItem['Pesanan'],
-                        'sales' => $salesAmount,
-                        'sales_per_hour' => $salesPerHour,
+                    ShopeeSellerCenterIklankuData::create([
+                        'data_date' => $rawData->data_date,
+                        'name' => $dataItem['Nama Iklan'],
+                        'status' => $dataItem['Status'],
+                        'ad_type' => $dataItem['Jenis Iklan'],
+                        'product_code' => $dataItem['Kode Produk'],
+                        'display_type' => $dataItem['Tampilan Iklan'],
+                        'bidding_type' => $dataItem['Mode Bidding'],
+                        'ad_placement' => $dataItem['Penempatan Iklan'],
+                        'start_date' => $dataItem['Tanggal Mulai'],
+                        'end_date' => $dataItem['Tanggal Selesai'],
+                        'impressions' => $dataItem['Dilihat'],
+                        'clicks' => $dataItem['Jumlah Klik'],
+                        'items_sold' => $dataItem['Produk Terjual'],
+                        'expense' => $dataItem['Biaya'],
+                        'roas' => $dataItem['Efektifitas Iklan'],
+                        'acos' => $acos,
+  
                         'raw_data_id' => $rawData->id,
                         'brand_id' => $rawData->brand_id,
                         'retrieved_at' => $rawData->retrieved_at,
@@ -80,7 +66,7 @@ class ShopeeSellerCenterLiveStreamingDataObserver
                 } catch (\Exception $e) {
                     $failedDetails[] = $dataItem;
                     $errorDetails[] = [
-                        'stream_info' => $dataItem['Informasi Streaming'],
+                        'name' => $dataItem['Nama Iklan'],
                         'error' => $e->getMessage(),
                     ];
                 }
