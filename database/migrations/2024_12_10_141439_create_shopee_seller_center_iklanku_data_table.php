@@ -26,8 +26,8 @@ return new class extends Migration
             $table->integer('clicks')->nullable(); # Jumlah Klik
             $table->integer('items_sold')->nullable(); # Produk Terjual
             $table->integer('expense')->nullable(); # Biaya
-            $table->decimal('roas', 5, 2)->nullable(); # Efektifitas Iklan
-            $table->decimal('acos', 5, 2)->nullable(); # Persentase Biaya Iklan terhadap Penjualan dari Iklan (ACOS)
+            $table->decimal('roas', 10, 2)->nullable(); # Efektifitas Iklan
+            $table->decimal('acos', 10, 2)->nullable(); # Persentase Biaya Iklan terhadap Penjualan dari Iklan (ACOS)
 
             $table->timestamp('retrieved_at'); 
             $table->string('file_name');
