@@ -452,7 +452,7 @@ $(document).ready(() => {
 
         function animateWidgetCards() {
             const cards = document.querySelectorAll('.widget-flat');
-        
+
             if (cards.length > 0) {
                 anime({
                     targets: '.widget-flat',
@@ -479,7 +479,7 @@ $(document).ready(() => {
             initFormAdvance();
             enableSmoothAutoScrollOnTable(5);
             animateWidgetCards();
-            
+
         }
 
         init();
@@ -490,42 +490,38 @@ $(document).ready(() => {
 
 window.getScripts = function (modalId) {
     return new Promise((resolve, reject) => {
-        const url = `/task-generator/get-script`; // Sesuaikan URL jika diperlukan
+        const url = `/task-generator/get-script`;
 
         fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); // Mengambil respons dalam format JSON
+                return response.json();
             })
             .then(data => {
-                // Ambil elemen modal yang akan diupdate
                 const modal = document.querySelector(`#${modalId} .modal-body`);
                 const select = modal.querySelector('#selectType');
 
-                // Bersihkan opsi yang sudah ada untuk menghindari duplikasi
                 select.innerHTML = `<option disabled selected>Select Script</option>`;
 
-                // Tambahkan opsi script dari respons
                 data.scripts.forEach(script => {
                     const option = document.createElement('option');
-                    option.value = script;  // Menggunakan nama script sebagai value
-                    option.textContent = script;  // Menampilkan nama script sebagai teks
+                    option.value = script;
+                    option.textContent = script;
                     select.appendChild(option);
                 });
 
-                // Inisialisasi select2 untuk dropdown dengan pencarian
                 $(select).select2({
                     dropdownParent: $(modal),
                     closeOnSelect: true
                 });
 
-                resolve(); // Resolusi promise ketika selesai
+                resolve();
             })
             .catch(error => {
-                console.error('Error:', error); // Log kesalahan jika ada
-                reject(error); // Menolak promise jika terjadi kesalahan
+                console.error('Error:', error);
+                reject(error);
             });
     });
 };
@@ -533,84 +529,114 @@ window.getScripts = function (modalId) {
 
 window.getMarketPlaces = function (modalId) {
     return new Promise((resolve, reject) => {
-        const url = `/market-place/read`; // Endpoint Laravel untuk mendapatkan data marketplace
+        const url = `/market-place/read`;
 
         fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); // Mengambil respons dalam format JSON
+                return response.json();
             })
             .then(data => {
-                // Ambil elemen modal yang akan diupdate
                 const modal = document.querySelector(`#${modalId} .modal-body`);
                 const select = modal.querySelector('#selectMarketPlace');
 
-                // Bersihkan opsi yang sudah ada untuk menghindari duplikasi
                 select.innerHTML = `<option disabled selected>Select MarketPlace</option>`;
 
-                // Tambahkan opsi marketplace dari respons
                 data.forEach(marketplace => {
                     const option = document.createElement('option');
-                    option.value = marketplace.id;  // Menggunakan ID marketplace sebagai value
-                    option.textContent = marketplace.name;  // Menampilkan nama marketplace sebagai teks
+                    option.value = marketplace.id;
+                    option.textContent = marketplace.name;
                     select.appendChild(option);
                 });
 
-                // Inisialisasi select2 untuk dropdown dengan pencarian
                 $(select).select2({
                     dropdownParent: $(modal),
                     closeOnSelect: true
                 });
 
-                resolve(); // Resolusi promise ketika selesai
+                resolve();
             })
             .catch(error => {
-                console.error('Error:', error); // Log kesalahan jika ada
-                reject(error); // Menolak promise jika terjadi kesalahan
+                console.error('Error:', error);
+                reject(error);
             });
     });
 };
 
 window.getBrands = function (modalId) {
     return new Promise((resolve, reject) => {
-        const url = `/brand/read`; // Endpoint Laravel untuk mendapatkan data brand
+        const url = `/brand/read`;
 
         fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); // Mengambil respons dalam format JSON
+                return response.json();
             })
             .then(data => {
-                // Ambil elemen modal yang akan diupdate
                 const modal = document.querySelector(`#${modalId} .modal-body`);
                 const select = modal.querySelector('#selectBrand');
 
-                // Bersihkan opsi yang sudah ada untuk menghindari duplikasi
                 select.innerHTML = `<option disabled selected>Select Brand</option>`;
 
-                // Tambahkan opsi brand dari respons
                 data.forEach(brand => {
                     const option = document.createElement('option');
-                    option.value = brand.id;  // Menggunakan ID brand sebagai value
-                    option.textContent = brand.name;  // Menampilkan nama brand sebagai teks
+                    option.value = brand.id;
+                    option.textContent = brand.name;
                     select.appendChild(option);
                 });
 
-                // Inisialisasi select2 untuk dropdown dengan pencarian
                 $(select).select2({
                     dropdownParent: $(modal),
                     closeOnSelect: true
                 });
 
-                resolve(); // Resolusi promise ketika selesai
+                resolve();
             })
             .catch(error => {
-                console.error('Error:', error); // Log kesalahan jika ada
-                reject(error); // Menolak promise jika terjadi kesalahan
+                console.error('Error:', error);
+                reject(error);
             });
     });
 };
+
+
+window.getType = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/group/type`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectType');
+
+                select.innerHTML = `<option disabled selected>Select Type</option>`;
+
+                data.forEach(type => {
+                    const option = new Option(type, type); // Here we assume each type is a string
+                    select.append(option);
+                });
+
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+};
+

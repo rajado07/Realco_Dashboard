@@ -20,4 +20,21 @@ class DataGroup extends Model
     {
         return $this->hasMany(ShopeeBrandPortalShopData::class, 'data_group_id');
     }
+
+    // Recusive Relationship Model
+
+    public function parent()
+    {
+        return $this->belongsTo(DataGroup::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(DataGroup::class, 'parent_id');
+    }
+
+    public function allChildren()
+    {
+        return $this->children()->with('allChildren');
+    }
 }

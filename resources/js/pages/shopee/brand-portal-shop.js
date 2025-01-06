@@ -19,13 +19,12 @@ $(document).ready(() => {
             ajaxData.start_date = startDate;
             ajaxData.end_date = endDate;
         }
-
         if (brandId) {
             ajaxData.brand_id = brandId;
         }
 
         if (dataTableInstance) {
-            dataTableInstance.clear().destroy(); // Properly destroy the existing DataTable instance
+            dataTableInstance.clear().destroy();
         }
 
         dataTableInstance = $('#basic-datatable').DataTable({
@@ -34,7 +33,10 @@ $(document).ready(() => {
                 type: 'GET',
                 data: ajaxData,
                 dataSrc: function (json) {
-                    return json; // No re-mapping needed
+                    return json;
+                },
+                error: function (xhr, error, thrown) {
+                    console.error('Error fetching data:', error);
                 }
             },
             stateSave: true,
@@ -42,7 +44,14 @@ $(document).ready(() => {
             deferLoading: true,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             columns: [
-                { title: "Brand", data: "group_name" },
+                {
+                    className: 'details-control',
+                    orderable: false,
+                    data: null,
+                    defaultContent: '<i class="ri-add-circle-line" style="cursor:pointer;"></i>',
+                    width: '30px'
+                },
+                { title: "Brand", data: "data_group_name" },
                 { title: "Gross Sales", data: "gross_sales" },
                 { title: "Gross Orders", data: "gross_orders" },
                 { title: "Gross Units Sold", data: "gross_units_sold" },
@@ -55,25 +64,25 @@ $(document).ready(() => {
             ],
             columnDefs: [
                 {
-                    targets: [2, 3, 4, 5],
-                    render: function (data, type, row) {
-                        return dataTableHelper.columnWitheNowPreviousChange(data,false);
+                    targets: [3, 4, 5, 6],
+                    render: function (data) {
+                        return dataTableHelper.columnWitheNowPreviousChange(data, false);
                     }
                 },
                 {
-                    targets: [1, 6, 7],
-                    render: function (data, type, row) {
-                        return dataTableHelper.columnWitheNowPreviousChange(data,true);
-                    }
-                },
-                {
-                    targets: 8,
-                    render: function (data, type, row) {
-                        return dataTableHelper.columnWitheNowPreviousChange(data,false,false);
+                    targets: [2, 7, 8],
+                    render: function (data) {
+                        return dataTableHelper.columnWitheNowPreviousChange(data, true);
                     }
                 },
                 {
                     targets: 9,
+                    render: function (data) {
+                        return dataTableHelper.columnWitheNowPreviousChange(data, false, false);
+                    }
+                },
+                {
+                    targets: 10,
                     orderable: false,
                     searchable: false,
                     render: function (data, type, row) {
@@ -83,8 +92,18 @@ $(document).ready(() => {
                                     <i class="ri-settings-4-line"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-animated">
-                                    <li><a class="dropdown-item action-edit" data-id="${row.group_id}" data-bs-toggle="modal" data-bs-target="#editModal" href="#" onclick="getAccounts('editModal');"><i class="ri-settings-3-line"></i> Edit</a></li>
-                                    <li><a class="dropdown-item action-delete" data-id="${row.group_id}" href="#"><i class="ri-delete-bin-2-line"></i> Delete</a></li>
+                                    <li>
+                                        <a class="dropdown-item action-edit" data-id="${row.group_id}" 
+                                           data-bs-toggle="modal" data-bs-target="#editModal" href="#"
+                                           onclick="getAccounts('editModal');">
+                                           <i class="ri-settings-3-line"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item action-delete" data-id="${row.group_id}" href="#">
+                                           <i class="ri-delete-bin-2-line"></i> Delete
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         `;
@@ -103,80 +122,48 @@ $(document).ready(() => {
                 initialize.toolTip();
             },
         });
-
-        // Add event listener for opening and closing details
-        $('#basic-datatable tbody').off('click', 'td:not(:last-child)');
-        $('#basic-datatable tbody').on('click', 'td:not(:last-child)', function () {
-            var tr = $(this).closest('tr');
-            var row = dataTableInstance.row(tr);
-
-            if (row.child.isShown()) {
-                row.child.hide();
-                tr.removeClass('shown');
-            } else {
-                row.child(formatGroup(row.data())).show();
-                tr.addClass('shown');
-            }
-        });
     }
 
-    function formatGroup(group) {
-        let dataTable = `
-        <div class="accordion accordion-flush" id="accordion-group-${group.group_id}">
+    function formatChildren(rowData) {
+        if (!rowData.children || rowData.children.length === 0) {
+            return `<div style="padding: 0.5rem 1rem;">No children data available</div>`;
+        }
+        let html = `
+            <table class="table table-sm" style="margin: 1rem; margin-left: 2rem;">
+                <thead>
+                    <tr>
+                        <th>Sub Brand</th>
+                        <th>Gross Sales</th>
+                        <th>Gross Orders</th>
+                        <th>Gross Units Sold</th>
+                        <th>Product Views</th>
+                        <th>Product Visitors</th>
+                        <th>Average Basket Size</th>
+                        <th>Average Selling Price</th>
+                        <th>Conversion</th>
+                    </tr>
+                </thead>
+                <tbody>
         `;
 
-        if (group.details && group.details.length > 0) {
-            group.details.forEach(product => {
-                dataTable += `
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading-product-${product.product_id}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#product-section-${product.product_id}" aria-expanded="false" aria-controls="product-section-${product.product_id}">
-                            ${product.product_name} (Product ID: ${product.product_id})
-                        </button>
-                    </h2>
-                    <div id="product-section-${product.product_id}" class="accordion-collapse collapse" aria-labelledby="heading-product-${product.product_id}">
-                        <div class="accordion-body">
-                            ${createProductTable(product.historical_data)}
-                        </div>
-                    </div>
-                </div>
-                `;
-            });
-        }
-
-        dataTable += `</div>`;
-        return dataTable;
-    }
-
-    function createProductTable(data) {
-        let tableId = 'product-table-' + Math.random().toString(36).substr(2, 9);
-        let table = `<table id="${tableId}" class="table table-sm"><thead><tr>`;
-
-        Object.keys(data[0]).forEach(function (key) {
-            table += '<th>' + key + '</th>';
+        rowData.children.forEach(child => {
+            html += `
+                <tr>
+                    <td>${child.data_group_name}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.gross_sales, true)}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.gross_orders, false)}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.gross_units_sold, false)}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.product_views, false)}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.product_visitors, false)}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.average_basket_size, true)}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.average_selling_price, true)}</td>
+                    <td>${dataTableHelper.columnWitheNowPreviousChange(child.conversion, false, false)}</td>
+                </tr>
+            `;
         });
 
-        table += '</tr></thead><tbody>';
-
-        data.forEach(function (item) {
-            table += '<tr>';
-            Object.values(item).forEach(function (value) {
-                table += '<td>' + value + '</td>';
-            });
-            table += '</tr>';
-        });
-
-        table += '</tbody></table>';
-
-        setTimeout(() => {
-            $(`#${tableId}`).DataTable({
-                paging: false,
-                searching: false,
-                info: false
-            });
-        }, 0);
-
-        return table;
+        html += `</tbody></table>`;
+        return html;
     }
 
     function fetchBrands() {
@@ -226,12 +213,12 @@ $(document).ready(() => {
         });
     }
 
+
     function initializeRefreshButton() {
         $('#btn-refresh').click(function () {
             var selectedDate = $('#selectedDate').text();
             var selectedBrand = $('#selectedBrand').val();
 
-            // Check if dates are selected
             const dates = selectedDate.split(' - ');
             let startDate, endDate;
 
@@ -259,11 +246,32 @@ $(document).ready(() => {
             url: '/shopee/brand-portal-shop/latest-data',
             type: 'GET',
             success: function (response) {
-                // Directly update the text of the label with the received data
                 $('#latestRetrievedData').text(response);
             },
             error: function (error) {
                 console.error('Error fetching latest retrieved data:', error);
+            }
+        });
+    }
+
+    function initializeDetailsControl() {
+        $('#basic-datatable tbody').on('click', 'td.details-control', function () {
+            const tr = $(this).closest('tr');
+            const row = dataTableInstance.row(tr);
+
+            if (row.child.isShown()) {
+                // Jika sudah terbuka, tutup
+                row.child.hide();
+                tr.removeClass('shown');
+                $(this).find('i').removeClass('ri-subtract-fill').addClass('ri-add-circle-line');
+            } else {
+                // Tampilkan "child row"
+                const childData = formatChildren(row.data());
+                row.child(childData).show();
+                tr.addClass('shown');
+                $(this).find('i').removeClass('ri-add-circle-line').addClass('ri-subtract-fill');
+
+                initialize.toolTip();
             }
         });
     }
@@ -273,11 +281,12 @@ $(document).ready(() => {
         initialize.toolTip();
 
         fetchBrands();
-        fetchSummaryData();
+        fetchSummaryData(); 
         fetchLatestRetrievedData();
 
         initializeOrUpdateDataTable();
         initializeRefreshButton();
+        initializeDetailsControl(); 
     }
 
     init();

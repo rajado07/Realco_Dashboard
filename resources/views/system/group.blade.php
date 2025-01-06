@@ -33,6 +33,47 @@
         </div>
         <!-- end page title -->
 
+        <!-- Start Form Modal Edit -->
+        <div id="editModal" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content modal-lg">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="standard-modalLabel">Edit</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="edit">
+                            <input type="hidden" id="editRowId" name="id">
+                            <div class="mb-3">
+                                <input  class="form-control" id="name"  name="name"  placeholder="Group Name" required>
+                            </div>
+                            <div class="mb-3">
+                                <select id="selectType" name="type" class="form-control select2" data-toggle="select2"></select>
+                            </div>
+                            <div class="mb-3">
+                                <select id="selectMarketPlace" name="market_place_id" class="form-control select2" data-toggle="select2"></select>
+                            </div>
+                            <div class="mb-3">
+                                <select id="selectBrand" name="brand_id" class="form-control select2" data-toggle="select2"></select>
+                            </div>
+                            <div class="mb-3">
+                                <input id="keyword" class="form-control"  name="keyword"  placeholder="Enter Keyword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="mb-2">Sub Groups & Keywords</label>
+                                <div id="editSubGroup"></div> <!-- Container for dynamic children -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitEditForm()" id="addNewFormSubmit">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>                
+        <!-- End Form Modal Edit -->
+
          <!-- Start Form Modal Add -->
         <div id="addModal" class="modal fade">
             <div class="modal-dialog modal-lg">
@@ -50,13 +91,17 @@
                                 <select id="selectType" name="type" class="form-control select2" data-toggle="select2" required></select>
                             </div>
                             <div class="mb-3">
-                                <select id="selectMarketPlace" name="marketPlace" class="form-control select2" data-toggle="select2" required></select>
+                                <select id="selectMarketPlace" name="market_place_id" class="form-control select2" data-toggle="select2" required></select>
                             </div>
                             <div class="mb-3">
-                                <select id="selectBrand" name="brand" class="form-control select2" data-toggle="select2" required></select>
+                                <select id="selectBrand" name="brand_id" class="form-control select2" data-toggle="select2" required></select>
                             </div>
                             <div class="mb-3">
-                                <select id="selectIdMapping" name="idMapping" class="form-control select2" data-toggle="select2" required></select>
+                                <input  class="form-control"  name="keyword"  placeholder="Enter Keyword" required>
+                            </div>
+                            <div class="mb-3">
+                                {{-- <label class="mb-2">Sub Groups & Keywords</label> --}}
+                                <div id="addSubGroup"></div>
                             </div>
                         </form>
                     </div>
@@ -91,13 +136,13 @@
                                     {{-- <a class="dropdown-item" href="#" id="editSelected">Edit Selected Task</a> --}}
                                 </div>
                                 <button type="button" id="import" class="btn btn-outline-seconday" data-bs-toggle="modal" data-bs-target="#importModal"><i class="bi bi-upload"></i> Import</button>
-                                <button type="button" id="addNew" onclick="getBrands('addModal');getMarketPlaces('addModal');getType('addModal');getGroupByType('addModal');" class="btn btn-outline-scondary" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-play-list-add-line me-1"></i> Add New</button>
+                                <button type="button" id="addNew" onclick="getBrands('addModal');getMarketPlaces('addModal');getType('addModal');" class="btn btn-outline-scondary" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-play-list-add-line me-1"></i> Add New</button>
                             </div>
                         </div>                        
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="basic-datatable" class="table table-hover table-responsive-sm nowrap w-100">
+                            <table id="basic-datatable" class="table table-responsive-sm nowrap w-100">
                                 <thead>
                                 </thead>
                                 <tbody>

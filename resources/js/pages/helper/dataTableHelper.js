@@ -150,6 +150,7 @@ function currency(data) {
 
 function columnWitheNowPreviousChange(data, isCurrency = false, showChange = true) {
   const now = data.now;
+  const previous = data.previous || ''; // Default value if previous is undefined
   const change = data.change;
   let badgeColor = 'bg-secondary'; // Default color for no change
   let changeSymbol = '';
@@ -161,7 +162,7 @@ function columnWitheNowPreviousChange(data, isCurrency = false, showChange = tru
     badgeColor = 'bg-danger';
   }
 
-  // Memformat nilai sekarang berdasarkan apakah ini mata uang atau tidak
+  // Format current value
   let formattedNow = '';
   if (typeof now === 'number') {
     if (isCurrency) {
@@ -174,13 +175,33 @@ function columnWitheNowPreviousChange(data, isCurrency = false, showChange = tru
     formattedNow = now;
   }
 
-  // Jika tidak ingin menampilkan perubahan persentase, kembalikan hanya nilai sekarang
-  if (!showChange) {
-    return `<span>${formattedNow}</span>`;
+  // Format previous value
+  let formattedPrevious = '';
+  if (typeof previous === 'number') {
+    if (isCurrency) {
+      const { value, unit } = formatCurrencyWithUnits(previous);
+      formattedPrevious = `${value} ${unit}`;
+    } else {
+      formattedPrevious = formatNumber(previous);
+    }
+  } else {
+    formattedPrevious = previous;
   }
 
+  // Jika tidak ingin menampilkan perubahan persentase, kembalikan hanya nilai sekarang dengan tooltip
+  if (!showChange) {
+    return `
+      <span data-tipsy="Previous: ${formattedPrevious}" class="has-tooltip">
+        ${formattedNow}
+      </span>
+    `;
+  }
+
+  // Tampilkan nilai sekarang, perubahan persentase, dan tooltip untuk nilai sebelumnya
   return `
-      <span>${formattedNow}</span>
+      <span data-tipsy="Previous: ${formattedPrevious}" class="has-tooltip">
+        ${formattedNow}
+      </span>
       <span class="badge ${badgeColor}">${changeSymbol}${change.toFixed(2)}%</span>
   `;
 }
@@ -216,6 +237,75 @@ function columnSummary(data, type) {
 
   return `<span>${formattedNow}</span>`;
 }
+
+function columnSummaryV2(data, type = 'integer') {
+  if (!data) return '';
+
+  // Format hanya untuk tipe currency
+  const formatValue = (value, type) => {
+    if (type === 'currency') {
+      return `Rp${parseFloat(value).toLocaleString('id-ID')}`;
+    }
+    return value; // Jika bukan currency, kembalikan nilai aslinya
+  };
+
+  // Determine the appropriate class and icon for growth
+  const growthClass = data.growth.includes('-')
+    ? 'text-danger' // Red for negative growth
+    : data.growth === '0.00%'
+      ? 'text-muted' // Gray for zero growth
+      : 'text-success'; // Green for positive growth
+
+  const growthIcon = data.growth.includes('-')
+    ? 'bi-arrow-down-circle-fill' // Down arrow for negative growth
+    : data.growth === '0.00%'
+      ? 'bi-dash-circle-fill' // Neutral icon for zero growth
+      : 'bi-arrow-up-circle-fill'; // Up arrow for positive growth
+
+  return `
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="current-value fs-4 me-2">${formatValue(data.first_period, type)}</div>
+      <div class="d-flex align-items-center">
+          <div class="previous-value me-2 text-muted fs-6">${formatValue(data.second_period, type)}</div>
+          <div class="change-value d-flex align-items-center">
+              <i class="bi ${growthIcon} ${growthClass} me-1"></i>
+              <span class="${growthClass}">${data.growth}</span>
+          </div>
+      </div>
+    </div>
+  `;
+}
+
+function columnSummaryV3(data, type = 'integer') {
+  if (!data) return '';
+
+  // Format hanya untuk tipe currency
+  const formatValue = (value, type) => {
+    if (type === 'currency') {
+      return `Rp${parseFloat(value).toLocaleString('id-ID')}`;
+    }
+    return value; // Jika bukan currency, kembalikan nilai aslinya
+  };
+
+  // Tambahkan tanda + atau - pada growth jika bukan 0.00%
+  const formattedGrowth = data.growth === '0.00%' ? data.growth : (data.growth.startsWith('-') ? data.growth : `+${data.growth}`);
+
+  // Tentukan kelas untuk pertumbuhan
+  const growthClass = data.growth.includes('-')
+    ? 'text-danger' // Merah untuk pertumbuhan negatif
+    : data.growth === '0.00%'
+      ? 'text-muted' // Abu-abu untuk pertumbuhan nol
+      : 'text-success'; // Hijau untuk pertumbuhan positif
+
+  return `
+    <div class="d-flex align-items-center summary-container" data-tipsy="${formatValue(data.second_period, type)}">
+      <div class="current-value me-2">${formatValue(data.first_period, type)}</div>
+      <span class="${growthClass}">${formattedGrowth}</span>
+    </div>
+  `;
+}
+
+
 
 
 function checkAll() {
@@ -270,6 +360,8 @@ export default {
   translateMarketPlace,
   columnWitheNowPreviousChange,
   columnSummary,
+  columnSummaryV2,
+  columnSummaryV3,
   shortenText,
   formatSchedule,
   checkAll,

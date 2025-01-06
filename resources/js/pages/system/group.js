@@ -8,149 +8,269 @@ $.fn.dataTable = DataTable;
 const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
 $(document).ready(() => {
-    // Data Table
+
     let dataTableInstance;
-    function initializeOrUpdateDataTable() {
-        if (!dataTableInstance) {
-            dataTableInstance = $('#basic-datatable').DataTable({
-                ajax: {
-                    url: '/group/read',
-                    type: 'GET',
-                    dataSrc: '',
-                },
-                stateSave: true,
-                pageLength: 25,
-                deferLoading: true,
-                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-                columns: [
-                    { title: '<input type="checkbox" id="checkAll"/>', defaultContent: '<input type="checkbox" class="rowCheckbox"/>' },
-                    { title: "ID", data: "id" },
-                    { title: "name", data: "name" },
-                    { title: "type", data: "type" },
-                    { title: "id_mapping", data: "id_mapping" },
-                    { title: "Market Place", data: "market_place_id" },
-                    { title: "Brand", data: "brand_id" },
-                    { title: "Action", defaultContent: '' }
-                ],
-                columnDefs: [
-                    {
-                        targets: 0,
-                        searchable: false,
-                        orderable: false,
-                        width: "15px",
-                        className: 'dt-body-center',
-                        render: function (data, type, row) {
-                            return '<input name="checklist[]" type="checkbox" class="rowCheckbox" value="' + row.id + '"/>';
-                        }
-                    },
-                    {
-                        targets: 4,
-                        render: function (data, type, row) {
-                            return  dataTableHelper.shortenText(data);
-                        }
-                    },
-                    {
-                        targets: 5,
-                        render: function (data, type, row) {
-                            return dataTableHelper.translateMarketPlace(data);
-                        }
-                    },
-                    {
-                        targets: 6,
-                        render: function (data, type, row) {
-                            return dataTableHelper.translateBrand(data);
-                        }
-                    },
-                    {
-                        targets: 7, // Updated target index for actions
-                        orderable: false,
-                        searchable: false,
-                        render: function (data, type, row) {
-                            return `
-                                <div class="dropdown">
-                                    <a class="text-reset fs-16 px-1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="ri-settings-4-line"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-animated">
-                                        <li><a class="dropdown-item action-edit" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#editModal" href="#" onclick="getAccounts('editModal');"><i class="ri-settings-3-line"></i> Edit</a></li>
-                                        <li><a class="dropdown-item action-delete" data-id="${row.id}" href="#"><i class="ri-delete-bin-2-line"></i> Delete</a></li>
-                                    </ul>
-                                </div>
-                            `;
-                        }
-                    }
-                ],
-                language: {
-                    loadingRecords: ` <div class="spinner-border avatar-sm text-secondary m-2" role="status"></div>`,
-                    paginate: {
-                        previous: "<i class='ri-arrow-left-s-line'></i>",
-                        next: "<i class='ri-arrow-right-s-line'></i>"
-                    }
-                },
-                drawCallback: function () {
-                    $('#basic-datatable_paginate').addClass('pagination-rounded');
-                    initialize.toolTip();
-                },
-            });
-        } else {
-            dataTableInstance.ajax.reload();
+
+    function initializeOrUpdateDataTable(startDate = null, endDate = null, brandId = null) {
+        const ajaxUrl = '/group/read';
+        const ajaxData = {};
+
+        if (startDate && endDate) {
+            ajaxData.start_date = startDate;
+            ajaxData.end_date = endDate;
         }
+
+        if (brandId) {
+            ajaxData.brand_id = brandId;
+        }
+
+        if (dataTableInstance) {
+            dataTableInstance.clear().destroy(); // Properly destroy the existing DataTable instance
+        }
+
+        dataTableInstance = $('#basic-datatable').DataTable({
+            ajax: {
+                url: ajaxUrl,
+                type: 'GET',
+                data: ajaxData,
+                dataSrc: '',
+            },
+            stateSave: true,
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            columns: [
+                { title: "Type", data: "type" },
+                { title: "Brand", data: "brand_id" },
+                { title: "Market Place", data: "market_place_id" },
+            ],
+            columnDefs: [
+                {
+                    targets: 2,
+                    render: function (data, type, row) {
+                        return dataTableHelper.translateMarketPlace(data);
+                    }
+                },
+                {
+                    targets: 1,
+                    render: function (data, type, row) {
+                        return dataTableHelper.translateBrand(data);
+                    }
+                }
+            ],
+            drawCallback: function () {
+                $('#basic-datatable_paginate').addClass('pagination-rounded');
+            },
+        });
+
+        // Add click event listener for opening and closing details
+        $('#basic-datatable tbody').off('click', 'td');
+        $('#basic-datatable tbody').on('click', 'td', function () {
+            const tr = $(this).closest('tr');
+            const row = dataTableInstance.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                row.child(formatGroup(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
     }
 
-    function periodicallyUpdateAllDataTable() {
-        setInterval(() => {
-            fetch('/group/read')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(newData => {
-                    let isChanged = false;
-                    const newDataIds = newData.map(item => item.id);
+    function formatGroup(group) {
+        let groupHtml = `
+            <div class="accordion accordion-flush" id="accordion-group-${group.id}">
+        `;
 
-                    // Fade out rows that no longer exist in the new data
-                    dataTableInstance.rows().every(function () {
-                        const oldRowId = this.data().id;
-                        if (!newDataIds.includes(oldRowId)) {
-                            $(this.node()).fadeOut(500, () => {
-                                this.remove();
-                                dataTableInstance.draw(false);
-                            });
-                            isChanged = true;
+        // Jika grup punya sub-group
+        if (group.groups && group.groups.length > 0) {
+            group.groups.forEach(subGroup => {
+                const childrenCount = subGroup.children && subGroup.children.length > 0 ? subGroup.children.length : 0;
+
+                // Jika subGroup masih punya children
+                if (childrenCount > 0) {
+                    groupHtml += `
+                        <div class="accordion-item">
+                            <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-group-${subGroup.id}">
+                                <button 
+                                    class="accordion-button collapsed flex-grow-1 text-start" 
+                                    type="button"
+                                    data-bs-toggle="collapse" 
+                                    data-bs-target="#group-section-${subGroup.id}" 
+                                    aria-expanded="false" 
+                                    aria-controls="group-section-${subGroup.id}"
+                                >
+                                    <!-- ICON FOLDER (berisi sub) -->
+                                    <i class="ri-folders-line me-2"></i> 
+                                    ${subGroup.name}
+                                    <!-- BADGE JUMLAH SUB GROUP -->
+                                    <span class="badge border border-secondary text-secondary ms-2">
+                                        <i class="ri-group-line"></i> ${childrenCount} Sub Group
+                                    </span>
+                                </button>
+                                <!-- ACTION DROPDOWN -->
+                                <div class="group-actions ms-3">
+                                    <div class="dropdown">
+                                        <a class="text-reset fs-16 px-2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ri-settings-4-line"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
+                                            <li>
+                                              <a class="dropdown-item action-edit" data-id="${subGroup.id}" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                <i class="ri-settings-3-line"></i> Edit
+                                              </a>
+                                            </li>
+                                            <li>
+                                              <a class="dropdown-item action-delete" data-id="${subGroup.id}" href="#">
+                                                <i class="ri-delete-bin-2-line"></i> Delete
+                                              </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </h2>
+                            <div 
+                                id="group-section-${subGroup.id}" 
+                                class="accordion-collapse collapse"
+                                aria-labelledby="heading-group-${subGroup.id}"
+                            >
+                                <div class="accordion-body">
+                                    ${formatChildren(subGroup.children)}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                // Jika subGroup tidak punya children
+                else {
+                    groupHtml += `
+                        <div class="accordion-item">
+                            <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-group-${subGroup.id}">
+                                <button 
+                                    class="accordion-button collapsed flex-grow-1 text-start" 
+                                    type="button"
+                                    style="cursor: default;">
+                                    <!-- ICON FOLDER (tanpa sub) -->
+                                    <i class="ri-file-list-3-line me-2"></i> 
+                                    ${subGroup.name}
+                                    ${subGroup.keyword
+                            ? `
+                                                <span class="badge border border-success text-success ms-2">
+                                                    <i class="ri-key-line"></i> ${subGroup.keyword}
+                                                </span>
+                                            `
+                            : `
+                                                <span class="badge border border-secondary text-secondary ms-2">
+                                                    No keyword
+                                                </span>
+                                            `
                         }
-                    });
+                                </button>
+                                <!-- ACTION DROPDOWN -->
+                                <div class="group-actions ms-3">
+                                    <div class="dropdown">
+                                        <a class="text-reset fs-16 px-2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ri-settings-4-line"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
+                                            <li>
+                                              <a class="dropdown-item action-edit" data-id="${subGroup.id}" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                <i class="ri-settings-3-line"></i> Edit
+                                              </a>
+                                            </li>
+                                            <li>
+                                              <a class="dropdown-item action-delete" data-id="${subGroup.id}" href="#">
+                                                <i class="ri-delete-bin-2-line"></i> Delete
+                                              </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </h2>
+                        </div>
+                    `;
+                }
+            });
+        }
+        // Jika grup utama tidak punya sub-group, langsung tampilkan tanpa collapsible
+        else {
+            groupHtml += `
+                <div class="accordion-item">
+                    <div class="accordion-header d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center flex-grow-1">
+                            <i class="ri-key-line me-2"></i>
+                            <span>${group.name}</span>
+                        </div>
+                        <div class="d-flex align-items-center ms-auto">
+                            ${group.keyword
+                    ? `
+                                        <span class="badge border border-success text-success ms-2">
+                                            <i class="ri-key-line"></i> ${group.keyword}
+                                        </span>
+                                    `
+                    : `
+                                        <span class="badge border border-secondary text-secondary ms-2">
+                                            No keyword available
+                                        </span>
+                                    `
+                }
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-                    // Update or add rows with blink effect
-                    newData.forEach(newRow => {
-                        const currentRow = dataTableInstance.row((idx, data) => data.id === newRow.id);
-                        if (currentRow.length) {
-                            if (JSON.stringify(currentRow.data()) !== JSON.stringify(newRow)) {
-                                currentRow.data(newRow).invalidate(); // Prepare data for redraw
-                                const node = $(currentRow.node());
-                                // Start blink animation
-                                node.fadeTo(100, 0.5).fadeTo(100, 1.0).fadeTo(100, 0.5).fadeTo(100, 1.0);
-                                isChanged = true;
-                            }
-                        } else {
-                            // Fade in new rows
-                            const node = $(dataTableInstance.row.add(newRow).draw(false).node());
-                            node.hide().fadeIn(1000);
-                            isChanged = true;
-                        }
-                    });
-
-                    // Redraw the table once if there are changes
-                    if (isChanged) {
-                        dataTableInstance.draw(false);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating data table:', error);
-                });
-        }, 3000);
+        groupHtml += `</div>`;
+        return groupHtml;
     }
+
+    function formatChildren(children) {
+        // Tetap gunakan ID unik untuk wrapper accordion jika dibutuhkan
+        let childrenHtml = `
+            <div class="accordion" id="accordion-children">
+        `;
+
+        children.forEach((child, index) => {
+            // headingId opsional: bisa dihilangkan jika tidak diperlukan
+            const headingId = `heading-child-${child.id || index}`;
+
+            childrenHtml += `
+                <div class="accordion-item">
+                    <h2 class="accordion-header d-flex justify-content-between align-items-center" id="${headingId}">
+                        <button
+                            class="accordion-button collapsed flex-grow-1 text-start"
+                            type="button"
+                            style="cursor: default;"
+                        >
+                            <!-- ICON CHILDREN -->
+                            <i class="ri-file-list-3-line me-2"></i>
+                            ${child.name}
+                            ${child.keyword
+                    ? `
+                                        <span class="badge border border-success text-success ms-2">
+                                            <i class="ri-key-line"></i> ${child.keyword}
+                                        </span>
+                                    `
+                    : `
+                                        <span class="badge border border-secondary text-secondary ms-2">
+                                            No keyword
+                                        </span>
+                                    `
+                }
+                        </button>
+                    </h2>
+                </div>
+            `;
+        });
+
+        childrenHtml += `
+            </div> <!-- End .accordion -->
+        `;
+
+        return childrenHtml;
+    }
+
 
     let selectedData = [];
     function getSelectedData() {
@@ -169,128 +289,278 @@ $(document).ready(() => {
         });
     }
 
-    window.getBrands = function(modalId) {
-        fetch('/brand/read')
-        .then(response => response.json())
-        .then(data => {
-            const $modal = $(`#${modalId} .modal-body`);
-            const $select = $modal.find('#selectBrand');
-            $select.empty(); 
-  
-            const defaultOption = new Option('Select Brand', '', true, true);
-            defaultOption.disabled = true;
-            $select.append(defaultOption);
-  
-            data.forEach(brand => {
-                const option = new Option(brand.name, brand.id);
-                $select.append(option); 
-            });
-            $select.select2({
-                dropdownParent: $modal,
-            }).trigger('change');
-        })
-        .catch(error => console.error('Error:', error));
-    }
-
-    window.getMarketPlaces = function(modalId) {
-        fetch('/market-place/read')
-        .then(response => response.json())
-        .then(data => {
-            const $modal = $(`#${modalId} .modal-body`);
-            const $select = $modal.find('#selectMarketPlace');
-            $select.empty(); 
-  
-            const defaultOption = new Option('Select Market Place', '', true, true);
-            defaultOption.disabled = true;
-            $select.append(defaultOption);
-  
-            data.forEach(marketPlace => {
-                const option = new Option(marketPlace.name, marketPlace.id);
-                $select.append(option); 
-            });
-            $select.select2({
-                dropdownParent: $modal,
-            }).trigger('change');
-        })
-        .catch(error => console.error('Error:', error));
-    }
-
-    window.getType = function(modalId) {
-        fetch('/group/type')
-        .then(response => response.json())
-        .then(data => {
-            const $modal = $(`#${modalId} .modal-body`);
-            const $select = $modal.find('#selectType');
-            $select.empty(); 
-    
-            // Create a default option and disable it
-            const defaultOption = new Option('Select Type', '', true, true);
-            defaultOption.disabled = true;
-            $select.append(defaultOption);
-    
-            // Iterate over the data array and append each type as an option
-            data.forEach(type => {
-                const option = new Option(type, type); // Here we assume each type is a string
-                $select.append(option); 
-            });
-    
-            // Initialize select2 for the dropdown and trigger change event
-            $select.select2({
-                dropdownParent: $modal,
-            }).trigger('change');
-        })
-        .catch(error => console.error('Error:', error));
-    }
-
-    window.getGroupByType = function(modalId, type = null) {
-        let url = '/group/bytype';
-        if (type) {
-            url += '/' + type;
-        }
-    
-        fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const $modal = $(`#${modalId} .modal-body`);
-            const $select = $modal.find('#selectIdMapping');
-            $select.empty(); 
-    
-            if (data.error) {
-                // Display the error message
-                const errorOption = new Option(data.error, '', true, true);
-                errorOption.disabled = true;
-                $select.append(errorOption);
-            } else {
-                // Create a default option and disable it
-                const defaultOption = new Option('Select Type', '');
-                defaultOption.disabled = true;
-                $select.append(defaultOption);
-    
-                // Filter and append options where data_group_id is null
-                data.filter(item => item.data_group_id === null).forEach(item => {
-                    const option = new Option(`${item.name} (${item.id_mapping})`, item.id_mapping);
-                    $select.append(option); 
-                });
-            }
-    
-            // Initialize select2 for the dropdown with multi-select enabled and trigger change event
-            $select.select2({
-                multiple: true,
-                // closeOnSelect: false,
-                dropdownParent: $modal,
-            }).trigger('change');
-        })
-        .catch(error => console.error('Error:', error));
-    }    
-
-    function handleSelectTypeChange() {
-        $(document).on('change', '#selectType', function() {
-            const selectedType = $(this).val();
-            const modalId = $(this).closest('.modal').attr('id'); // Assuming the select is inside a modal
-            getGroupByType(modalId, selectedType);
+    // Click Action
+    function deleteAction() {
+        $(document).on('click', '.action-delete', function () {
+            const id = $(this).data('id');
+            deleteRow(id);
         });
     }
 
+    function editAction() {
+        $(document).on('click', '.action-edit', function () {
+            const rowId = $(this).data('id');
+
+            $('#editRowId').val(rowId);
+
+            Promise.all([
+                window.getBrands('editModal'),
+                window.getMarketPlaces('editModal'),
+                window.getType('editModal')
+            ]).then(() => {
+                console.log('All data loaded, now calling editRow');
+                editRow(rowId);
+
+                $('#editModal').modal('show');
+            }).catch((error) => {
+                console.error('Failed to fetch data:', error);
+            });
+        });
+    }
+
+    // Action
+    async function deleteRow(id) {
+        try {
+            const response = await fetch(`/group/destroy/${id}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                initialize.toast(data);
+                dataTableInstance?.row($(`a.action-delete[data-id="${id}"]`).closest('tr')).remove().draw();
+            } else {
+                initialize.toast(data);
+            }
+        } catch (error) {
+            initialize.toast(error);
+        }
+    }
+
+    function editRow(id) {
+        fetch(`/group/edit/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                // Isi data parent ke form
+                $('#name').val(data.name || '');
+                $('#selectType').val(data.type || '').trigger('change');
+                $('#selectMarketPlace').val(data.market_place_id || '').trigger('change');
+                $('#selectBrand').val(data.brand_id || '').trigger('change');
+                $('#keyword').val(data.keyword || '');
+
+                // Load children into the repeater
+                loadFormRepeater('editSubGroup', data.children.map(child => ({
+                    id: child.id, // Tambahkan ID child
+                    name: child.name,
+                    keyword: child.keyword,
+                })));
+            })
+            .catch(error => console.error('Failed to fetch data:', error));
+    }
+
+    window.submitAddForm = function () {
+        const form = document.getElementById('add');
+        const formData = new FormData(form);
+
+        // Ambil data parent
+        const parentData = {
+            name: formData.get('name'),
+            type: formData.get('type'),
+            market_place_id: formData.get('market_place_id'),
+            brand_id: formData.get('brand_id'),
+            keyword: formData.get('keyword'),
+        };
+
+        // Ambil data children dari repeater
+        const childrenContainer = document.getElementById('addSubGroup');
+        const childrenGroups = childrenContainer.querySelectorAll('.input-group');
+        const childrenData = [];
+
+        childrenGroups.forEach(group => {
+            const childName = group.querySelector('input[name="children[][name]"]')?.value || null;
+            const childKeyword = group.querySelector('input[name="children[][keyword]"]')?.value || null;
+
+            if (childName || childKeyword) {
+                childrenData.push({
+                    name: childName,
+                    keyword: childKeyword,
+                });
+            }
+        });
+
+        // Gabungkan data parent dan children
+        const payload = {
+            ...parentData,
+            children: childrenData,
+        };
+
+        fetch('/group/store', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+            body: JSON.stringify(payload), // Kirim sebagai JSON
+        })
+            .then(response => response.json())
+            .then(data => {
+                $('#addNewFormSubmit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop('disabled', true);
+                dataTableInstance.ajax.reload(() => {
+                    $('#addNewFormSubmit').html('Save changes').prop('disabled', false);
+                    initialize.toast(data);
+                    $('#addModal').modal('hide');
+                    form.reset();
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                initialize.toast({ message: 'An error occurred. Please try again.', type: 'error' });
+            });
+    };
+
+    window.submitEditForm = function () {
+        const form = document.getElementById('edit');
+        const formData = new FormData(form);
+
+        // Ambil data parent
+        const parentData = {
+            id: formData.get('id'),
+            name: formData.get('name'),
+            type: formData.get('type'),
+            market_place_id: formData.get('market_place_id'),
+            brand_id: formData.get('brand_id'),
+            keyword: formData.get('keyword'),
+        };
+
+        // Ambil data children dari repeater
+        const childrenContainer = document.getElementById('editSubGroup');
+        const childrenGroups = childrenContainer.querySelectorAll('.input-group');
+        const childrenData = [];
+
+        childrenGroups.forEach(group => {
+            const childId = group.querySelector('input[name="children[][id]"]')?.value || null;
+            const childName = group.querySelector('input[name="children[][name]"]')?.value || null;
+            const childKeyword = group.querySelector('input[name="children[][keyword]"]')?.value || null;
+
+            if (childName || childKeyword) {
+                childrenData.push({
+                    id: childId, // ID child untuk update/delete (null jika child baru)
+                    name: childName,
+                    keyword: childKeyword,
+                });
+            }
+        });
+
+        // Gabungkan data parent dan children
+        const payload = {
+            ...parentData,
+            children: childrenData,
+        };
+
+        fetch('/group/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+            body: JSON.stringify(payload), // Kirim sebagai JSON
+        })
+            .then(response => response.json())
+            .then(data => {
+                $('#addNewFormSubmit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop('disabled', true);
+                dataTableInstance.ajax.reload(() => {
+                    $('#addNewFormSubmit').html('Save changes').prop('disabled', false);
+                    initialize.toast(data);
+                    $('#editModal').modal('hide');
+                    form.reset();
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                initialize.toast({ message: 'An error occurred. Please try again.', type: 'error' });
+            });
+    };
+
+    // Form Repeater
+
+    function loadFormRepeater(containerId, children = []) {
+        var container = $(`#${containerId}`);
+        container.empty(); // Clear the container first
+
+        if (children.length === 0) {
+            addChildField(container); // Add a blank field if no data provided
+        } else {
+            children.forEach(function (child) {
+                addChildField(container, child);
+            });
+        }
+
+        updateChildButtons(containerId); // Update button appearances
+    }
+
+    function addChildField(container, child = { id: null, name: '', keyword: '' }) {
+        var inputGroup = $('<div>').addClass('input-group mb-3').hide(); // Start hidden for animation
+
+        // Hidden input for child ID
+        var idInput = $('<input>').attr({
+            type: 'hidden',
+            name: 'children[][id]'
+        }).val(child.id || '');
+
+        var nameInput = $('<input>').attr({
+            type: 'text',
+            name: 'children[][name]',
+            placeholder: 'Enter Sub Group Name'
+        }).addClass('form-control').val(child.name);
+
+        var keywordInput = $('<input>').attr({
+            type: 'text',
+            name: 'children[][keyword]',
+            placeholder: 'Enter Keyword'
+        }).addClass('form-control ms-2').val(child.keyword);
+
+        var button = $('<button>').attr('type', 'button').addClass('btn btn-outline-primary')
+            .html('<i class="ri-add-line"></i>').on('click', function () {
+                addChildField(container);
+                updateChildButtons(container.attr('id'));
+            });
+
+        inputGroup.append(idInput).append(nameInput).append(keywordInput).append(button);
+        container.append(inputGroup);
+        inputGroup.slideDown(); // Animate slide down on add
+    }
+
+    function updateChildButtons(containerId) {
+        var container = $(`#${containerId}`);
+        var groups = container.find('.input-group');
+
+        groups.each(function (index) {
+            var button = $(this).find('button');
+            button.off('click');
+
+            if (index === groups.length - 1) {
+                // Last input field, show add button
+                button.addClass('btn-outline-primary').removeClass('btn-outline-danger')
+                    .html('<i class="ri-add-line"></i>').on('click', function () {
+                        addChildField(container);
+                        updateChildButtons(container.attr('id'));
+                    });
+            } else {
+                // Other input fields, show remove button
+                button.addClass('btn-outline-danger').removeClass('btn-outline-primary')
+                    .html('<i class="ri-close-line"></i>').on('click', function () {
+                        $(this).parent().slideUp(400, function () {
+                            $(this).remove();
+                            updateChildButtons(container.attr('id'));
+                        });
+                    });
+            }
+        });
+    }
 
     function init() {
         // Initialise External Helper
@@ -302,11 +572,13 @@ $(document).ready(() => {
 
         // Data Table
         initializeOrUpdateDataTable();
-        periodicallyUpdateAllDataTable();
         getSelectedData();
 
-         // Initialize event listener for 'selectType' dropdown change
-        handleSelectTypeChange();
+        // Action
+        deleteAction();
+        editAction();
+
+        loadFormRepeater('addSubGroup');
 
     }
     init();

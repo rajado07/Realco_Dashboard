@@ -103,6 +103,10 @@ Route::post('/market-place/update', [MarketPlaceController::class, 'update'])->m
 
 // Group
 Route::get('/group/read', [DataGroupController::class, 'index'])->middleware('auth');
+Route::post('/group/store', [DataGroupController::class, 'store'])->middleware('auth');
+Route::delete('/group/destroy/{id}', [DataGroupController::class, 'destroy'])->middleware('auth');
+Route::get('/group/edit/{id}', [DataGroupController::class, 'edit'])->middleware('auth');
+Route::post('/group/update', [DataGroupController::class, 'update'])->middleware('auth');
 Route::get('/group/type', [DataGroupController::class, 'getDataGroupType'])->middleware('auth');
 Route::get('/group/bytype/{type?}', [DataGroupController::class, 'getDataGroupByType'])->middleware('auth');
 
