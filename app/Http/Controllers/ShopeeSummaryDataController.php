@@ -14,6 +14,15 @@ use App\Models\DataGroup;
 class ShopeeSummaryDataController extends Controller
 {
 
+    public function getDataGroups()
+    {
+        return DataGroup::where('type', 'shopee_brand_portal_shop')
+            ->where('market_place_id', 1) // Shopee
+            ->whereNull('parent_id')
+            ->with('children')
+            ->get();
+    }
+
     private function getDateRanges(Request $request)
     {
         // Set default date ranges
@@ -50,81 +59,160 @@ class ShopeeSummaryDataController extends Controller
 
     public function shopeeBrand(Request $request)
     {
-        // Get date ranges
+        // Ambil date range
         list($firstPeriodStart, $firstPeriodEnd, $secondPeriodStart, $secondPeriodEnd) = $this->getDateRanges($request);
 
-        // Fetch data
-        $data = ShopeeBrandPortalShopData::whereBetween('data_date', [$secondPeriodStart, $firstPeriodEnd]);
-
-        // Filter by brandId if provided
+        // Ambil data ShopeeBrandPortalShopData
         $brandId = $request->input('brandId', 0);
+        $dataQuery = ShopeeBrandPortalShopData::whereBetween('data_date', [$secondPeriodStart, $firstPeriodEnd]);
         if ($brandId != 0) {
-            $data = $data->where('brand_id', $brandId);
+            $dataQuery->where('brand_id', $brandId);
         }
+        $data = $dataQuery->get(); // Kumpulkan dalam collection
 
-        $data = $data->get();
+        // Ambil parent groups dengan filter berdasarkan brand_id
+        $parentGroupsQuery = $this->getDataGroups();
+        if ($brandId != 0) {
+            $parentGroupsQuery = $parentGroupsQuery->filter(function ($group) use ($brandId) {
+                return $group->brand_id == $brandId;
+            });
+        }
+        $parentGroups = $parentGroupsQuery;
 
-        // Group data by data_group_id
-        $groupedData = $data->groupBy('data_group_id');
-
+        // Siapkan array hasil & collection penanda data terpakai
         $result = [];
+        $processedItems = collect();
 
-        foreach ($groupedData as $groupId => $items) {
-            if ($groupId === null) {
-                $groupName = 'Unknown Group';
-            } else {
-                $group = DataGroup::find($groupId);
-                $groupName = $group ? $group->name : 'Unknown Group';
+        // Closure untuk hitung growth (dipakai berulang)
+        $calculateGrowth = function ($first, $second) {
+            if ($second > 0) {
+                return (($first - $second) / $second) * 100;
+            }
+            return 0;
+        };
+
+        // Closure untuk hitung growth conversion (dipakai berulang)
+        $calculateConversionGrowth = function ($fpViews, $fpUnits, $spViews, $spUnits) {
+            if ($fpViews > 0 && $spViews > 0 && $spUnits > 0) {
+                $firstConv = $fpUnits / $fpViews;
+                $secondConv = $spUnits / $spViews;
+                if ($secondConv != 0) {
+                    return (($firstConv - $secondConv) / $secondConv) * 100;
+                }
+            }
+            return 0;
+        };
+
+        // Closure rekursif untuk menghitung stats group + children
+        $computeGroupStats = function ($group, $data, $processedItems) use (
+            &$computeGroupStats,  // Rekursif panggil dirinya sendiri
+            $calculateGrowth,
+            $calculateConversionGrowth,
+            $firstPeriodStart,
+            $firstPeriodEnd,
+            $secondPeriodStart,
+            $secondPeriodEnd
+        ) {
+            // Siapkan struktur default
+            $resultGroup = [
+                'data_group_name' => $group->name,
+                'product_views'   => ['first_period' => 0, 'second_period' => 0, 'growth' => '0%'],
+                'conversion'      => ['first_period' => '0%', 'second_period' => '0%', 'growth' => '0%'],
+                'gmv'             => ['first_period' => 0, 'second_period' => 0, 'growth' => '0%'],
+                'children'        => [],
+            ];
+
+            $keyword = $group->keyword;
+
+            // Filter data berdasarkan keyword
+            $filteredData = collect([]);
+            if ($keyword) {
+                $filteredData = $data->filter(function ($item) use ($keyword) {
+                    return strpos(strtolower($item->product_name), strtolower($keyword)) !== false;
+                });
             }
 
-            // Calculate totals for the first period
-            $firstPeriodItems = $items->filter(function ($item) use ($firstPeriodStart, $firstPeriodEnd) {
+            // Tandai data sebagai sudah diproses
+            $processedItems->push(...$filteredData->all());
+
+            // Pisahkan data untuk periode pertama
+            $firstPeriodItems = $filteredData->filter(function ($item) use ($firstPeriodStart, $firstPeriodEnd) {
                 return Carbon::parse($item->data_date)->between($firstPeriodStart, $firstPeriodEnd);
             });
-            $firstPeriodProductViews = $firstPeriodItems->sum('product_views');
-            $firstPeriodGrossUnitsSold = $firstPeriodItems->sum('gross_units_sold');
-            $firstPeriodGrossSales = $firstPeriodItems->sum('gross_sales');
+            $fpProductViews = $firstPeriodItems->sum('product_views');
+            $fpUnitsSold    = $firstPeriodItems->sum('gross_units_sold');
+            $fpSales        = $firstPeriodItems->sum('gross_sales');
 
-            // Calculate totals for the second period
-            $secondPeriodItems = $items->filter(function ($item) use ($secondPeriodStart, $secondPeriodEnd) {
+            // Pisahkan data untuk periode kedua
+            $secondPeriodItems = $filteredData->filter(function ($item) use ($secondPeriodStart, $secondPeriodEnd) {
                 return Carbon::parse($item->data_date)->between($secondPeriodStart, $secondPeriodEnd);
             });
-            $secondPeriodProductViews = $secondPeriodItems->sum('product_views');
-            $secondPeriodGrossUnitsSold = $secondPeriodItems->sum('gross_units_sold');
-            $secondPeriodGrossSales = $secondPeriodItems->sum('gross_sales');
+            $spProductViews = $secondPeriodItems->sum('product_views');
+            $spUnitsSold    = $secondPeriodItems->sum('gross_units_sold');
+            $spSales        = $secondPeriodItems->sum('gross_sales');
 
-            // Calculate growth
-            $productViewsGrowth = $secondPeriodProductViews > 0 ? (($firstPeriodProductViews - $secondPeriodProductViews) / $secondPeriodProductViews) * 100 : 0;
+            // Hitung growth
+            $viewsGrowth = $calculateGrowth($fpProductViews, $spProductViews);
+            $convGrowth  = $calculateConversionGrowth($fpProductViews, $fpUnitsSold, $spProductViews, $spUnitsSold);
+            $gmvGrowth   = $calculateGrowth($fpSales, $spSales);
 
-            if ($firstPeriodProductViews > 0 && $secondPeriodProductViews > 0 && $secondPeriodGrossUnitsSold > 0) {
-                $conversionGrowth = ((($firstPeriodGrossUnitsSold / $firstPeriodProductViews) - ($secondPeriodGrossUnitsSold / $secondPeriodProductViews)) / ($secondPeriodGrossUnitsSold / $secondPeriodProductViews)) * 100;
-            } else {
-                $conversionGrowth = 0;
+            // Masukkan hasil ke $resultGroup
+            $resultGroup['product_views'] = [
+                'first_period' => $fpProductViews,
+                'second_period' => $spProductViews,
+                'growth' => number_format($viewsGrowth, 2) . '%'
+            ];
+            $resultGroup['conversion'] = [
+                'first_period' => $fpProductViews > 0
+                    ? number_format(($fpUnitsSold / $fpProductViews) * 100, 2) . '%'
+                    : '0%',
+                'second_period' => $spProductViews > 0
+                    ? number_format(($spUnitsSold / $spProductViews) * 100, 2) . '%'
+                    : '0%',
+                'growth' => number_format($convGrowth, 2) . '%'
+            ];
+            $resultGroup['gmv'] = [
+                'first_period' => $fpSales,
+                'second_period' => $spSales,
+                'growth' => number_format($gmvGrowth, 2) . '%'
+            ];
+
+            // Jika ada children, proses rekursif
+            if ($group->children->count() > 0) {
+                foreach ($group->children as $child) {
+                    $childStats = $computeGroupStats($child, $data, $processedItems);
+
+                    // Tambahkan data children ke parent
+                    $resultGroup['product_views']['first_period'] += $childStats['product_views']['first_period'];
+                    $resultGroup['product_views']['second_period'] += $childStats['product_views']['second_period'];
+                    $resultGroup['gmv']['first_period'] += $childStats['gmv']['first_period'];
+                    $resultGroup['gmv']['second_period'] += $childStats['gmv']['second_period'];
+
+                    // Tambahkan children ke hasil
+                    $resultGroup['children'][] = $childStats;
+                }
+
+                // Hitung ulang growth setelah penambahan data children
+                $resultGroup['product_views']['growth'] = number_format(
+                    $calculateGrowth($resultGroup['product_views']['first_period'], $resultGroup['product_views']['second_period']),
+                    2
+                ) . '%';
+                $resultGroup['gmv']['growth'] = number_format(
+                    $calculateGrowth($resultGroup['gmv']['first_period'], $resultGroup['gmv']['second_period']),
+                    2
+                ) . '%';
             }
 
-            $gmvGrowth = $secondPeriodGrossSales > 0 ? (($firstPeriodGrossSales - $secondPeriodGrossSales) / $secondPeriodGrossSales) * 100 : 0;
+            return $resultGroup;
+        };
 
-            // Prepare the result
-            $result[] = [
-                'data_group_name' => $groupName,
-                'product_views' => [
-                    'first_period' => $firstPeriodProductViews,
-                    'second_period' => $secondPeriodProductViews,
-                    'growth' => number_format($productViewsGrowth, 2) . '%'
-                ],
-                'conversion' => [
-                    'first_period' => $firstPeriodProductViews > 0 ? number_format($firstPeriodGrossUnitsSold / $firstPeriodProductViews * 100, 2) . '%' : '0%',
-                    'second_period' => $secondPeriodProductViews > 0 ? number_format($secondPeriodGrossUnitsSold / $secondPeriodProductViews * 100, 2) . '%' : '0%',
-                    'growth' => number_format($conversionGrowth, 2) . '%'
-                ],
-                'gmv' => [
-                    'first_period' => $firstPeriodGrossSales,
-                    'second_period' => $secondPeriodGrossSales,
-                    'growth' => number_format($gmvGrowth, 2) . '%'
-                ]
-            ];
+        // Proses setiap parent group
+        foreach ($parentGroups as $parent) {
+            $groupStats = $computeGroupStats($parent, $data, $processedItems);
+            $result[] = $groupStats;
         }
 
+        // Kembalikan response JSON
         return response()->json($result);
     }
 
