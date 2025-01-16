@@ -40,7 +40,7 @@ class TiktokVideoAnalyticsDataObserver
                         'ctr' => 'CTR',
                         'v_to_l_rate' => 'V-to-L rate',
                         'video_finish_rate' => 'Video Finish Rate',
-                        'ctor' => 'CTOR',
+                        'ctor' => 'Click-to-Order Rate',
                     ];
 
                     $cleanedPercentageData = [];

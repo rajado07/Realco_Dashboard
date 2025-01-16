@@ -35,8 +35,8 @@ class TiktokPsaDataObserver
                             'ad_group_name' => $dataItem['Ad group name'],
                             'ad_name' => $dataItem['Ad name'],
                             'cost' => $dataItem['Cost'],
-                            'purchases' => $dataItem['Purchases (Shop)'],
-                            'gross_revenue' => $dataItem['Gross revenue (Shop)'],
+                            'purchases' => $dataItem['Purchases (TikTok Shop)'],
+                            'gross_revenue' => $dataItem['Gross revenue (TikTok Shop)'],
                             'impressions' => $dataItem['Impressions'],
                         ]);
 
@@ -58,8 +58,8 @@ class TiktokPsaDataObserver
                             'ad_id' => $dataItem['Ad ID'],
                             'ad_name' => $dataItem['Ad name'],
                             'cost' => $dataItem['Cost'],
-                            'purchases' => $dataItem['Purchases (Shop)'],
-                            'gross_revenue' => $dataItem['Gross revenue (Shop)'],
+                            'purchases' => $dataItem['Purchases (TikTok Shop)'],
+                            'gross_revenue' => $dataItem['Gross revenue (TikTok Shop)'],
                             'impressions' => $dataItem['Impressions'],
                             'retrieved_at' => $rawData->retrieved_at,
                             'file_name' => $rawData->file_name,

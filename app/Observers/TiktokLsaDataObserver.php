@@ -37,8 +37,8 @@ class TiktokLsaDataObserver
                             'cost' => $dataItem['Cost'],
                             'live_views' => $dataItem['LIVE views'],
                             'live_unique_views' => $dataItem['LIVE unique views'],
-                            'purchases' => $dataItem['Purchases (Shop)'],
-                            'gross_revenue' => $dataItem['Gross revenue (Shop)'],
+                            'purchases' => $dataItem['Purchases (TikTok Shop)'],
+                            'gross_revenue' => $dataItem['Gross revenue (TikTok Shop)'],
                             'impressions' => $dataItem['Impressions'],
                         ]);
 
@@ -62,8 +62,8 @@ class TiktokLsaDataObserver
                             'cost' => $dataItem['Cost'],
                             'live_views' => $dataItem['LIVE views'],
                             'live_unique_views' => $dataItem['LIVE unique views'],
-                            'purchases' => $dataItem['Purchases (Shop)'],
-                            'gross_revenue' => $dataItem['Gross revenue (Shop)'],
+                            'purchases' => $dataItem['Purchases (TikTok Shop)'],
+                            'gross_revenue' => $dataItem['Gross revenue (TikTok Shop)'],
                             'impressions' => $dataItem['Impressions'],
                             'retrieved_at' => $rawData->retrieved_at,
                             'file_name' => $rawData->file_name,
