@@ -59,6 +59,7 @@ class ShopeeSellerCenterIklankuKeywordDataObserver
                         'impressions' => $dataItem['Dilihat'],
                         'clicks' => $dataItem['Jumlah Klik'],
                         'items_sold' => $dataItem['Produk Terjual'],
+                        'gmv' => $dataItem['Omzet Penjualan'],
                         'expense' => $dataItem['Biaya'],
                         'roas' => $dataItem['Efektifitas Iklan'],
                         'acos' => $acos,
