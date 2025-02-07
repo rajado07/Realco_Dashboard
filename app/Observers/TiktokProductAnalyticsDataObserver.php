@@ -98,7 +98,7 @@ class TiktokProductAnalyticsDataObserver
 
                         // Video
                         'video_gmv' => $cleanedCurrencyData['video_gmv'],
-                        'video_units_sold' => $dataItem['Video units sold'],
+                        'video_units_sold' => $dataItem['Video items sold'],
                         'video_impressions' => $dataItem['Video impressions'],
                         'page_views_from_video' => $dataItem['Page views from video'],
                         'unique_page_views_from_video' => $dataItem['Unique page views from video'],
