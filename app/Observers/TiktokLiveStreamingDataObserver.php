@@ -74,7 +74,7 @@ class TiktokLiveStreamingDataObserver
                         'orders_created' => $dataItem['Orders Created'],
                         'orders_paid' => $dataItem['Orders Paid'],
                         'unit_sales' => $dataItem['Unit Sales'],
-                        'buyers' => $dataItem['Buyers'],
+                        'buyers' => $dataItem['Customers'],
                         'average_price' => $dataItem['Average Price (Rp)'],
                         'co_rate' =>  $cleanedPercentageData['co_rate'],
                         'live_attributed_gmv' => $dataItem['LIVE attributed GMV (Rp)'],

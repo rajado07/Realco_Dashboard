@@ -75,24 +75,24 @@ class TiktokProductAnalyticsDataObserver
 
                         // Shop Tab
                         'gmv' => $cleanedCurrencyData['gmv'],
-                        'units_sold' => $dataItem['Units sold'],
+                        'units_sold' => $dataItem['Items sold'],
                         'orders' => $dataItem['Orders'],
                         'shop_tab_gmv' => $cleanedCurrencyData['shop_tab_gmv'],
-                        'shop_tab_units_sold' => $dataItem['Shop Tab units sold'],
+                        'shop_tab_units_sold' => $dataItem['Shop Tab items sold'],
                         'shop_tab_listing_impressions' => $dataItem['Shop tab listing impressions'],
                         'shop_tab_page_views' => $dataItem['Shop tab page views'],
                         'shop_tab_unique_page_views' => $dataItem['Shop tab unique page views'],
-                        'shop_tab_unique_product_buyers' => $dataItem['Shop tab unique product buyers'],
+                        'shop_tab_unique_product_buyers' => $dataItem['Shop tab unique product customers'],
                         'shop_tab_clickthrough_rate' => $cleanedPercentageData['shop_tab_clickthrough_rate'],
                         'shop_tab_conversion_rate' => $cleanedPercentageData['shop_tab_conversion_rate'],
 
                         // LIVE
                         'live_gmv' => $cleanedCurrencyData['live_gmv'],
-                        'live_units_sold' => $dataItem['LIVE units sold'],
+                        'live_units_sold' => $dataItem['LIVE items sold'],
                         'live_impressions' => $dataItem['LIVE impressions'],
                         'page_views_from_live' => $dataItem['Page views from LIVE'],
                         'unique_page_views_from_live' => $dataItem['Unique page views from LIVE'],
-                        'live_unique_product_buyers' => $dataItem['LIVE unique product buyers'],
+                        'live_unique_product_buyers' => $dataItem['LIVE unique product customers'],
                         'live_clickthrough_rate' => $cleanedPercentageData['live_clickthrough_rate'],
                         'live_conversion_rate' => $cleanedPercentageData['live_conversion_rate'],
 
@@ -102,17 +102,17 @@ class TiktokProductAnalyticsDataObserver
                         'video_impressions' => $dataItem['Video impressions'],
                         'page_views_from_video' => $dataItem['Page views from video'],
                         'unique_page_views_from_video' => $dataItem['Unique page views from video'],
-                        'video_unique_product_buyers' => $dataItem['Video unique product buyers'],
+                        'video_unique_product_buyers' => $dataItem['Video unique product customers'],
                         'video_clickthrough_rate' => $cleanedPercentageData['video_clickthrough_rate'],
                         'video_conversion_rate' => $cleanedPercentageData['video_conversion_rate'],
 
                         // Product Card
                         'product_card_gmv' => $cleanedCurrencyData['product_card_gmv'],
-                        'product_card_units_sold' => $dataItem['Product  card units sold'],
+                        'product_card_units_sold' => $dataItem['Product  card items sold'],
                         'product_card_impressions' => $dataItem['Product card impressions'],
                         'page_views_from_product_card' => $dataItem['Page views from product card'],
                         'unique_page_views_from_product_card' => $dataItem['Unique page views from product card'],
-                        'product_card_unique_buyers' => $dataItem['Product card unique buyers'],
+                        'product_card_unique_buyers' => $dataItem['Product card unique customers'],
                         'product_card_clickthrough_rate' => $cleanedPercentageData['product_card_clickthrough_rate'],
                         'product_card_conversion_rate' => $cleanedPercentageData['product_card_conversion_rate'],
 

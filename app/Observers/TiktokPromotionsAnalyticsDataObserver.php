@@ -58,7 +58,7 @@ class TiktokPromotionsAnalyticsDataObserver
                         'customers' => $dataItem['Customers'], # perlu dirubah jadi customer
                         'products_sold' => $dataItem['Products sold'],
                         'new_customers' => $dataItem['New Customers'], # perlu dirubah menjadi new customer
-                        'avg_gmv_per_buyer' => $dataItem['Avg. GMV per buyer (Rp)'],
+                        'avg_gmv_per_buyer' => $dataItem['Avg. GMV per customer (Rp)'],
                         'discount_amount' => $dataItem['Discount amount (Rp)'],
                         'avg_discount_rate' => $cleanedPercentageData['avg_discount_rate'],
                         'roi' => $cleanedPercentageData['roi'],
