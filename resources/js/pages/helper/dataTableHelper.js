@@ -65,6 +65,7 @@ function translateMarketPlace(brand) {
     3: '<i class="ri-shopping-cart-line"></i><span> Tokopedia</span>',
     4: '<i class="ri-shopping-bag-3-line"></i><span> Lazada</span>',
     5: '<i class="ri-shopping-bag-fill"></i><span> Odoo</span>',
+    6: '<i class="ri-whatsapp-line"></i><span> Whatsapp</span>',
   };
   return brandMap[parseInt(brand, 10)] || '<span class="badge bg-secondary rounded-pill">No Market Place</span>';
 }

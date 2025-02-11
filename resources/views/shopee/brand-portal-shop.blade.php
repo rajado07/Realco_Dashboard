@@ -36,6 +36,14 @@
         <!-- end page title -->
 
         <div class="row justify-content-end mb-2">
+
+            <div class="col-auto mt-1" style="margin-right: auto;">
+                <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input" id="advanced-comparisons">
+                    <label class="form-check-label" for="customSwitch1">Advanced Comparisons</label>
+                </div>
+            </div>
+
             <div class="col-auto">
                 <span class="form-control">
                     Latest Retrieved Data At : <span id="latestRetrievedData">N/A</span>
@@ -47,6 +55,16 @@
                     <div id="reportrange" class="form-control d-flex justify-content-between align-items-center" data-toggle="date-picker-range" data-target-display="#selectedDate" data-cancel-class="btn-light">
                         <i class="ri-calendar-2-line"></i>
                         <span id="selectedDate">Select date</span>
+                        <i class="ri-arrow-down-s-line"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto" id="datePickerContainer" style="display: none;">
+                <!-- Date Picker -->
+                <div class="form-group">
+                    <div id="reportrange" class="form-control d-flex justify-content-between align-items-center" data-toggle="date-picker-range" data-target-display="#selectedDate2" data-cancel-class="btn-light">
+                        <i class="ri-calendar-2-line"></i>
+                        <span id="selectedDate2">Select date</span>
                         <i class="ri-arrow-down-s-line"></i>
                     </div>
                 </div>
@@ -64,6 +82,27 @@
                 <button type="button" id="btn-refresh" class="btn btn-primary"><i class="ri-refresh-line"></i></button>
             </div>
         </div>
+
+
+        <!-- Full width modal content -->
+        <div id="detail-product-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="fullWidthModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-full-width">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Detail</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <!--End Full width modal content -->
+
         
 
          <!-- start dashboar card -->

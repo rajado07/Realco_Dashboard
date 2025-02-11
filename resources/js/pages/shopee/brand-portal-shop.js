@@ -11,13 +11,17 @@ const csrfToken = $('meta[name="csrf-token"]').attr('content');
 $(document).ready(() => {
     let dataTableInstance;
 
-    function initializeOrUpdateDataTable(startDate = null, endDate = null, brandId = null) {
+    function initializeOrUpdateDataTable(startDate = null, endDate = null, startDate2 = null, endDate2 = null, brandId = null) {
         const ajaxUrl = '/shopee/brand-portal-shop/read';
         const ajaxData = {};
 
         if (startDate && endDate) {
-            ajaxData.start_date = startDate;
-            ajaxData.end_date = endDate;
+            ajaxData.start_date = startDate; // sesuai dengan $startDateInput
+            ajaxData.end_date = endDate;     // sesuai dengan $endDateInput
+        }
+        if (startDate2 && endDate2) {
+            ajaxData.start_date_2 = startDate2; // sesuai dengan $startDate2Input
+            ajaxData.end_date_2 = endDate2;     // sesuai dengan $endDate2Input
         }
         if (brandId) {
             ajaxData.brand_id = brandId;
@@ -93,15 +97,14 @@ $(document).ready(() => {
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-animated">
                                     <li>
-                                        <a class="dropdown-item action-edit" data-id="${row.group_id}" 
-                                           data-bs-toggle="modal" data-bs-target="#editModal" href="#"
-                                           onclick="getAccounts('editModal');">
-                                           <i class="ri-settings-3-line"></i> Edit
+                                        <a class="dropdown-item action-product" data-id="${row.data_group_id}" 
+                                           data-bs-toggle="modal" data-bs-target="#detail-product-modal" href="#">
+                                           <i class="ri-search-line"></i> Product
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item action-delete" data-id="${row.group_id}" href="#">
-                                           <i class="ri-delete-bin-2-line"></i> Delete
+                                        <a class="dropdown-item action-chart" data-id="${row.data_group_id}" href="#">
+                                           <i class="ri-bar-chart-box-line"></i> Graph
                                         </a>
                                     </li>
                                 </ul>
@@ -185,10 +188,12 @@ $(document).ready(() => {
             .catch(error => console.error('Error loading brands:', error));
     }
 
-    function fetchSummaryData(startDate, endDate, brandId) {
+    function fetchSummaryData(startDate, endDate, startDate2, endDate2, brandId) {
         const data = {};
         if (startDate) data.start_date = startDate;
         if (endDate) data.end_date = endDate;
+        if (startDate2) data.start_date_2 = startDate2;
+        if (endDate2) data.end_date_2 = endDate2;
         if (brandId) data.brand_id = brandId;
 
         $.ajax({
@@ -196,16 +201,19 @@ $(document).ready(() => {
             type: 'GET',
             data: data,
             success: function (response) {
-                initialize.animateCounter($('#gross-sales'), response.total_gross_sales, true);
-                initialize.animateCounter($('#gross-order'), response.total_gross_orders);
-                initialize.animateCounter($('#gross-unit-sold'), response.total_gross_units_sold);
-                initialize.animateCounter($('#average-basket-size'), response.average_basket_size, true);
-                initialize.animateCounter($('#average-selling-price'), response.average_selling_price, true);
-                initialize.updatePercentageChange($('#gross-sales-change-percentage'), response.gross_sales_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#gross-order-change-percentage'), response.gross_orders_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#gross-units-sold-change-percentage'), response.gross_units_sold_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#average-basket-size-change-percentage'), response.average_basket_size_change_percentage, startDate, endDate);
-                initialize.updatePercentageChange($('#average-selling-price-change-percentage'), response.average_selling_price_change_percentage, startDate, endDate);
+                // Update current values
+                initialize.animateCounter($('#gross-sales'), response.gross_sales.now, true);
+                initialize.animateCounter($('#gross-order'), response.gross_orders.now);
+                initialize.animateCounter($('#gross-unit-sold'), response.gross_units_sold.now);
+                initialize.animateCounter($('#average-basket-size'), response.average_basket_size.now, true);
+                initialize.animateCounter($('#average-selling-price'), response.average_selling_price.now, true);
+
+                // Update percentage changes
+                initialize.updatePercentageChange($('#gross-sales-change-percentage'), response.gross_sales.change, startDate, endDate);
+                initialize.updatePercentageChange($('#gross-order-change-percentage'), response.gross_orders.change, startDate, endDate);
+                initialize.updatePercentageChange($('#gross-units-sold-change-percentage'), response.gross_units_sold.change, startDate, endDate);
+                initialize.updatePercentageChange($('#average-basket-size-change-percentage'), response.average_basket_size.change, startDate, endDate);
+                initialize.updatePercentageChange($('#average-selling-price-change-percentage'), response.average_selling_price.change, startDate, endDate);
             },
             error: function (error) {
                 console.error('Error fetching summary data:', error);
@@ -213,30 +221,40 @@ $(document).ready(() => {
         });
     }
 
-
     function initializeRefreshButton() {
         $('#btn-refresh').click(function () {
             var selectedDate = $('#selectedDate').text();
+            var selectedDate2 = $('#selectedDate2').text();
             var selectedBrand = $('#selectedBrand').val();
 
-            const dates = selectedDate.split(' - ');
-            let startDate, endDate;
-
-            if (dates.length === 2) {
-                startDate = initialize.formatDate(dates[0]);
-                endDate = initialize.formatDate(dates[1]);
-                console.log(`Start Date: ${startDate}`);
-                console.log(`End Date: ${endDate}`);
+            // Helper function to parse date ranges
+            function parseDateRange(dateStr) {
+                if (dateStr && dateStr !== 'Select date') {
+                    const dates = dateStr.split(' - ');
+                    if (dates.length === 2) {
+                        return {
+                            startDate: initialize.formatDate(dates[0]),
+                            endDate: initialize.formatDate(dates[1]),
+                        };
+                    }
+                }
+                return { startDate: null, endDate: null };
             }
 
-            console.log(`Input value changed to: ${selectedDate}`);
+            const { startDate: startDate1, endDate: endDate1 } = parseDateRange(selectedDate);
+            const { startDate: startDate2, endDate: endDate2 } = parseDateRange(selectedDate2);
+
+            console.log(`Start Date 1: ${startDate1}`);
+            console.log(`End Date 1: ${endDate1}`);
+            console.log(`Start Date 2: ${startDate2}`);
+            console.log(`End Date 2: ${endDate2}`);
             console.log(`Selected Brand: ${selectedBrand}`);
 
-            fetchSummaryData(startDate, endDate, selectedBrand);
-            initializeOrUpdateDataTable(startDate, endDate, selectedBrand);
-
-            if (!startDate || !endDate) {
-                console.log('No dates available, using only brand filter.');
+            // Call functions with the parsed dates and selected brand
+            fetchSummaryData(startDate1, endDate1, startDate2, endDate2, selectedBrand);
+            initializeOrUpdateDataTable(startDate1, endDate1, startDate2, endDate2, selectedBrand);
+            if (!startDate1 || !endDate1) {
+                console.log('Tanggal tidak tersedia, menggunakan hanya brand untuk filter.');
             }
         });
     }
@@ -276,17 +294,28 @@ $(document).ready(() => {
         });
     }
 
+    function toggleDatePickerAdvancedComparisonsVisibility() {
+        $('#advanced-comparisons').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#datePickerContainer').slideDown(400); // Tampilkan elemen dengan efek slide
+            } else {
+                $('#datePickerContainer').slideUp(400); // Sembunyikan elemen dengan efek slide
+            }
+        });
+    }
+
     function init() {
         initialize.dateTimePicker();
         initialize.toolTip();
 
         fetchBrands();
-        fetchSummaryData(); 
+        fetchSummaryData();
         fetchLatestRetrievedData();
+        toggleDatePickerAdvancedComparisonsVisibility();
 
         initializeOrUpdateDataTable();
         initializeRefreshButton();
-        initializeDetailsControl(); 
+        initializeDetailsControl();
     }
 
     init();

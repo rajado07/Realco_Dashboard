@@ -128,6 +128,7 @@ Route::post('/task-generator/update', [TaskGeneratorController::class, 'update']
 //Shopee-BrandPortal-Shop
 Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])->middleware('auth');
 Route::get('/shopee/brand-portal-shop/summary', [ShopeeBrandPortalShopDataController::class, 'getSummary'])->middleware('auth');
+Route::get('/shopee/brand-portal-shop/get-data-by-group', [ShopeeBrandPortalShopDataController::class, 'showDataByGroup'])->middleware('auth');
 Route::get('/shopee/brand-portal-shop/latest-data', [ShopeeBrandPortalShopDataController::class, 'latestRetrievedAt'])->middleware('auth');
 
 //Shopee-BrandPortal-Ads

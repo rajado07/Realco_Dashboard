@@ -102,6 +102,8 @@
                                     <th class="text-center">Growth</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                            </tfoot>
                         </table>
                     </div>
                 </div> 

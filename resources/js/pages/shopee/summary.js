@@ -11,6 +11,7 @@ const csrfToken = $('meta[name="csrf-token"]').attr('content');
 $(document).ready(() => {
     // Data Table for Shopee Summary Data
     let shopeeDataTableInstance;
+
     function initializeOrUpdateShopeeDataTable(startDate1, endDate1, startDate2, endDate2, brandId) {
         // Destroy existing instance if it exists
         if (shopeeDataTableInstance) {
@@ -64,19 +65,19 @@ $(document).ready(() => {
                 },
                 {
                     targets: [1, 2],
-                    render: function (data, type, row) {
+                    render: function (data) {
                         return dataTableHelper.columnSummary(data, 'integer');
                     }
                 },
                 {
                     targets: [3, 4, 5, 6, 9],
-                    render: function (data, type, row) {
+                    render: function (data) {
                         return dataTableHelper.columnSummary(data, 'percentage');
                     }
                 },
                 {
                     targets: [7, 8],
-                    render: function (data, type, row) {
+                    render: function (data) {
                         return dataTableHelper.columnSummary(data, 'currency');
                     }
                 },
@@ -93,6 +94,71 @@ $(document).ready(() => {
                 initialize.toolTip();
             },
         });
+
+        // Add click event listener for opening and closing details
+        $('#shopee-datatable tbody').off('click', 'td');
+        $('#shopee-datatable tbody').on('click', 'td', function () {
+            const tr = $(this).closest('tr');
+            const row = shopeeDataTableInstance.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                row.child(formatNestedTable(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
+    }
+
+    // Format nested table for children
+    function formatNestedTable(group) {
+        if (!group.children || group.children.length === 0) {
+            return '<div class="text-center">No children available</div>';
+        }
+
+        let tableHtml = `
+        <table class="table table table-responsive-sm">
+            <thead>
+                <tr>
+                    <th>Sub-Brand</th>
+                    <th>Now</th>
+                    <th>Previous</th>
+                    <th>Growth</th>
+                    <th>Now</th>
+                    <th>Previous</th>
+                    <th>Growth</th>
+                    <th>Now</th>
+                    <th>Previous</th>
+                    <th>Growth</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+        group.children.forEach(child => {
+            tableHtml += `
+            <tr>
+                <td>${child.data_group_name}</td>
+                <td>${dataTableHelper.columnSummary(child.product_views.first_period, 'integer')}</td>
+                <td>${dataTableHelper.columnSummary(child.product_views.second_period, 'integer')}</td>
+                <td>${dataTableHelper.columnSummary(child.product_views.growth, 'percentage')}</td>
+                <td>${dataTableHelper.columnSummary(child.conversion.first_period, 'percentage')}</td>
+                <td>${dataTableHelper.columnSummary(child.conversion.second_period, 'percentage')}</td>
+                <td>${dataTableHelper.columnSummary(child.conversion.growth, 'percentage')}</td>
+                <td>${dataTableHelper.columnSummary(child.gmv.first_period, 'currency')}</td>
+                <td>${dataTableHelper.columnSummary(child.gmv.second_period, 'currency')}</td>
+                <td>${dataTableHelper.columnSummary(child.gmv.growth, 'percentage')}</td>
+            </tr>
+        `;
+        });
+
+        tableHtml += `
+            </tbody>
+        </table>
+    `;
+
+        return tableHtml;
     }
 
 
