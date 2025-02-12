@@ -19,6 +19,7 @@ use App\Observers\TiktokPsaDataObserver;
 use App\Observers\TiktokLsaDataObserver;
 use App\Observers\TiktokVsaDataObserver;
 use App\Observers\TiktokGmvDataObserver;
+use App\Observers\TiktokGmvMaxDataObserver;
 use App\Observers\TiktokProductAnalyticsDataObserver;
 use App\Observers\TiktokPromotionsAnalyticsDataObserver;
 use App\Observers\TiktokVideoAnalyticsDataObserver;
@@ -50,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
         RawData::observe(TiktokLsaDataObserver::class);
         RawData::observe(TiktokVsaDataObserver::class);
         RawData::observe(TiktokGmvDataObserver::class);
+        RawData::observe(TiktokGmvMaxDataObserver::class);
         RawData::observe(TiktokProductAnalyticsDataObserver::class);
         RawData::observe(TiktokPromotionsAnalyticsDataObserver::class);
         RawData::observe(TiktokVideoAnalyticsDataObserver::class);
