@@ -24,6 +24,9 @@ use App\Observers\TiktokProductAnalyticsDataObserver;
 use App\Observers\TiktokPromotionsAnalyticsDataObserver;
 use App\Observers\TiktokVideoAnalyticsDataObserver;
 use App\Observers\TiktokLiveStreamingDataObserver;
+use App\Observers\TokopediaGmvDataObserver;
+use App\Observers\TokopediaPromotionsAnalyticsDataObserver;
+use App\Observers\TokopediaProductAnalyticsDataObserver;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -56,5 +59,9 @@ class AppServiceProvider extends ServiceProvider
         RawData::observe(TiktokPromotionsAnalyticsDataObserver::class);
         RawData::observe(TiktokVideoAnalyticsDataObserver::class);
         RawData::observe(TiktokLiveStreamingDataObserver::class);
+        RawData::observe(TokopediaGmvDataObserver::class);
+        RawData::observe(TokopediaPromotionsAnalyticsDataObserver::class);
+        RawData::observe(TokopediaProductAnalyticsDataObserver::class);
+        
     }
 }
