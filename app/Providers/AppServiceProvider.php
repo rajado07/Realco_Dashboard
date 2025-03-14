@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\RawData;
+use App\Models\ImportData;
 use App\Observers\RawDataStatusObserver;
 use App\Observers\ShopeeBrandPortalShopDataObserver;
 use App\Observers\ShopeeBrandPortalAdsDataObserver;
@@ -27,6 +28,10 @@ use App\Observers\TiktokLiveStreamingDataObserver;
 use App\Observers\TokopediaGmvDataObserver;
 use App\Observers\TokopediaPromotionsAnalyticsDataObserver;
 use App\Observers\TokopediaProductAnalyticsDataObserver;
+
+use App\Observers\OdooTargetDataObserver;
+use App\Observers\BrandTargetDataObserver;
+use App\Observers\FsBoostingDataObserver;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -62,6 +67,10 @@ class AppServiceProvider extends ServiceProvider
         RawData::observe(TokopediaGmvDataObserver::class);
         RawData::observe(TokopediaPromotionsAnalyticsDataObserver::class);
         RawData::observe(TokopediaProductAnalyticsDataObserver::class);
+
+        ImportData::observe(OdooTargetDataObserver::class);
+        ImportData::observe(BrandTargetDataObserver::class);
+        ImportData::observe(FsBoostingDataObserver::class);
         
     }
 }

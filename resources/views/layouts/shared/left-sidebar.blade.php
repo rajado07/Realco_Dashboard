@@ -199,6 +199,22 @@
                 </div>
             </li>
 
+            <li class="side-nav-title">Target</li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('second', ['target', 'odoo-target']) }}" class="side-nav-link">
+                    <i class="ri-shopping-basket-line"></i>
+                    <span> Odoo</span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('second', ['target', 'brand-target']) }}" class="side-nav-link">
+                    <i class="ri-leaf-line"></i>
+                    <span> Brand </span>
+                </a>
+            </li>
+
 
             <li class="side-nav-title">System</li>
 
@@ -241,6 +257,13 @@
                 <a href="{{ route('second', ['system', 'task-generator']) }}" class="side-nav-link">
                     <i class="ri-alarm-line"></i>
                     <span> Task Generator </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('second', ['system', 'input-data']) }}" class="side-nav-link">
+                    <i class="ri-focus-3-line"></i>
+                    <span> Input Data </span>
                 </a>
             </li>
 

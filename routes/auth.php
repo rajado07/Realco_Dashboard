@@ -13,6 +13,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DataGroupController;
 use App\Http\Controllers\MarketPlaceController;
 use App\Http\Controllers\RawDataController;
+use App\Http\Controllers\ImportDataController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGeneratorController;
 use App\Http\Controllers\ShopeeBrandPortalShopDataController;
@@ -22,6 +23,9 @@ use App\Http\Controllers\ShopeeSellerCenterCoinDataController;
 use App\Http\Controllers\ShopeeSellerCenterVoucherDataController;
 use App\Http\Controllers\ShopeeSummaryDataController;
 use App\Http\Controllers\MetaCpasDataController;
+use App\Http\Controllers\OdooTargetDataController;
+use App\Http\Controllers\BrandTargetDataController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/register', [RegisteredUserController::class, 'create'])
@@ -82,10 +86,13 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 // DataChecker
 Route::post('/data-checker/check-dates', [DataCheckerController::class, 'checkDataDates'])->middleware('auth');
 
-// rawData
+// RawData
 Route::get('/raw-data/read', [RawDataController::class, 'index'])->middleware('auth');
 Route::get('/raw-data/status-count', [RawDataController::class, 'getRawDataStatusCount'])->middleware('auth');
 
+// ImportData
+Route::get('/import/read', [ImportDataController::class, 'index'])->middleware('auth');
+Route::post('/import/data', [ImportDataController::class, 'import'])->middleware('auth');
 
 // Brand
 Route::get('/brand/read', [BrandController::class, 'index'])->middleware('auth');
@@ -157,6 +164,13 @@ Route::get('/shopee/summary/live-stream/read', [ShopeeSummaryDataController::cla
 Route::get('/meta/cpas/read', [MetaCpasDataController::class, 'index'])->middleware('auth');
 Route::get('/meta/cpas/summary', [MetaCpasDataController::class, 'getSummary'])->middleware('auth');
 Route::get('/meta/cpas/latest-data', [MetaCpasDataController::class, 'latestRetrievedAt'])->middleware('auth');
+
+// OdooTargetData
+Route::get('/target/odoo-target/read', [OdooTargetDataController::class, 'index'])->middleware('auth');
+
+// BrandTargetData
+Route::get('/target/brand-target/read', [BrandTargetDataController::class, 'index'])->middleware('auth');
+
 
 
 

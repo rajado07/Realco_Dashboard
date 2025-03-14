@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\RawData;
-use App\Models\Task; // Pastikan untuk menambahkan use Task
+use App\Models\Task; 
 use Illuminate\Support\Facades\Log;
 
 class RawDataStatusObserver
