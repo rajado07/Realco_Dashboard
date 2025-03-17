@@ -211,7 +211,7 @@
             <li class="side-nav-item">
                 <a href="{{ route('second', ['target', 'brand-target']) }}" class="side-nav-link">
                     <i class="ri-leaf-line"></i>
-                    <span> Brand </span>
+                    <span>Sub Brand </span>
                 </a>
             </li>
 

@@ -45,24 +45,20 @@
                     <form id="edit">
                         <input type="hidden" id="editRowId" name="id">
                         <div class="mb-3">
-                            <input class="form-control" name="name" placeholder="Enter Name" id="name" required>
+                            <input class="form-control" name="odoo_user" placeholder="Enter Odoo User" id="odoo_user"
+                                required>
                         </div>
                         <div class="mb-3">
-                            <input class="form-control" name="user_data_dir" placeholder="Enter User Data Directory" id="user_data_dir">
+                            <input class="form-control" name="target" placeholder="Enter Target" id="target">
                         </div>
                         <div class="mb-3">
-                            <input class="form-control" name="profile_dir" placeholder="Enter Profile Directory" id="profile_dir">
+                            <input class="form-control" name="type" placeholder="Enter Type" id="type">
                         </div>
                         <div class="mb-3">
-                            <input class="form-control" name="download_directory" placeholder="Enter Downnload Directory" id="download_directory">
+                            <input class="form-control" name="data_date" placeholder="Enter Date" id="data_date">
                         </div>
                         <div class="mb-3">
-                            <input class="form-control" name="fast_api_url" placeholder="Enter Fast API URL"
-                                id="fast_api_url">
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" name="description" id="editDescription"
-                                placeholder="Descriptions" rows="3"></textarea>
+                            <input class="form-control" name="brand_id" placeholder="Enter Brand ID" id="brand_id">
                         </div>
                     </form>
                 </div>
@@ -75,48 +71,6 @@
         </div>
     </div>
     <!-- End Form Modal Edit -->
-
-    <!-- Start Form Modal Add -->
-    <div id="addModal" class="modal fade">
-        <div class="modal-dialog  modal-dialog-centered">
-            <div class="modal-content modal-lg">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="standard-modalLabel">Add New</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="add">
-                        <div class="mb-3">
-                            <input class="form-control" name="name" placeholder="Enter Name" required>
-                        </div>
-                        <div class="mb-3">
-                            <input class="form-control" name="user_data_dir" placeholder="Enter User Data Directory">
-                        </div>
-                        <div class="mb-3">
-                            <input class="form-control" name="profile_dir" placeholder="Enter Profile Directory">
-                        </div>
-                        <div class="mb-3">
-                            <input class="form-control" name="download_directory" placeholder="Enter Downnload Directory">
-                        </div>
-                        <div class="mb-3">
-                            <input class="form-control" name="fast_api_url" placeholder="Enter Fast API URL">
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" name="description" id="addDescription"
-                                placeholder="Descriptions" rows="3"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="submitAddForm()" id="addNewFormSubmit">Save
-                        changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Form Modal Add -->
-
 
     <!-- Start Data Table-->
     <div class="row">
@@ -144,8 +98,9 @@
                                 {{-- <a class="dropdown-item" id="deleteSelected" href="#">Delete Selected Task</a> --}}
                                 <a class="dropdown-item" id="forceStopSelected" href="#">Force Stop Selected Task</a>
                             </div>
-                            {{-- <button type="button" id="addNew" class="btn btn-outline-scondary" data-bs-toggle="modal"
-                                data-bs-target="#addModal"><i class="ri-play-list-add-line me-1"></i> Add New</button> --}}
+                            {{-- <button type="button" id="addNew" class="btn btn-outline-scondary"
+                                data-bs-toggle="modal" data-bs-target="#addModal"><i
+                                    class="ri-play-list-add-line me-1"></i> Add New</button> --}}
                         </div>
                     </div>
                 </div>

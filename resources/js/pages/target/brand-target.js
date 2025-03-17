@@ -187,7 +187,7 @@ $(document).ready(() => {
   // Action
   async function deleteRow(id) {
     try {
-      const response = await fetch(`/target/destroy/${id}`, {
+      const response = await fetch(`/target/brand-target/destroy/${id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json',
@@ -208,52 +208,25 @@ $(document).ready(() => {
   }
 
   function editRow(id) {
-    fetch(`/target/edit/${id}`)
+    fetch(`/target/brand-target/edit/${id}`)
       .then(response => response.json())
       .then(data => {
-        $('#name').val(data.name || '');
-        $('#user_data_dir').val(data.user_data_dir || '');
-        $('#profile_dir').val(data.profile_dir || '');
-        $('#download_directory').val(data.download_directory || '');
-        $('#fast_api_url').val(data.fast_api_url || '');
-        $('#editDescription').val(data.description || '');
+        $('#sub_brand_name').val(data.sub_brand_name || '');
+        $('#target_nmv').val(data.target_nmv || '');
+        $('#target_ads_to_nmv').val(data.target_ads_to_nmv || '');
+        $('#composition_cpas').val(data.composition_cpas || '');
+        $('#composition_iklanku').val(data.composition_iklanku || '');
+        $('#data_date').val(data.data_date || '');
+        $('#brand_id').val(data.brand_id || '');
       })
       .catch(error => console.error('Failed to fetch data:', error));
-  }
-
-  window.submitAddForm = function () {
-    const form = document.getElementById('add');
-    const formData = new FormData(form);
-
-    fetch('/brand/store', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-CSRF-Token': csrfToken,
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        $('#addNewFormSubmit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true">').prop('disabled', true);
-        // Reload dataTable dan tunggu hingga selesai
-        dataTableInstance.ajax.reload(() => {
-          $('#addNewFormSubmit').html('Save changes').prop('disabled', false);
-          initialize.toast(data);
-          $('#addModal').modal('hide');
-          form.reset();
-        });
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        initialize.toast(data);
-      });
   }
 
   window.submitEditForm = function () {
     const form = document.getElementById('edit');
     const formData = new FormData(form);
 
-    fetch('/brand/update', {
+    fetch('/target/brand-target/update', {
       method: 'POST',
       body: formData,
       headers: {
@@ -289,8 +262,8 @@ $(document).ready(() => {
     getSelectedData();
 
     // Action
-    // deleteAction();
-    // editAction();
+    deleteAction();
+    editAction();
 
   }
   init();

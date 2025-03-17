@@ -167,10 +167,12 @@ Route::get('/meta/cpas/latest-data', [MetaCpasDataController::class, 'latestRetr
 
 // OdooTargetData
 Route::get('/target/odoo-target/read', [OdooTargetDataController::class, 'index'])->middleware('auth');
+Route::delete('/target/odoo-target/destroy/{id}', [OdooTargetDataController::class, 'destroy'])->middleware('auth');
+Route::get('/target/odoo-target/edit/{id}', [OdooTargetDataController::class, 'edit'])->middleware('auth');
+Route::post('/target/odoo-target/update', [OdooTargetDataController::class, 'update'])->middleware('auth');
 
 // BrandTargetData
 Route::get('/target/brand-target/read', [BrandTargetDataController::class, 'index'])->middleware('auth');
-
-
-
-
+Route::delete('/target/brand-target/destroy/{id}', [BrandTargetDataController::class, 'destroy'])->middleware('auth');
+Route::get('/target/brand-target/edit/{id}', [BrandTargetDataController::class, 'edit'])->middleware('auth');
+Route::post('/target/brand-target/update', [BrandTargetDataController::class, 'update'])->middleware('auth');
