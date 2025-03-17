@@ -27,7 +27,7 @@
                         <li class="breadcrumb-item active">Odoo Target</a></li>
                     </ol>
                 </div>
-                <h4 class="page-title">Odoo Target</h4>
+                <h4 class="page-title">Brand Target</h4>
             </div>
         </div>
     </div>

@@ -177,32 +177,38 @@ $(document).ready(() => {
     const form = document.getElementById('import');
     const formData = new FormData(form);
     const file = formData.get('file');
+    const importButton = document.getElementById('importFormSubmit');
 
     if (!file) {
       alert("No file selected!");
       return;
     }
 
-    formData.append('file', file); // Kirim file tanpa konversi
+    // Ubah tombol menjadi loading dan nonaktifkan
+    importButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Importing...';
+    importButton.disabled = true;
 
-    // Kirim ke backend sebagai FormData
-    fetch('/import/data', {
-      method: 'POST',
-      headers: {
-        'X-CSRF-Token': csrfToken, // CSRF token Laravel
-      },
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        initialize.toast(data);
-        $('#importModal').modal('hide');
-        form.reset();
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        initialize.toast(error);
+    try {
+      const response = await fetch('/import/data', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': csrfToken, // CSRF token Laravel
+        },
+        body: formData
       });
+
+      const data = await response.json();
+      initialize.toast(data);
+      $('#importModal').modal('hide');
+      form.reset();
+    } catch (error) {
+      console.error('Error:', error);
+      initialize.toast(error);
+    } finally {
+      // Kembalikan tombol ke keadaan awal setelah selesai
+      importButton.innerHTML = 'Import';
+      importButton.disabled = false;
+    }
   };
 
   window.analyzeFile = function (input) {
