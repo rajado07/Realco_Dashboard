@@ -200,12 +200,10 @@ $(document).ready(() => {
       const data = await response.json();
       initialize.toast(data);
       $('#importModal').modal('hide');
-      form.reset();
     } catch (error) {
       console.error('Error:', error);
       initialize.toast(error);
     } finally {
-      // Kembalikan tombol ke keadaan awal setelah selesai
       importButton.innerHTML = 'Import';
       importButton.disabled = false;
     }
@@ -219,6 +217,23 @@ $(document).ready(() => {
     importButton.disabled = true; // Pastikan tombol import dimatikan awalnya
 
     if (file) {
+      // Cek tipe file (CSV, XLS, XLSX)
+      const validExtensions = ['csv', 'xls', 'xlsx'];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+
+      if (!validExtensions.includes(fileExtension)) {
+        const errorHtml = `
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="ri-error-warning-line ri-lg me-2"></i>
+                    <div>
+                        <strong>Error!</strong> The file type is not supported. Please upload a CSV, XLS, or XLSX file.
+                    </div>
+                </div>`;
+        alertPlaceholder.innerHTML = errorHtml;
+        importButton.disabled = true;
+        return; // Stop further processing
+      }
+
       const reader = new FileReader();
 
       reader.onload = function (e) {

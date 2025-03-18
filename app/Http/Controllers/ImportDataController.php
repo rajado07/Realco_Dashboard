@@ -18,13 +18,13 @@ class ImportDataController extends Controller
 
     public function import(Request $request)
     {
-        // Validasi file
-        $request->validate([
-            'type' => 'required|string',
-            'file' => 'required|file|mimes:csv,xls,xlsx|max:2048', // Maksimum 2MB
-        ]);
-
         try {
+            // Validasi file
+            $request->validate([
+                'type' => 'required|string',
+                'file' => 'required|file|max:5120', // Maksimum 5MB
+            ]);
+
             $file = $request->file('file');
             $extension = $file->getClientOriginalExtension();
 
@@ -51,6 +51,11 @@ class ImportDataController extends Controller
                 'message' => 'Data Imported Successfully',
                 'type' => 'success'
             ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed: ' . $e->getMessage(),
+                'type' => 'error'
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed: ' . $e->getMessage(),
@@ -63,8 +68,13 @@ class ImportDataController extends Controller
     {
         $data = [];
         if (($handle = fopen($file->getRealPath(), "r")) !== FALSE) {
-            $headers = fgetcsv($handle); // Ambil header
-            while (($row = fgetcsv($handle)) !== FALSE) {
+            $line = fgets($handle);  // Ambil baris pertama
+            $separator = strpos($line, ',') !== false ? ',' : ';'; // Tentukan separator yang digunakan
+
+            rewind($handle); // Kembali ke awal file untuk membaca seluruhnya
+            $headers = fgetcsv($handle, 0, $separator); // Ambil header
+
+            while (($row = fgetcsv($handle, 0, $separator)) !== FALSE) {
                 $rowData = array_combine($headers, $row);
                 $data[] = $this->cleanRow($rowData);
             }
