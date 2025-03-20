@@ -11,7 +11,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $data = Task::whereIn('status', [1, 2, 3])
+        $data = Task::whereIn('status', [1, 2, 3 , 10])
             ->orderBy('updated_at', 'desc')
             ->get();
         return response()->json($data);

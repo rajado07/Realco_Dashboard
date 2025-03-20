@@ -542,7 +542,7 @@ window.getMarketPlaces = function (modalId) {
                 const modal = document.querySelector(`#${modalId} .modal-body`);
                 const select = modal.querySelector('#selectMarketPlace');
 
-                select.innerHTML = `<option disabled selected>Select MarketPlace</option>`;
+                select.innerHTML = `<option disabled selected>Select Market Place</option>`;
 
                 data.forEach(marketplace => {
                     const option = document.createElement('option');

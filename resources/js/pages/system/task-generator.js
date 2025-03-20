@@ -80,6 +80,7 @@ $(document).ready(() => {
                                         <i class="ri-settings-4-line"></i>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-animated">
+                                        <li><a class="dropdown-item action-generate-task" data-id="${row.id}"><i class="ri-code-view"></i> Generate</a></li>
                                         <li><a class="dropdown-item action-edit" data-id="${row.id}"><i class="ri-settings-3-line"></i> Edit</a></li>
                                         <li><a class="dropdown-item action-delete" data-id="${row.id}" href="#"><i class="ri-delete-bin-2-line"></i> Delete</a></li>
                                     </ul>
@@ -178,6 +179,15 @@ $(document).ready(() => {
     }
 
     // Click Action
+
+    function generateAction() {
+        $(document).on('click', '.action-generate-task', function () {
+            const id = $(this).data('id');
+            $('#taskGeneratorRowId').val(id);
+            $('#taskGeneratorModal').modal('show');
+        });
+    }
+
     function deleteAction() {
         $(document).on('click', '.action-delete', function () {
             const id = $(this).data('id');
@@ -341,6 +351,41 @@ $(document).ready(() => {
             });
     }
 
+    window.submitTaskGeneratorForm = async function () {
+        const form = document.getElementById('taskGenerator');
+        const formData = new FormData(form);
+        const importButton = document.getElementById('taskGeneratorFormSubmit');
+
+        // console.log("Isi FormData:");
+        // formData.forEach((value, key) => {
+        //     console.log(`${key}:`, value);
+        // });
+    
+        // Ubah tombol menjadi loading dan nonaktifkan
+        importButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+        importButton.disabled = true;
+    
+        try {
+          const response = await fetch('/task-generator/generate', {
+            method: 'POST',
+            headers: {
+              'X-CSRF-Token': csrfToken, // CSRF token Laravel
+            },
+            body: formData
+          });
+    
+          const data = await response.json();
+          initialize.toast(data);
+          $('#taskGeneratorModal').modal('hide');
+        } catch (error) {
+          console.error('Error:', error);
+          initialize.toast(error);
+        } finally {
+          importButton.innerHTML = 'Generate Task';
+          importButton.disabled = false;
+        }
+      }
+
     function init() {
         // Initialise External Helper
         initialize.dateTimePicker();
@@ -355,6 +400,7 @@ $(document).ready(() => {
         getSelectedData();
 
         // Action
+        generateAction();
         deleteAction();
         editAction();
         runSelected();

@@ -10,6 +10,7 @@
 'node_modules/datatables.net-select-bs5/css/select.bootstrap5.min.css',
 'node_modules/select2/dist/css/select2.min.css',
 'node_modules/flatpickr/dist/flatpickr.min.css',
+'node_modules/daterangepicker/daterangepicker.css',
 ])
 @endsection
 
@@ -32,6 +33,31 @@
         </div>
     </div>
     <!-- end page title -->
+
+    <!-- Start Form Modal Generate Task -->
+    <div id="taskGeneratorModal" class="modal fade">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="standard-modalLabel">Generate Task</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="taskGenerator">
+                        <input type="hidden" id="taskGeneratorRowId" name="id">
+                        <div class="mb-3">
+                            <input class="form-control" name="date_range" placeholder="Enter Date Range ( 2025-01-01 - 2025-01-30 )">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitTaskGeneratorForm()" id="taskGeneratorFormSubmit">Generate Task</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Form Modal Generate Task -->
 
     <!-- Start Form Modal Edit -->
     <div id="editModal" class="modal fade">
@@ -61,6 +87,7 @@
                                 data-toggle="select2">
                                 <option disabled selected>Select Frequency</option>
                                 <option value="weekly">Weekly</option>
+                                <option value="three_times_weekly">Three Times Weekly</option>
                                 <option value="daily">Daily</option>
                             </select>
                         </div>
@@ -110,6 +137,7 @@
                                 data-toggle="select2">
                                 <option disabled selected>Select Frequency</option>
                                 <option value="weekly">Weekly</option>
+                                <option value="three_times_weekly">Three Times Weekly</option>
                                 <option value="daily">Daily</option>
                             </select>
                         </div>
@@ -158,8 +186,8 @@
                                 <a class="dropdown-item" href="#" id="archivedSelected">Archived Selected Task</a>
                                 {{-- <a class="dropdown-item" href="#" id="editSelected">Edit Selected Task</a> --}}
                             </div>
-                            <button type="button" id="import" class="btn btn-outline-seconday" data-bs-toggle="modal"
-                                data-bs-target="#importModal"><i class="bi bi-upload"></i> Import</button>
+                            {{-- <button type="button" id="import" class="btn btn-outline-seconday" data-bs-toggle="modal"
+                                data-bs-target="#importModal"><i class="bi bi-upload"></i> Import</button> --}}
                             <button type="button" id="addNew" onclick="getScripts('addModal');getMarketPlaces('addModal');getBrands('addModal');"
                                 class="btn btn-outline-scondary" data-bs-toggle="modal" data-bs-target="#addModal"><i
                                     class="ri-play-list-add-line me-1"></i> Add New</button>

@@ -131,6 +131,7 @@ Route::get('/task-generator/edit/{id}', [TaskGeneratorController::class, 'edit']
 Route::delete('/task-generator/destroy/{id}', [TaskGeneratorController::class, 'destroy'])->middleware('auth');
 Route::post('/task-generator/store', [TaskGeneratorController::class, 'store'])->middleware('auth');
 Route::post('/task-generator/update', [TaskGeneratorController::class, 'update'])->middleware('auth');
+Route::post('/task-generator/generate', [TaskGeneratorController::class, 'generateTask'])->middleware('auth');
 
 //Shopee-BrandPortal-Shop
 Route::get('/shopee/brand-portal-shop/read', [ShopeeBrandPortalShopDataController::class, 'index'])->middleware('auth');

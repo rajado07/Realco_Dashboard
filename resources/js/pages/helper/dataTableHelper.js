@@ -12,6 +12,7 @@ function translateStatusTask(status, rowId) {
     7: '<span class="remixicon ri-checkbox-circle-line text-danger"></span> Partial Failed',
     8: '<span class="remixicon ri-close-circle-line text-danger"></span> Failed',
     9: '<span class="remixicon ri-checkbox-circle-line text-info"></span> All Skipped',
+    10: '<span class="remixicon ri-time-line text-dark"></span> Queue',
   };
 
   // Convert status to integer if it's not already
