@@ -139,6 +139,7 @@
                                 {{-- <a class="dropdown-item" href="#" id="deleteSelected">Delete Selected Task</a> --}}
                                 <a class="dropdown-item" href="#" id="archivedSelected">Archived Selected Task</a>
                                 {{-- <a class="dropdown-item" href="#" id="editSelected">Edit Selected Task</a> --}}
+                                <a class="dropdown-item" href="#" id="markedAsQueue">Mark As Queue</a>
                             </div>
                             {{-- <button type="button" id="import" class="btn btn-outline-seconday"
                                 data-bs-toggle="modal" data-bs-target="#importModal"><i class="bi bi-upload"></i>

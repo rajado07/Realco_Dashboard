@@ -11,7 +11,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $data = Task::whereIn('status', [1, 2, 3 , 10])
+        $data = Task::whereIn('status', [1, 2, 3, 10])
             ->orderBy('updated_at', 'desc')
             ->get();
         return response()->json($data);
@@ -90,9 +90,23 @@ class TaskController extends Controller
                 if ($model) {
                     $model->status = $status;
 
-                    // Update the message if the type is marked_as_completed
-                    if ($type == 'marked_as_completed') {
-                        $model->message = 'Task marked as completed';
+                    // Update message berdasarkan type
+                    switch ($type) {
+                        case 'marked_as_completed':
+                            $model->message = 'Task marked as completed';
+                            break;
+                        case 'archived':
+                            $model->message = 'Task archived';
+                            break;
+                        case 'start':
+                            $model->message = 'Task started';
+                            break;
+                        case 'marked_as_queue':
+                            $model->message = 'Task marked as queue';
+                            break;
+                        default:
+                            $model->message = 'Status updated';
+                            break;
                     }
 
                     $model->save();
@@ -100,13 +114,23 @@ class TaskController extends Controller
                 }
             }
 
-            $successMessage = "Updated successfully.";
-            if ($type == 'start') {
-                $successMessage = "$updateCount Task started successfully.";
-            } elseif ($type == 'archived') {
-                $successMessage = "$updateCount Task archived successfully.";
-            } elseif ($type == 'marked_as_completed') {
-                $successMessage = "$updateCount Task marked as completed.";
+            // Success message untuk frontend
+            switch ($type) {
+                case 'marked_as_completed':
+                    $successMessage = "$updateCount task(s) marked as completed.";
+                    break;
+                case 'archived':
+                    $successMessage = "$updateCount task(s) archived.";
+                    break;
+                case 'start':
+                    $successMessage = "$updateCount task(s) started.";
+                    break;
+                case 'marked_as_queue':
+                    $successMessage = "$updateCount task(s) marked as queue.";
+                    break;
+                default:
+                    $successMessage = "$updateCount task(s) updated.";
+                    break;
             }
 
             return response()->json([
@@ -114,7 +138,10 @@ class TaskController extends Controller
                 'type' => 'success'
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed: ' . $e->getMessage(), 'type' => 'error']);
+            return response()->json([
+                'message' => 'Failed: ' . $e->getMessage(),
+                'type' => 'error'
+            ]);
         }
     }
 

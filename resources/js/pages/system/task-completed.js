@@ -122,6 +122,12 @@ $(document).ready(() => {
         });
     }
 
+    function markedAsQueue() {
+        $(document).on('click', '#markedAsQueue', function () {
+            updateStatus(selectedData, 'marked_as_queue', 10);
+        });
+    }
+
     function updateStatus(ids, type, status) {
         fetch(`/task/update/status`, {
             method: 'POST',
@@ -161,6 +167,7 @@ $(document).ready(() => {
         // Action
         runSelected();
         archivedSelected();
+        markedAsQueue();
 
     }
     init();
