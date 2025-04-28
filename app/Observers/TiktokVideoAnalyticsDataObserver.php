@@ -37,10 +37,10 @@ class TiktokVideoAnalyticsDataObserver
                     }
 
                     $percentageFieldsToReplace = [
-                        'ctr' => 'CTR',
+                        'ctr' => 'Click-through rate (Video)',
                         'v_to_l_rate' => 'V-to-L rate',
                         'video_finish_rate' => 'Video Finish Rate',
-                        'ctor' => 'Click-to-Order Rate',
+                        'ctor' => 'Click-to-order rate (Video)',
                     ];
 
                     $cleanedPercentageData = [];
@@ -79,7 +79,7 @@ class TiktokVideoAnalyticsDataObserver
                         'customers' => $dataItem['Customers'] ?? null, // perlu dirubah jadi Customer tetapi jika tidak ada null saja
                         'orders' => $dataItem['Orders'],
                         'unit_sales' => $dataItem['Unit Sales'],
-                        'video_revenue' => $dataItem['Video Revenue (Rp)'],
+                        'video_revenue' => $dataItem['Gross merchandise value (Video) (Rp)'],
                         'gpm' => $dataItem['GPM (Rp)'],
                         'shoppable_video_attributed_gmv' => $dataItem['Shoppable video attributed GMV (Rp)'],
                         'ctr' => $cleanedPercentageData['ctr'],
