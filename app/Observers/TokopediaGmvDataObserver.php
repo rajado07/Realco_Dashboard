@@ -37,13 +37,13 @@ class TokopediaGmvDataObserver
 
                     TokopediaGmvData::create([
                         'data_date' => $dataItem['Date'],
-                        'gmv' => $dataItem['GMV (Rp)'],
+                        'gmv' => $dataItem['Gross merchandise value (Rp)'],
                         'refunds' => $dataItem['Refunds (Rp)'],
-                        'gross_revenue' => $dataItem['Gross Revenue (with platform product subsidy)'],
+                        'gross_revenue' => $dataItem['Gross merchandise value (with TikTok co-funding)'],
                         'items_sold' => $dataItem['Items sold'],
                         'customers' => $dataItem['Customers'], # dirubah dari sebelum nya penamaan nya buyers
                         'page_views' => $dataItem['Page views'],
-                        'visitors' => $dataItem['Visitors'],
+                        'visitors' => $dataItem['Shop page visits'],
                         'sku_orders' => $dataItem['SKU orders'],
                         'orders' => $dataItem['Orders'],
                         'conversion_rate' => $conversionRate,
