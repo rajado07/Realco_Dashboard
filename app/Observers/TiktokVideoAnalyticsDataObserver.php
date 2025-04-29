@@ -78,7 +78,7 @@ class TiktokVideoAnalyticsDataObserver
                         'product_clicks' => $dataItem['Product Clicks'],
                         'customers' => $dataItem['Customers'] ?? null, // perlu dirubah jadi Customer tetapi jika tidak ada null saja
                         'orders' => $dataItem['Orders'],
-                        'unit_sales' => $dataItem['Unit Sales'],
+                        'unit_sales' => $dataItem['Video items sold'],
                         'video_revenue' => $dataItem['Gross merchandise value (Video) (Rp)'],
                         'gpm' => $dataItem['GPM (Rp)'],
                         'shoppable_video_attributed_gmv' => $dataItem['Shoppable video attributed GMV (Rp)'],
