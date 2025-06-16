@@ -55,6 +55,7 @@ function translateBrand(brand) {
     2: '<span class="badge rounded-pill text-dark" style="background-color: #f1e5b3;">Skindoze</span>',
     3: '<span class="badge rounded-pill text-light" style="background-color: #9e8ad6;">Elora</span>',
     4: '<span class="badge rounded-pill text-light" style="background-color: #a24688;">Odoo</span>',
+    5: '<span class="badge rounded-pill text-light" style="background-color: #0044b3;">Momiku</span>',
   };
   return brandMap[parseInt(brand, 10)] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
 }
