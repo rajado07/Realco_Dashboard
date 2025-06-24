@@ -6,7 +6,6 @@ use App\Models\Task;
 use App\Models\RawData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
@@ -24,25 +23,14 @@ class ProcessFastApiTaskJob implements ShouldQueue
         $this->task = $task;
     }
 
-    public function middleware()
-    {
-        $baseUrl = rtrim($this->task->brand->fast_api_url, '/');
-        $lockKey = 'fastapi:' . md5($baseUrl);
-
-        return [
-            (new WithoutOverlapping($lockKey, 1000))
-                ->releaseAfter(30),
-        ];
-    }
-
     public function handle()
     {
-        // Ambil ulang task terbaru dan mark as running
+        // Segera tandai running
         $task = Task::with('brand')->find($this->task->id);
         $task->update(['status' => 3]);
 
         $baseUrl  = rtrim($task->brand->fast_api_url, '/');
-        $endpoint = $baseUrl . '/run-script';
+        $endpoint = "{$baseUrl}/run-script";
 
         try {
             $response = Http::timeout(900)->post($endpoint, [
@@ -66,7 +54,7 @@ class ProcessFastApiTaskJob implements ShouldQueue
 
             $data = $response->json();
 
-            if ($data['status'] === 'success') {
+            if (isset($data['status']) && $data['status'] === 'success') {
                 RawData::create([
                     'type'             => $task->type,
                     'data'             => json_encode($data['data']),
