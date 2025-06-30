@@ -80,7 +80,7 @@ class TiktokLiveStreamingDataObserver
                         'live_attributed_gmv' => $dataItem['LIVE attributed GMV (Rp)'],
                         'viewers' => $dataItem['Viewers'],
                         'views' => $dataItem['Views'],
-                        'avg_viewing_duration' => $dataItem['Average viewing duration (LIVEs)'],
+                        'avg_viewing_duration' => $dataItem['Average viewing duration (LIVE streams)'],
                         'comments' => $dataItem['Comments'],
                         'shares' => $dataItem['Shares'],
                         'likes' => $dataItem['LIVE likes'],
