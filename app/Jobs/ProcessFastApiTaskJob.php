@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\RawData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +15,7 @@ use Carbon\Carbon;
 
 class ProcessFastApiTaskJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $task;
 
@@ -25,69 +26,81 @@ class ProcessFastApiTaskJob implements ShouldQueue
 
     public function handle()
     {
-        // Segera tandai running
-        $task = Task::with('brand')->find($this->task->id);
-        $task->update(['status' => 3]);
+        // Eager load relasi brand jika belum ter-load
+        $this->task->loadMissing('brand');
 
-        $baseUrl  = rtrim($task->brand->fast_api_url, '/');
-        $endpoint = "{$baseUrl}/run-script";
+        $baseFastApiUrl = $this->task->brand->fast_api_url ?? 'http://127.0.0.1:8001';
+        $fastApiUrl = rtrim($baseFastApiUrl, '/') . '/run-script';
+
+        // Gabungkan atribut Task dengan atribut spesifik dari Brand
+        $mergedData = [
+            'id' => $this->task->id,
+            'brand_id' => $this->task->brand_id,
+            'market_place_id' => $this->task->market_place_id,
+            'type' => $this->task->type,
+            'link' => $this->task->link,
+            'scheduled_to_run' => $this->task->scheduled_to_run,
+            'status' => $this->task->status,
+            'task_generator_id' => $this->task->task_generator_id,
+            'message' => $this->task->message,
+            'user_data_dir' => $this->task->brand->user_data_dir,
+            'profile_dir' => $this->task->brand->profile_dir,
+            'download_directory' => $this->task->brand->download_directory,
+        ];
 
         try {
-            $response = Http::timeout(900)->post($endpoint, [
-                'id'                 => $task->id,
-                'brand_id'           => $task->brand_id,
-                'market_place_id'    => $task->market_place_id,
-                'type'               => $task->type,
-                'link'               => $task->link,
-                'scheduled_to_run'   => $task->scheduled_to_run,
-                'status'             => 3,
-                'task_generator_id'  => $task->task_generator_id,
-                'message'            => $task->message,
-                'user_data_dir'      => $task->brand->user_data_dir,
-                'profile_dir'        => $task->brand->profile_dir,
-                'download_directory' => $task->brand->download_directory,
-            ]);
+            // Lakukan POST request dengan data yang sudah digabung
+            $response = Http::timeout(300)->post($fastApiUrl, $mergedData);
 
-            if (! $response->successful()) {
-                throw new \Exception('HTTP error: ' . $response->body());
-            }
+            if ($response->successful()) {
+                $responseData = $response->json();
+                if (isset($responseData['status']) && $responseData['status'] == 'success') {
+                    // Buat RawData
+                    $rawData = new RawData();
+                    $rawData->type = $this->task->type;
+                    $rawData->data = json_encode($responseData['data']);
+                    $rawData->retrieved_at = Carbon::now();
+                    $rawData->data_date = Carbon::parse($this->task->scheduled_to_run)->toDateString();
+                    $rawData->file_name = $responseData['file_name'] ?? null;
+                    $rawData->brand_id = $this->task->brand_id;
+                    $rawData->market_place_id = $this->task->market_place_id;
+                    $rawData->task_id = $this->task->id;
+                    $rawData->save();
 
-            $data = $response->json();
-
-            if (isset($data['status']) && $data['status'] === 'success') {
-                RawData::create([
-                    'type'             => $task->type,
-                    'data'             => json_encode($data['data']),
-                    'retrieved_at'     => Carbon::now(),
-                    'data_date'        => Carbon::parse($task->scheduled_to_run)->toDateString(),
-                    'file_name'        => $data['file_name'],
-                    'brand_id'         => $task->brand_id,
-                    'market_place_id'  => $task->market_place_id,
-                    'task_id'          => $task->id,
-                ]);
-
-                $task->update([
-                    'status'  => 5, // success
-                    'message' => null,
-                ]);
-
-                Log::info("Task [{$task->id}] succeeded (URL={$baseUrl}).");
+                    // Update status task menjadi 5 (success)
+                    $this->task->status = 5;
+                    $this->task->message = 'Successfully executed by FastAPI.';
+                    Log::info('Task successfully executed.', ['task_id' => $this->task->id]);
+                } else {
+                    // Gagal dieksekusi oleh FastAPI (status error atau exception dari FastAPI)
+                    $errorMessage = $responseData['error'] ?? $responseData['message'] ?? 'Unknown error from FastAPI.';
+                    $this->task->status = 4;
+                    $this->task->message = $errorMessage;
+                    Log::error('Task execution failed on FastAPI.', [
+                        'task_id' => $this->task->id,
+                        'error_message' => $errorMessage,
+                    ]);
+                }
             } else {
-                $errorMsg = $data['error'] ?? $data['message'] ?? 'Unknown error';
-                $task->update([
-                    'status'  => 4,
-                    'message' => $errorMsg,
+                // Request ke FastAPI gagal (misal: 404 Not Found, 500 Internal Server Error)
+                $this->task->status = 4;
+                $this->task->message = 'Failed to call FastAPI: ' . $response->reason();
+                Log::error('Failed to call FastAPI.', [
+                    'task_id' => $this->task->id,
+                    'status_code' => $response->status(),
+                    'response_body' => $response->body(),
                 ]);
-
-                Log::error("Task [{$task->id}] failed: {$errorMsg}");
             }
         } catch (\Exception $e) {
-            $task->update([
-                'status'  => 4,
-                'message' => $e->getMessage(),
+            // Terjadi exception saat melakukan request (misal: timeout, koneksi ditolak)
+            $this->task->status = 4;
+            $this->task->message = 'Exception occurred: ' . $e->getMessage();
+            Log::error('An exception occurred during task execution.', [
+                'task_id' => $this->task->id,
+                'exception' => $e->getMessage(),
             ]);
-
-            Log::error("Task [{$task->id}] exception: {$e->getMessage()}");
+        } finally {
+            $this->task->save();
         }
     }
 }
