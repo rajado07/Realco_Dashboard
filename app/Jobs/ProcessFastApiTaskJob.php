@@ -49,58 +49,77 @@ class ProcessFastApiTaskJob implements ShouldQueue
         ];
 
         try {
-            // Lakukan POST request dengan data yang sudah digabung
+            // 1. Panggil FastAPI
             $response = Http::timeout(300)->post($fastApiUrl, $mergedData);
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                if (isset($responseData['status']) && $responseData['status'] == 'success') {
-                    // Buat RawData
-                    $rawData = new RawData();
-                    $rawData->type = $this->task->type;
-                    $rawData->data = json_encode($responseData['data']);
-                    $rawData->retrieved_at = Carbon::now();
-                    $rawData->data_date = Carbon::parse($this->task->scheduled_to_run)->toDateString();
-                    $rawData->file_name = $responseData['file_name'] ?? null;
-                    $rawData->brand_id = $this->task->brand_id;
-                    $rawData->market_place_id = $this->task->market_place_id;
-                    $rawData->task_id = $this->task->id;
+                if (isset($responseData['status']) && $responseData['status'] === 'success') {
+                    
+                    $rawData                     = new RawData();
+                    $rawData->type               = $this->task->type;
+                    $rawData->data               = json_encode($responseData['data']);
+                    $rawData->retrieved_at       = Carbon::now();
+                    $rawData->data_date          = Carbon::parse($this->task->scheduled_to_run)->toDateString();
+                    $rawData->file_name          = $responseData['file_name'] ?? null;
+                    $rawData->brand_id           = $this->task->brand_id;
+                    $rawData->market_place_id    = $this->task->market_place_id;
+                    $rawData->task_id            = $this->task->id;
+
+                    $this->task->status  = 5;
+                    $this->task->message = null;
+                    
+                    Log::info('Task executed and status updated to 5 (success)', [
+                        'task_id'          => $this->task->id,
+                        'type'             => $this->task->type,
+                        'scheduled_to_run' => $this->task->scheduled_to_run,
+                    ]);
+
+                    $this->task->save();
                     $rawData->save();
 
-                    // Update status task menjadi 5 (success)
-                    $this->task->status = 5;
-                    $this->task->message = 'Successfully executed by FastAPI.';
-                    Log::info('Task successfully executed.', ['task_id' => $this->task->id]);
-                } else {
-                    // Gagal dieksekusi oleh FastAPI (status error atau exception dari FastAPI)
-                    $errorMessage = $responseData['error'] ?? $responseData['message'] ?? 'Unknown error from FastAPI.';
-                    $this->task->status = 4;
-                    $this->task->message = $errorMessage;
-                    Log::error('Task execution failed on FastAPI.', [
-                        'task_id' => $this->task->id,
-                        'error_message' => $errorMessage,
+                } elseif ($responseData['status'] === 'error') {
+                    $this->task->status  = 4;
+                    $this->task->message = $responseData['error'] ?? 'Unknown error';
+                    $this->task->save();
+
+                    Log::error('Task execution failed with error and status updated to 4 (exception)', [
+                        'task_id'       => $this->task->id,
+                        'error_message' => $this->task->message,
+                    ]);
+
+                } elseif ($responseData['status'] === 'exception') {
+                    $this->task->status  = 4;
+                    $this->task->message = $responseData['message'] ?? 'Exception from FastAPI';
+                    $this->task->save();
+
+                    Log::error('Task execution encountered an exception and status updated to 4 (exception)', [
+                        'task_id'            => $this->task->id,
+                        'exception_message'  => $this->task->message,
                     ]);
                 }
+
             } else {
-                // Request ke FastAPI gagal (misal: 404 Not Found, 500 Internal Server Error)
-                $this->task->status = 4;
-                $this->task->message = 'Failed to call FastAPI: ' . $response->reason();
-                Log::error('Failed to call FastAPI.', [
-                    'task_id' => $this->task->id,
-                    'status_code' => $response->status(),
-                    'response_body' => $response->body(),
+                $this->task->status  = 4;
+                $this->task->message = 'Failed to call FastAPI';
+                $this->task->save();
+
+                Log::error('Failed to call FastAPI and status updated to 4 (exception)', [
+                    'task_id'       => $this->task->id,
+                    'fast_api_url'  => $fastApiUrl,
+                    'error_message' => $response->body(),
                 ]);
             }
         } catch (\Exception $e) {
-            // Terjadi exception saat melakukan request (misal: timeout, koneksi ditolak)
-            $this->task->status = 4;
-            $this->task->message = 'Exception occurred: ' . $e->getMessage();
-            Log::error('An exception occurred during task execution.', [
-                'task_id' => $this->task->id,
-                'exception' => $e->getMessage(),
-            ]);
-        } finally {
+            $this->task->status  = 4;
+            $this->task->message = $e->getMessage();
             $this->task->save();
+
+            Log::error('Task execution failed and status updated to 4 (exception)', [
+                'task_id'      => $this->task->id,
+                'fast_api_url' => $fastApiUrl,
+                'error'        => $e->getMessage(),
+            ]);
         }
     }
 }
