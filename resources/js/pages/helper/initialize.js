@@ -22,26 +22,33 @@ export default (function ($) {
   function toolTip() {
     tippy('[data-tipsy]', {
       content(reference) {
-        return reference.getAttribute('data-tipsy');
+        // Ambil teks full, decode dari URI component
+        const encoded = reference.getAttribute('data-tipsy') || '';
+        const full = decodeURIComponent(encoded);
+
+        // Ganti newline menjadi <br> agar terlihat semua baris
+        const html = full.replace(/\r\n|\r|\n/g, '<br>');
+        return `<div class="tippy-content">${html}</div>`;
       },
+      allowHTML: true,
       theme: 'light',
       animation: 'scale',
-      allowHTML: true,
-      interactive: true, // Membuat tooltip bisa diklik
+      interactive: true,
       delay: [750, 0],
+      maxWidth: 1200, // boleh disesuaikan
       onShow(instance) {
         const tooltipElement = instance.popper;
+        // Hindari multiple listener: bersihkan dulu jika perlu
         tooltipElement.addEventListener('click', function () {
-          const textToCopy = instance.props.content;
+          const encoded = instance.reference.getAttribute('data-tipsy') || '';
+          const textToCopy = decodeURIComponent(encoded);
           copyToClipboard(textToCopy);
-          toast({
-            type: 'success',
-            message: 'Copied To Clipboard'
-          });
-        });
+          toast({ type: 'success', message: 'Copied To Clipboard' });
+        }, { once: true });
       }
     });
   }
+
 
   function copyToClipboard(text) {
     const textArea = document.createElement("textarea");

@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DataCheckerController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DataGroupController;
 use App\Http\Controllers\MarketPlaceController;
@@ -85,6 +86,9 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 // DataChecker
 Route::post('/data-checker/check-dates', [DataCheckerController::class, 'checkDataDates'])->middleware('auth');
+
+// Log
+Route::get('/logs/read', [LogController::class, 'index'])->middleware('auth');
 
 // RawData
 Route::get('/raw-data/read', [RawDataController::class, 'index'])->middleware('auth');

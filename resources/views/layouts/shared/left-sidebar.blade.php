@@ -275,9 +275,9 @@
             </li>
 
             <li class="side-nav-item">
-                <a href="{{ route('second', ['system', 'test']) }}" class="side-nav-link">
+                <a href="{{ route('second', ['system', 'log']) }}" class="side-nav-link">
                     <i class="ri-bill-line"></i>
-                    <span> Log </span>
+                    <span> Logs </span>
                 </a>
             </li>
 

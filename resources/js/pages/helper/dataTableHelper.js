@@ -42,11 +42,19 @@ function translateStatusRawData(status) {
 }
 
 function translateStatusLog(status) {
-  const statusMap = {
-    INFO: '<span class="badge bg-info rounded-pill">INFO</span>',
-    DANGER: '<span class="badge bg-danger rounded-pill">DANGER</span>',
-  };
-  return statusMap[status] || '<span class="badge bg-dark rounded-pill">Unknown</span>';
+  const lowerCaseStatus = status.toLowerCase();
+
+  if (lowerCaseStatus.includes('info')) {
+    return `<i class="ri-information-line" style="color: #00bcd4;"></i> ${status}`;
+  } else if (lowerCaseStatus.includes('error')) {
+    return `<i class="ri-close-circle-line" style="color: #f44336;"></i> ${status}`;
+  } else if (lowerCaseStatus.includes('warning')) {
+    return `<i class="ri-alert-line" style="color: #ff9800;"></i> ${status}`;
+  } else if (lowerCaseStatus.includes('success')) {
+    return `<i class="ri-checkbox-circle-fill" style="color: #4caf50;"></i> ${status}`;
+  } else {
+    return `<i class="ri-question-line" style="color: #607d8b;"></i> ${status}`;
+  }
 }
 
 function translateBrand(brand) {
@@ -74,13 +82,16 @@ function translateMarketPlace(brand) {
 }
 
 function shortenText(data, maxLength = 50) {
-  if (data?.length > maxLength) {
-    // Mengembalikan string HTML dengan data-tipsy attribute
-    return `<span data-tipsy="${data}">${data.substr(0, maxLength)}...</span>`;
-  } else {
-    return data;
+    if (data == null) return '';
+    const full = String(data);
+    const short = full.length > maxLength ? full.slice(0, maxLength) + '…' : full;
+
+    // Simpan versi encoded agar tidak rusak oleh kutip, <, >, \n, dll.
+    const encoded = encodeURIComponent(full);
+
+    // Penting: short untuk UI boleh apa adanya, tapi kalau mau ekstra aman silakan escapeHtml(short)
+    return `<span data-tipsy="${encoded}">${short}</span>`;
   }
-}
 
 function formatSchedule(schedule) {
   try {

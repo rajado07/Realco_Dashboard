@@ -46,7 +46,7 @@
                     <form id="taskGenerator">
                         <input type="hidden" id="taskGeneratorRowId" name="id">
                         <div class="mb-3">
-                            <input class="form-control" name="date_range" placeholder="Enter Date Range ( 2025-01-01 - 2025-01-30 )">
+                            <input class="form-control" name="date_range" placeholder="Enter Date Range ( 2025-01-01 , 2025-01-30 )">
                         </div>
                     </form>
                 </div>
