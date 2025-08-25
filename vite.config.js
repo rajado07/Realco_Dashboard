@@ -169,6 +169,7 @@ export default defineConfig({
                  'resources/js/pages/system/task-completed.js',
                  'resources/js/pages/system/task-exception.js',
                  'resources/js/pages/system/task-failed.js',
+                 'resources/js/pages/system/log.js',
 
             ],
             refresh: true,
