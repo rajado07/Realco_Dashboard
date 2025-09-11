@@ -39,7 +39,7 @@ class TiktokGmvDataObserver
                         'data_date' => $dataItem['Date'],
                         'gmv' => $dataItem['Gross merchandise value (Rp)'],
                         'refunds' => $dataItem['Refunds (Rp)'],
-                        'gross_revenue' => $dataItem['Gross merchandise value (with TikTok co-funding)'],
+                        'gross_revenue' => $dataItem['Gross revenue with platform product subsidy breakdown'],
                         'items_sold' => $dataItem['Items sold'],
                         'customers' => $dataItem['Customers'], # dirubah dari sebelum nya penamaan nya buyers
                         'page_views' => $dataItem['Page views'],
