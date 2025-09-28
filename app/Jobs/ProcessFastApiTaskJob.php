@@ -50,7 +50,7 @@ class ProcessFastApiTaskJob implements ShouldQueue
 
         try {
             // 1. Panggil FastAPI
-            $response = Http::timeout(300)->post($fastApiUrl, $mergedData);
+            $response = Http::timeout(900)->post($fastApiUrl, $mergedData);
 
             if ($response->successful()) {
                 $responseData = $response->json();
