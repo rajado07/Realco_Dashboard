@@ -92,3 +92,10 @@
 .card-h-100 {
     height: calc(100% - #{$spacer});
 }
+
+// Custom SCSS
+// Tambahkan aturan untuk card active
+.card.active {
+    border: 2px solid #007bff; // Aturan gaya saat card active, misalnya border biru
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); // Contoh shadow saat active
+}

@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('file_name');
             $table->unsignedBigInteger('brand_id'); 
             $table->unsignedBigInteger('market_place_id'); 
+            $table->unsignedBigInteger('task_id'); 
             $table->integer('status')->default('1'); 
-            $table->text('message')->nullable();
+            $table->longText('message')->nullable();
             $table->timestamps();
         });
     }

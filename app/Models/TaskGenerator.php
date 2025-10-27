@@ -9,12 +9,5 @@ class TaskGenerator extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'brand_id',
-        'market_place_id',
-        'type',
-        'link',
-        'frequency',
-        'run_at'
-    ];
+    protected $guarded = ['id'];
 }

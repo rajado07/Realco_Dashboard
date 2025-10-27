@@ -2,17 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessFastApiTaskJob;
 use Illuminate\Console\Command;
 use App\Models\Task;
-use App\Models\RawData;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use Carbon\Carbon;
 
 class RunTasksFastApi extends Command
 {
     protected $signature = 'run:fastapi';
-    protected $description = 'Run tasks based on status using FastAPI';
+    protected $description = 'Find eligible tasks and dispatch them to the queue to be run in parallel.';
 
     public function __construct()
     {
@@ -21,89 +19,59 @@ class RunTasksFastApi extends Command
 
     public function handle()
     {
-        // Log::info('RunFastAPITasks command started.');
+        // 1. Identifikasi URL yang slotnya sedang terpakai (status 3 = Running)
+        $runningUrls = Task::where('status', 3)
+            ->whereHas('brand', fn($query) => $query->whereNotNull('fast_api_url'))
+            ->with('brand:id,fast_api_url')
+            ->get()
+            ->map(fn($task) => $task->brand->fast_api_url)
+            ->unique()
+            ->all();
 
-        $runningTask = Task::where('status', 3)->first();
-        if ($runningTask) {
-            Log::info('A task is already running. Waiting for it to finish.');
+        if (count($runningUrls) > 0) {
+            Log::info('URLs currently in use', ['urls' => $runningUrls]);
+        }
+
+        // 2. Cari kandidat task (status 2) yang URL-nya tidak sedang terpakai
+        $pendingTasks = Task::with('brand')
+            ->where('status', 2)
+            ->whereHas('brand', function ($query) use ($runningUrls) {
+                $query->whereNotIn('fast_api_url', $runningUrls)
+                      ->whereNotNull('fast_api_url');
+            })
+            ->orderBy('updated_at', 'asc')
+            ->get();
+
+        if ($pendingTasks->isEmpty()) {
+            Log::info('No eligible tasks to run in this cycle.');
+            $this->info('No eligible tasks to run in this cycle.');
             return;
         }
 
-        $task = Task::where('status', 2)
-            ->orderBy('updated_at', 'asc')
-            ->first();
+        // 3. Pilih satu perwakilan dari setiap URL unik
+        $tasksToDispatch = $pendingTasks
+            ->groupBy('brand.fast_api_url')
+            ->map(fn($group) => $group->first());
+            
+        $this->info("Found {$tasksToDispatch->count()} tasks to dispatch to the queue.");
 
-        if ($task) {
+        // 4. Kunci statusnya dan delegasikan ke Job
+        foreach ($tasksToDispatch as $task) {
+            // Kunci task dengan mengubah statusnya menjadi 3 (Running)
             $task->status = 3;
+            $task->message = 'Dispatched to queue for processing.';
             $task->save();
+            
+            // Kirim ke antrian untuk diproses di latar belakang
+            ProcessFastApiTaskJob::dispatch($task);
 
-            try {
-                $response = Http::timeout(120)->post('http://127.0.0.1:8001/run-script', $task->toArray());
-                // $response = Http::timeout(120)->post('http://192.165.10.20:8000/run-script', $task->toArray());
-
-                if ($response->successful()) {
-                    $responseData = $response->json();
-                    if ($responseData['status'] == 'success') {
-                        $rawData = new RawData();
-                        $rawData->type = $task->type;
-                        $rawData->data = json_encode($responseData['data']);
-                        $rawData->retrieved_at = Carbon::now();
-                        $rawData->data_date = Carbon::parse($task->scheduled_to_run)->toDateString();
-                        $rawData->file_name = $responseData['file_name'];
-                        $rawData->brand_id = $task->brand_id;
-                        $rawData->market_place_id = $task->market_place_id;
-                        $rawData->save();
-
-                        $task->status = 5;
-                        $task->message = null;
-                        Log::info('Task executed and status updated to 5 (success)', [
-                            'task_id' => $task->id,
-                            'type' => $task->type,
-                            'scheduled_to_run' => $task->scheduled_to_run,
-                        ]);
-                    } elseif ($responseData['status'] == 'error') {
-                        // Update status task menjadi 4 (exception) jika terjadi kesalahan
-                        $task->status = 4;
-                        $task->message = $responseData['error'];
-                        Log::error('Task execution failed with error and status updated to 4 (exception)', [
-                            'task_id' => $task->id,
-                            'error_message' => $responseData['error'],
-                        ]);
-                    } elseif ($responseData['status'] == 'exception') {
-                        // Update status task menjadi 4 (exception) jika terjadi exception
-                        $task->status = 4;
-                        $task->message = $responseData['message'];
-                        Log::error('Task execution encountered an exception and status updated to 4 (exception)', [
-                            'task_id' => $task->id,
-                            'exception_message' => $responseData['message'],
-                        ]);
-                    }
-                } else {
-                    // Update status task menjadi 4 (exception) jika request gagal
-                    $task->status = 4;
-                    $task->message = 'Failed to call FastAPI';
-                    Log::error('Failed to call FastAPI and status updated to 4 (exception)', [
-                        'task_id' => $task->id,
-                        'error_message' => $response->body(),
-                    ]);
-                }
-
-                $task->save();
-            } catch (\Exception $e) {
-                // Update status task menjadi 4 (exception) jika terjadi kesalahan
-                $task->status = 4;
-                $task->message = $e->getMessage();
-                $task->save();
-
-                Log::error('Task execution failed and status updated to 4 (exception)', [
-                    'task_id' => $task->id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        } else {
-            // Log::info('No tasks with status 2 found.');
+            Log::info('Dispatched task to queue.', [
+                'task_id' => $task->id,
+                'fast_api_url' => $task->brand->fast_api_url
+            ]);
+            $this->info(" -> Dispatched Task ID: {$task->id} for URL: {$task->brand->fast_api_url}");
         }
-
-        // Log::info('RunFastAPITasks command completed.');
+        
+        $this->info('All eligible tasks have been dispatched.');
     }
 }

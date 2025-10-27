@@ -17,6 +17,9 @@ import bootstrap from 'bootstrap/dist/js/bootstrap.min';
 window.bootstrap = bootstrap;
 import 'simplebar';
 
+import anime from 'animejs/lib/anime.es.js';
+
+
 $(document).ready(() => {
     (function ($) {
 
@@ -410,6 +413,59 @@ $(document).ready(() => {
             }
         }
 
+        // Fungsi untuk mengaktifkan scroll otomatis pada tabel
+        function enableSmoothAutoScrollOnTable(scrollSpeed = 5, scrollZone = 50) {
+            document.querySelectorAll('.table-responsive').forEach(function (table) {
+                let scrollInterval;
+
+                function startScrolling(direction) {
+                    if (scrollInterval) return;
+                    scrollInterval = requestAnimationFrame(function step() {
+                        table.scrollLeft += direction * scrollSpeed;
+                        scrollInterval = requestAnimationFrame(step);
+                    });
+                }
+
+                function stopScrolling() {
+                    if (scrollInterval) {
+                        cancelAnimationFrame(scrollInterval);
+                        scrollInterval = null;
+                    }
+                }
+
+                table.addEventListener('mousemove', function (e) {
+                    const visibleWidth = table.clientWidth;
+                    const mouseX = e.clientX - table.getBoundingClientRect().left;
+
+                    if (mouseX < scrollZone) {
+                        startScrolling(-1); // Scroll ke kiri
+                    } else if (mouseX > visibleWidth - scrollZone) {
+                        startScrolling(1); // Scroll ke kanan
+                    } else {
+                        stopScrolling(); // Berhenti scroll jika mouse tidak di area scroll
+                    }
+                });
+
+                table.addEventListener('mouseleave', stopScrolling);
+            });
+        }
+
+        function animateWidgetCards() {
+            const cards = document.querySelectorAll('.widget-flat');
+
+            if (cards.length > 0) {
+                anime({
+                    targets: '.widget-flat',
+                    translateY: [
+                        { value: -30, duration: 300, easing: 'easeOutQuad' },  // Move up
+                        { value: 0, duration: 600, easing: 'easeOutBounce' }   // Bounce down
+                    ],
+                    delay: anime.stagger(100),  // Apply staggered animation to each card
+                    duration: 1000
+                });
+            }
+        }
+
         function init() {
             initComponents();
             initPortletCard();
@@ -421,9 +477,166 @@ $(document).ready(() => {
             initShowHidePassword();
             initFormValidation();
             initFormAdvance();
+            enableSmoothAutoScrollOnTable(5);
+            animateWidgetCards();
+
         }
 
         init();
 
     })(jQuery)
 })
+
+
+window.getScripts = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/task-generator/get-script`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectType');
+
+                select.innerHTML = `<option disabled selected>Select Script</option>`;
+
+                data.scripts.forEach(script => {
+                    const option = document.createElement('option');
+                    option.value = script;
+                    option.textContent = script;
+                    select.appendChild(option);
+                });
+
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+};
+
+
+window.getMarketPlaces = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/market-place/read`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectMarketPlace');
+
+                select.innerHTML = `<option disabled selected>Select Market Place</option>`;
+
+                data.forEach(marketplace => {
+                    const option = document.createElement('option');
+                    option.value = marketplace.id;
+                    option.textContent = marketplace.name;
+                    select.appendChild(option);
+                });
+
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+};
+
+window.getBrands = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/brand/read`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectBrand');
+
+                select.innerHTML = `<option disabled selected>Select Brand</option>`;
+
+                data.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand.id;
+                    option.textContent = brand.name;
+                    select.appendChild(option);
+                });
+
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+};
+
+
+window.getType = function (modalId) {
+    return new Promise((resolve, reject) => {
+        const url = `/group/type`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.querySelector(`#${modalId} .modal-body`);
+                const select = modal.querySelector('#selectType');
+
+                select.innerHTML = `<option disabled selected>Select Type</option>`;
+
+                data.forEach(type => {
+                    const option = new Option(type, type); // Here we assume each type is a string
+                    select.append(option);
+                });
+
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    closeOnSelect: true
+                });
+
+                resolve();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+};
+

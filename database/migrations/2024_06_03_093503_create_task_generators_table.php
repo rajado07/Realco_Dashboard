@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('link');
             $table->string('frequency'); // daily, weekly, hourly, etc.
             $table->time('run_at'); // waktu eksekusi dalam sehari
+            $table->integer('status')->default('1'); 
             $table->timestamps();
         });
     }

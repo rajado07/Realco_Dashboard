@@ -4,26 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RawData;
+use Illuminate\Support\Facades\DB;
+
 
 
 class RawDataController extends Controller
 {
-    public function create(Request $request)
+    public function index()
     {
-        try {
-            $rawData = new RawData;
-            $rawData->type = $request->type;
-            $rawData->data = json_encode($request->data);
-            $rawData->retrieved_at = $request->retrieved_at;
-            $rawData->data_date = $request->data_date;
-            $rawData->file_name = $request->file_name;
-            $rawData->brand_id = $request->brand_id;
-            $rawData->market_place_id = $request->market_place_id;
-            $rawData->save();
+        $data = RawData::orderBy('updated_at', 'desc')->get();
+        return response()->json($data);
+    }
+    
+    public function getRawDataStatusCount()
+    {
+        // Mengambil jumlah uploads berdasarkan status yang ditentukan
+        $statusCounts = RawData::select('status', DB::raw('count(*) as total'))
+            ->whereIn('status', [1, 2, 3, 4, 5 , 6])
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status')
+            ->map(function ($item) {
+                return $item->total;
+            });
 
-            return response()->json(['message' => 'Data inserted successfully', 'data' => $rawData], 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'An error occurred', 'error' => $e->getMessage()], 400);
-        }
+        $allStatusCounts = collect([1, 2, 3, 4, 5, 6])->mapWithKeys(function ($status) use ($statusCounts) {
+            return [$status => $statusCounts->get($status, 0)];
+        });
+
+        return response()->json($allStatusCounts);
     }
 }

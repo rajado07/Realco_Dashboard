@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('link');
             $table->timestamp('scheduled_to_run'); // waktu dijadwalkan untuk dijalankan
             $table->integer('status')->default('1'); 
+            $table->unsignedBigInteger('task_generator_id'); 
             $table->text('message')->nullable();
             $table->timestamps();
         });

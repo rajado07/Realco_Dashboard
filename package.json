@@ -21,6 +21,7 @@
         "@fullcalendar/timegrid": "^6.1.6",
         "@popperjs/core": "^2.11.7",
         "admin-resources": "git+https://github.com/coderthemes/admin-resources.git#master",
+        "animejs": "^3.2.2",
         "apexcharts": "3.26.0",
         "bootstrap": "5.3.0",
         "bootstrap-datepicker": "1.9.0",
@@ -28,6 +29,7 @@
         "bootstrap-timepicker": "^0.5.2",
         "bootstrap-touchspin": "^4.7.3",
         "chart.js": "^3.7.1",
+        "crypto-js": "^4.2.0",
         "datatables.net": "^1.11.4",
         "datatables.net-bs5": "^1.11.4",
         "datatables.net-buttons": "^2.2.2",
@@ -65,6 +67,7 @@
         "simplebar": "^5.3.6",
         "tippy.js": "^6.3.7",
         "toastr": "^2.1.4",
-        "typeahead.js": "^0.11.1"
+        "typeahead.js": "^0.11.1",
+        "xlsx": "^0.18.5"
     }
 }

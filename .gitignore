@@ -17,3 +17,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+scripts/__pycache__
+scripts/downloaded_excell
+scripts/log
+
